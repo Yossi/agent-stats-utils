@@ -101,7 +101,7 @@ def get_stats(group, time_span='current'):
 def cleanup_data(data):
     for k, v in data.items():
         data[k] = v.replace(',','').replace('-','0')
-    data['Last submission'] = parse(data['Last submission'].replace(u'\u200b', '')).strftime("%Y-%m-%d") if not data['Last submission'].startswith('0') else '0/0/0'
+    data['Last submission'] = parse(data['Last submission'].replace('\u200b', '')).strftime("%Y-%m-%d") if not data['Last submission'].startswith('0') else '0/0/0'
     data['Agent name'] = data['Agent name'][:16]
     return data
 
@@ -240,7 +240,7 @@ def removed_agents(group_id, table):
         if agent_id:
             stored.remove(agent_id[0][0])
     for agent_id in stored:
-        print exec_mysql("SELECT name FROM agents WHERE idagents = {0};".format(agent_id))
+        print(exec_mysql("SELECT name FROM agents WHERE idagents = {0};".format(agent_id)))
         exec_mysql("DELETE FROM membership WHERE idagents = {0} and idgroups = {1};".format(agent_id, group_id))
     
     
@@ -511,7 +511,7 @@ def check_for_applicants(group):
 
 
 
-
+"""
 def validate(row):
     max_sojourner = (row.date - sojourner_start).days + 1
     max_guardian = (row.date - game_start).days + 1
@@ -557,12 +557,12 @@ def validate(row):
     if (row.translator/15) > row.hacker:
         print '%s %s %s %s %s' % (row.name.ljust(16), row.date, str(row.translator).rjust(8), 'high translator, max =', row.hacker*15)
         #continue
-
+"""
 
 
 
 def test(group='iSBAR'):
-    print weekly_roundup(group='South Bay Area Leaderboard')
+    print(weekly_roundup(group='South Bay Area Leaderboard'))
     
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Tools for agent-stats admins')
@@ -583,9 +583,9 @@ if __name__ == '__main__':
 
     if not args.mail:
         if result and args.action != 'snarf':
-            print result
+            print(result)
         else:
-            print 'Done'
+            print('Done')
     else:
         if not args.group: args.group=''
         subject = args.action+' '+args.group if not args.subject else args.subject
