@@ -1,3 +1,5 @@
+import pymysql
+pymysql.install_as_MySQLdb()
 import MySQLdb
 import logging
 
@@ -38,7 +40,7 @@ def exec_mysql(sql, retries=2):
         return rows
 
     except MySQLdb.Warning:
-        print sql
+        print(sql)
     
     except MySQLdb.OperationalError as exc:
         if cur:
@@ -55,8 +57,8 @@ def exec_mysql(sql, retries=2):
 
 
 import smtplib
-from email.MIMEMultipart import MIMEMultipart
-from email.MIMEText import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from secrets import gmail_user, gmail_pwd
 
 def mail(to, subject, text):
@@ -97,8 +99,8 @@ def get_html(scoreboard=None, time_span='current'):
         logging.info('url loaded')
         
         if 'Sign in with your Google Account' in driver.find_element_by_tag_name("BODY").text:
-            print 'Sign in with your Google Account'
-            print 'If you do this wrong, shit will explode (or not work)'
+            print('Sign in with your Google Account')
+            print('If you do this wrong, shit will explode (or not work)')
             driver.find_element_by_id("Email").clear()
             driver.find_element_by_id("Email").send_keys(raw_input('Email: '))
             driver.find_element_by_id("next").click()
