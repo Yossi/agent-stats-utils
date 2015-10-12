@@ -1,5 +1,7 @@
 secrets.py
 venv/
+cookies.txt
+ghostdriver.log
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
