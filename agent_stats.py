@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from pprint import pprint
 import argparse
 import datetime
 import getpass
@@ -160,7 +161,7 @@ def read_table(table):
 
 def get_groups():
     soup = BeautifulSoup(get_html(), "html.parser")
-    return [li.text.strip() for li in soup.find_all('ul')[1].find_all('li')[2:]]
+    return [(li.find('a').text, li.find('a').get('href')[18:]) for li in soup.find_all('ul')[1].find_all('li')[2:]]
 
 def get_badges(agent):
     categories = {'explorer': [100, 1000, 2000, 10000, 30000],
@@ -249,14 +250,14 @@ def snarf(group=None):
         group = None
     
     if not group:
-        for group in get_groups():
+        for group, url in get_groups():
             logging.info('snarfing '+group)
             group_id = exec_mysql("SELECT idgroups FROM groups WHERE name = '{0}';".format(group))
             if group_id:
                 group_id = group_id[0][0]
             else:
                 sql = '''INSERT INTO `groups`
-                         SET `name`='{0}';'''.format(group)
+                         SET `name`='{0}', url='{1}';'''.format(group, url)
                          #ON DUPLICATE KEY UPDATE idgroups=LAST_INSERT_ID(idgroups)
                 exec_mysql(sql)
                 group_id = exec_mysql("SELECT idgroups FROM groups WHERE name = '{0}';".format(group))[0][0]
@@ -563,7 +564,8 @@ def validate(row):
 
 
 def test(group='iSBAR'):
-    print(weekly_roundup(group='South Bay Area Leaderboard'))
+    #print()
+    get_groups()
     
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Tools for agent-stats admins')
