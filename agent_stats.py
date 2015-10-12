@@ -66,7 +66,7 @@ def get_stats(group, time_span='current'):
                  'weekly': 'last week'}.get(time_span, time_span)
     output = []
     html = get_html(scoreboard=group, time_span=time_span)
-    soup = BeautifulSoup(html)
+    soup = BeautifulSoup(html, "html.parser")
     table = soup.table
     data = read_table(table)
     categories_full = ('ap', 'explorer', 'seer', 'collector', 'trekker', 'builder',
@@ -159,7 +159,7 @@ def read_table(table):
 
 
 def get_groups():
-    soup = BeautifulSoup(get_html())
+    soup = BeautifulSoup(get_html(), "html.parser")
     return [li.text.strip() for li in soup.find_all('ul')[1].find_all('li')[2:]]
 
 def get_badges(agent):
@@ -266,7 +266,7 @@ def snarf(group=None):
         group_id = exec_mysql("SELECT idgroups FROM groups WHERE name = '{0}';".format(group))[0][0]
         html = get_html(group)
         logging.info('mix the soup')
-        soup = BeautifulSoup(html)
+        soup = BeautifulSoup(html, "html.parser")
         logging.info("soup's up")
         table = read_table(soup.table)
         
@@ -496,7 +496,7 @@ def monthly_roundup(group='iSBAR'):
 
 def check_for_applicants(group):
     html = get_html(scoreboard=group)
-    soup = BeautifulSoup(html)
+    soup = BeautifulSoup(html, "html.parser")
     applicants = None
     for elem in soup(text='Agents waiting for validation:'):
         applicants = elem.parent.parent.text.replace('\n', '').split('@')[1:]
