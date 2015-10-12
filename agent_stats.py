@@ -259,6 +259,7 @@ def snarf(group=None):
                          SET `name`='{0}';'''.format(group)
                          #ON DUPLICATE KEY UPDATE idgroups=LAST_INSERT_ID(idgroups)
                 exec_mysql(sql)
+                group_id = exec_mysql("SELECT idgroups FROM groups WHERE name = '{0}';".format(group))[0][0]
             table = snarf(group) # getting all recursive and shiz
             removed_agents(group_id, table)
         colate_agents()
