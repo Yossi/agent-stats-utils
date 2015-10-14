@@ -84,6 +84,7 @@ def mail(to, subject, text):
 #######
 
 from time import sleep
+import getpass
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 
@@ -110,10 +111,10 @@ def get_html(scoreboard=None, time_span='current'):
             driver.find_element_by_id("signIn").click()
             
             if '2-Step Verification' in driver.find_element_by_tag_name("BODY").text:
-                driver.find_element_by_id("smsUserPin").clear()
-                driver.find_element_by_id("smsUserPin").send_keys(input('Enter your 2FA code: '))
-                driver.find_element_by_id("PersistentCookie").click()
-                driver.find_element_by_id("smsVerifyPin").click()
+                driver.find_element_by_id("totpPin").clear()
+                driver.find_element_by_id("totpPin").send_keys(input('Enter your 2FA code: '))
+                #driver.find_element_by_id("trustDevice").click()
+                driver.find_element_by_id("submit").click()
 
         #logging.info('saving screenshot')
         #driver.save_screenshot('../www/selenium.png')

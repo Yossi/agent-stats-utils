@@ -4,7 +4,6 @@
 from pprint import pprint
 import argparse
 import datetime
-import getpass
 import logging
 from collections import OrderedDict, namedtuple
 
