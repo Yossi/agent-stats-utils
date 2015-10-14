@@ -102,7 +102,7 @@ def get_html(scoreboard=None, time_span='current'):
             print('Sign in with your Google Account')
             print('If you do this wrong, shit will explode (or not work)')
             driver.find_element_by_id("Email").clear()
-            driver.find_element_by_id("Email").send_keys(raw_input('Email: '))
+            driver.find_element_by_id("Email").send_keys(input('Email: '))
             driver.find_element_by_id("next").click()
             sleep(1)
             driver.find_element_by_id("Passwd").clear()
@@ -111,7 +111,7 @@ def get_html(scoreboard=None, time_span='current'):
             
             if '2-Step Verification' in driver.find_element_by_tag_name("BODY").text:
                 driver.find_element_by_id("smsUserPin").clear()
-                driver.find_element_by_id("smsUserPin").send_keys(raw_input('Enter your 2FA code: '))
+                driver.find_element_by_id("smsUserPin").send_keys(input('Enter your 2FA code: '))
                 driver.find_element_by_id("PersistentCookie").click()
                 driver.find_element_by_id("smsVerifyPin").click()
 

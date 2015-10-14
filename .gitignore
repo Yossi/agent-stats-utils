@@ -1,7 +1,11 @@
 secrets.py
 venv/
+winvenv/
 cookies.txt
 ghostdriver.log
+phantomjs
+phantomjs.exe
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
