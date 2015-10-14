@@ -7,7 +7,6 @@ import datetime
 import getpass
 import logging
 from collections import OrderedDict, namedtuple
-from time import sleep
 
 from bs4 import BeautifulSoup
 from dateutil.parser import parse
@@ -243,8 +242,12 @@ def removed_agents(group_id, table):
     for agent_id in stored:
         print(exec_mysql("SELECT name FROM agents WHERE idagents = {0};".format(agent_id)))
         exec_mysql("DELETE FROM membership WHERE idagents = {0} and idgroups = {1};".format(agent_id, group_id))
-    
-    
+
+def test(group='iSBAR'):
+    #print()
+    get_groups()
+
+
 def snarf(group=None):
     if group in ('smurfs', 'frogs', 'all'):
         group = None
@@ -563,9 +566,7 @@ def validate(row):
 
 
 
-def test(group='iSBAR'):
-    #print()
-    get_groups()
+
     
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Tools for agent-stats admins')
