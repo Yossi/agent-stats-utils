@@ -140,8 +140,9 @@ def read_table(table):
                'recruiter',
                'Last submission']
 
-    output = []
+    count = 0
     for row in table.find_all('tr')[1:]:
+        count += 1
         cells = row.find_all('td')
         
         d = [cell.text.strip() for cell in cells]
@@ -149,9 +150,10 @@ def read_table(table):
         except KeyError: d[0] = 'nul'
         
         data = dict(zip(headers, d))
-        output.append(cleanup_data(data))
-    logging.info('%s rows' % len(output))
-    return output
+
+        yield cleanup_data(data)
+    logging.info('%s rows' % count)
+
 
 
 
@@ -230,22 +232,8 @@ def colate_agents():
                  ON DUPLICATE KEY UPDATE idagents=idagents;'''.format(agent_id, general_groups[faction])
         exec_mysql(sql)
 
-
-def removed_agents(group_id, table):
-    logging.info('checking for removed agents')
-    stored = [item for sublist in exec_mysql("SELECT idagents FROM membership WHERE idgroups = {0};".format(group_id)) for item in sublist]
-    for data in table:
-        agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{Agent name}';".format(**data))
-        if agent_id:
-            stored.remove(agent_id[0][0])
-    for agent_id in stored:
-        print(exec_mysql("SELECT name FROM agents WHERE idagents = {0};".format(agent_id)))
-        exec_mysql("DELETE FROM membership WHERE idagents = {0} and idgroups = {1};".format(agent_id, group_id))
-
 def test(group='iSBAR'):
-    #print()
-    get_groups()
-
+    pass
 
 def snarf(group=None):
     if group in ('smurfs', 'frogs', 'all'):
@@ -263,17 +251,17 @@ def snarf(group=None):
                          #ON DUPLICATE KEY UPDATE idgroups=LAST_INSERT_ID(idgroups)
                 exec_mysql(sql)
                 group_id = exec_mysql("SELECT idgroups FROM groups WHERE name = '{0}';".format(group))[0][0]
-            table = snarf(group) # getting all recursive and shiz
-            removed_agents(group_id, table)
+            snarf(group) # getting all recursive and shiz
         colate_agents()
     else:
         group_id = exec_mysql("SELECT idgroups FROM groups WHERE name = '{0}';".format(group))[0][0]
+        remaining_roster = [item for sublist in exec_mysql("SELECT idagents FROM membership WHERE idgroups = {0};".format(group_id)) for item in sublist]
         html = get_html(group)
         logging.info('mix the soup')
         soup = BeautifulSoup(html, "html.parser")
         logging.info("soup's up")
-        table = read_table(soup.table)
         
+        table = read_table(soup.table)
         for data in table:
             agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{Agent name}';".format(**data))
             if agent_id:
@@ -283,7 +271,11 @@ def snarf(group=None):
                          SET `name`='{Agent name}', `faction`='{Faction}';'''.format(**data)
                 exec_mysql(sql)
                 agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{Agent name}';".format(**data))[0][0]
-                
+            try:
+                remaining_roster.remove(agent_id)
+            except ValueError:
+                logging.info('Agent added: {Agent name}'.format(**data))
+            
             sql = '''INSERT INTO `membership`
                      VALUES ('{0}', '{1}')
                      ON DUPLICATE KEY UPDATE idagents=idagents;'''.format(agent_id, group_id)
@@ -353,7 +345,12 @@ def snarf(group=None):
                                              controller='{controller}',
                                              `field-master`='{field-master}';'''.format(agent_id=agent_id, **data)
             exec_mysql(sql)
-    return table
+        
+        if remaining_roster:
+            remaining_roster = str(tuple(remaining_roster)).replace(',)',')')
+            logging.info('Agent(s) removed: %s' % str(sum(exec_mysql("SELECT name FROM agents WHERE idagents in {};".format(remaining_roster)), ())))
+            exec_mysql("DELETE FROM membership WHERE idagents in {0} and idgroups = {1};".format(remaining_roster, group_id))
+            
 
 def summary(group='all', days=7):
     if not group: group = 'all'
