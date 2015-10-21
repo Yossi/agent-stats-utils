@@ -39,9 +39,6 @@ def exec_mysql(sql, retries=2):
         db.commit()
         return rows
 
-    except MySQLdb.Warning:
-        print(sql)
-    
     except MySQLdb.OperationalError as exc:
         if cur:
             cur.close()
@@ -51,6 +48,11 @@ def exec_mysql(sql, retries=2):
             return exec_mysql(sql, retries-1)
         else:
             raise
+            
+    except:
+        logging.error(sql)
+        raise
+    
 
 
 #######
@@ -132,7 +134,3 @@ def get_html(scoreboard=None, time_span='current'):
     
     logging.info('html acquired')
     return html
-
-
-
-
