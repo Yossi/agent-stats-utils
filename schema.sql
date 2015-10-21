@@ -6,7 +6,7 @@ CREATE TABLE `agents` (
   `idagents` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(16) NOT NULL,
   `faction` varchar(3) DEFAULT NULL,
-  `apdiff` bigint(11) unsigned NOT NULL,
+  `apdiff` bigint(11) unsigned NOT NULL DEFAULT '0',
 
   PRIMARY KEY (`idagents`,`name`),
   UNIQUE KEY `idagents_UNIQUE` (`idagents`),
@@ -66,7 +66,7 @@ CREATE TABLE `stats` (
   `link-master` bigint(20) unsigned DEFAULT NULL,
   `controller` bigint(20) unsigned DEFAULT NULL,
   `field-master` bigint(20) unsigned DEFAULT NULL,
-  `flag` int(10) unsigned zerofill DEFAULT NULL,
+  `flag` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`idagents`,`date`),
   CONSTRAINT `FK_idagents` FOREIGN KEY (`idagents`) REFERENCES `agents` (`idagents`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
