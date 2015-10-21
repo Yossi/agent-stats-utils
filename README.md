@@ -11,7 +11,7 @@ python3+
 mysql server
 
 clone this repo.
-get phantomjs http://phantomjs.org/releases.html
+get phantomjs https://bitbucket.org/ariya/phantomjs/downloads the 2.0 version is a pile of crap, get the 1.9.8 version
 throw it in the same dir as the other checked out files, or change the code in util.py that looks like this
      driver = webdriver.PhantomJS('phantomjs', service_args=['--cookies-file=cookies.txt'])
 to point to the path where you installed phantomjs.
