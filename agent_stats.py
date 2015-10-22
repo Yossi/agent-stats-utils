@@ -191,11 +191,9 @@ def get_badges(agent):
             if agent[category] != '-' and int(agent[category]) >= rank:
                 current = badge
             if current == 'Onyx':
-                for multiplier in range(2,500000):
-                    if int(agent[category]) < rank*(multiplier):
-                        break
+                multiplier = agent[category] // rank
                 if multiplier > 2: 
-                    current = '%sx %s' % (multiplier-1, current)
+                    current = '%sx %s' % (multiplier, current)
         result[category] = current
     return result
 
@@ -233,7 +231,15 @@ def colate_agents():
         exec_mysql(sql)
 
 def test(group='iSBAR'):
-    pass
+    headers = ['name', 'date', 'flag', 'apdiff', 'level', 'ap', 'explorer', 'seer',
+               'trekker', 'builder', 'connector', 'mind-controller', 'illuminator', 
+               'recharger', 'liberator', 'pioneer', 'engineer', 'purifier', 'guardian', 
+               'specops', 'hacker', 'translator', 'sojourner', 'recruiter', 'collector', 
+               'binder', 'country-master', 'neutralizer', 'disruptor', 'salvator', 
+               'smuggler', 'link-master', 'controller', 'field-master']
+
+    data = exec_mysql("call FindAgentByName('@');")[-1]
+    print(get_badges(dict(zip(headers, data))))
 
 def snarf(group=None):
     if group in ('smurfs', 'frogs', 'all'):
