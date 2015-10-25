@@ -67,7 +67,7 @@ def get_stats(group, time_span='current'):
     html = get_html(scoreboard=group, time_span=time_span)
     soup = BeautifulSoup(html, "html.parser")
     table = soup.table
-    data = read_table(table)
+    data = list(read_table(table))
     categories_full = ('ap', 'explorer', 'seer', 'collector', 'trekker', 'builder',
                        'connector', 'mind-controller', 'illuminator', 'binder',
                        'country-master', 'recharger', 'liberator', 'pioneer',
@@ -238,8 +238,29 @@ def test(group='iSBAR'):
                'binder', 'country-master', 'neutralizer', 'disruptor', 'salvator', 
                'smuggler', 'link-master', 'controller', 'field-master']
 
-    data = exec_mysql("call FindAgentByName('@');")[-1]
-    print(get_badges(dict(zip(headers, data))))
+    for name, apdiff in exec_mysql('select name, apdiff from agents;'):
+        data = exec_mysql("call FindAgentByName('{}');".format(name))
+        temp = 100000000000000000
+        for datum in data:
+            datum = dict(zip(headers, datum))
+            if (not datum['date']) or datum['date'] < datetime.date(2015, 9, 1):
+                continue
+            for badge in headers[-9:]:
+                datum[badge] = datum[badge] if datum[badge] else 0
+                
+            min_ap = datum['liberator']*125 + min(-(-max(0,(datum['builder']-datum['liberator']*8))//7)*65, -(-max(0,(datum['builder']-datum['liberator']*8))//8)*125) \
+                     + datum['connector']*313 + datum['mind-controller']*1250 + datum['liberator']*500 + datum['engineer']*125 \
+                     + datum['purifier']*75 + datum['recharger']//15000*10 + datum['disruptor']*187 + datum['salvator']*750
+            if temp < min_ap-datum['ap']:
+                print('went back up', datum['name'])
+                break
+            temp = min_ap-datum['ap']
+            if datum['ap'] < min_ap and len(data) > 1:
+                print("UPDATE agents SET apdiff='{ap}' WHERE name='{name}' and apdiff > {ap}; '{date}".format(ap=min_ap-datum['ap'], name=datum['name'], date=datum['date']))
+                #input()
+        
+    
+    #print(get_badges(dict(zip(headers, data[-1]))))
 
 def snarf(group=None):
     if group in ('smurfs', 'frogs', 'all'):
@@ -518,56 +539,6 @@ def check_for_applicants(group):
 
 
 
-"""
-def validate(row):
-    max_sojourner = (row.date - sojourner_start).days + 1
-    max_guardian = (row.date - game_start).days + 1
-    #min_ap = row.liberator*125 + min(-(-max(0,(row.builder-row.liberator*8))//7)*65, -(-max(0,(row.builder-row.liberator*8))//8)*125) \
-    #         + row.connector*313 + row.mind_controller*1250 + row.liberator*500 + row.engineer*125 \
-    #         + row.purifier*75 + row.recharger//15000*10 + row.disruptor*187 + row.salvator*750
-    #if row.ap < min_ap and row.name.lower() not in flippers:
-    #    print '%s %s %s %s %s' % (row.name.ljust(16), row.date, str(row.ap).rjust(8), 'low ap, min =', min_ap)
-    #    #continue
-    if row.guardian > max_guardian:
-        print '%s %s %s %s %s' % (row.name.ljust(16), row.date, str(row.guardian).rjust(8), 'high guardian, max =', max_guardian)
-        #continue
-    if row.sojourner > max_sojourner:
-        print '%s %s %s %s %s' % (row.name.ljust(16), row.date, str(row.sojourner).rjust(8), 'high sojourner, max =', max_sojourner)
-        #continue
-    if row.date > today+datetime.timedelta(days=1):
-        print '%s %s %s' % (row.name.ljust(16), row.date, 'date in the future')
-        #continue
-    if (row.mind_controller/2) > row.connector:
-        print '%s %s %s %s %s' % (row.name.ljust(16), row.date, str(row.mind_controller).rjust(8), 'high mind_controller, max =', row.connector*2)
-        #continue
-    if row.explorer > row.hacker+row.builder+row.engineer+row.connector:
-        print '%s %s %s %s %s' % (row.name.ljust(16), row.date, str(row.explorer).rjust(8), 'high explorer, max =', row.hacker+row.builder+row.engineer+row.connector)
-        #continue
-    if row.pioneer > row.explorer:
-        print '%s %s %s %s %s' % (row.name.ljust(16), row.date, str(row.pioneer).rjust(8), 'high pioneer, (exp)max =', row.explorer)
-        #continue
-    if row.pioneer > row.liberator:
-        print '%s %s %s %s %s' % (row.name.ljust(16), row.date, str(row.pioneer).rjust(8), 'high pioneer, (lib)max =', row.liberator)
-        #continue
-    if row.liberator > row.builder:
-        print '%s %s %s %s %s' % (row.name.ljust(16), row.date, str(row.liberator).rjust(8), 'high liberator, max =', row.builder)
-        #continue
-    if (row.salvator/2) > row.disruptor:
-        print '%s %s %s %s %s' % (row.name.ljust(16), row.date, str(row.salvator).rjust(8), 'high salvator, max =', row.disruptor*2)
-        #continue
-    if row.disruptor > row.purifier:
-        print '%s %s %s %s %s' % (row.name.ljust(16), row.date, str(row.disruptor).rjust(8), 'high disruptor, max =', row.purifier)
-        #continue
-    if row.neutralizer > row.purifier:
-        print '%s %s %s %s %s' % (row.name.ljust(16), row.date, str(row.neutralizer).rjust(8), 'high neutralizer, max =', row.purifier)
-        #continue
-    if (row.translator/15) > row.hacker:
-        print '%s %s %s %s %s' % (row.name.ljust(16), row.date, str(row.translator).rjust(8), 'high translator, max =', row.hacker*15)
-        #continue
-"""
-
-
-
 
     
 if __name__ == '__main__':
@@ -598,3 +569,4 @@ if __name__ == '__main__':
         if result:
             mail(args.mail, subject, result)
             logging.info('email sent')
+    logging.info('Done')
