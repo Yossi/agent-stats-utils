@@ -21,6 +21,9 @@ logging.basicConfig(level=logging.INFO,
                     format="%(asctime)s %(message)s",
                     datefmt="%H:%M:%S")
 
+from Stat import Stat
+
+
 
 today = datetime.date.today()
 sojourner_start = datetime.date(2015, 3, 5)
@@ -162,40 +165,9 @@ def read_table(table):
 def get_groups():
     soup = BeautifulSoup(get_html(), "html.parser")
     return [(li.find('a').text, li.find('a').get('href')[18:]) for li in soup.find_all('ul')[1].find_all('li')[2:]]
-
-def get_badges(agent):
-    categories = {'explorer': [100, 1000, 2000, 10000, 30000],
-                  'seer': [10, 50, 200, 500, 5000],
-                  'trekker': [10, 100, 300, 1000, 2500],
-                  'builder': [2000, 10000, 30000, 100000, 200000],
-                  'connector': [50, 1000, 5000, 25000, 100000],
-                  'mind-controller': [100, 500, 2000, 10000, 40000],
-                  'illuminator': [5000, 50000, 250000, 1000000, 4000000],
-                  'recharger': [100000, 1000000, 3000000, 10000000, 25000000],
-                  'liberator': [100, 1000, 5000, 15000, 40000],
-                  'pioneer': [20, 200, 1000, 5000, 20000],
-                  'engineer': [150, 1500, 5000, 20000, 50000],
-                  'purifier': [2000, 10000, 30000, 100000, 300000],
-                  'guardian': [3, 10, 20, 90, 150],
-                  'specops': [5, 25, 100, 200, 500],
-                  'hacker': [2000, 10000, 30000, 100000, 200000],
-                  'translator': [200, 2000, 6000, 20000, 50000],
-                  'sojourner': [15, 30, 60, 180, 360],
-                  'recruiter': [2, 10, 25, 50, 100]}
-
-    result = {}
-    for category, ranks in categories.items():
-        current = 'Locked'
-        multiplier = 1
-        for rank, badge in zip(ranks, ['Bronze', 'Silver', 'Gold', 'Platinum', 'Onyx']):
-            if agent[category] != '-' and int(agent[category]) >= rank:
-                current = badge
-            if current == 'Onyx':
-                multiplier = agent[category] // rank
-                if multiplier > 2: 
-                    current = '%sx %s' % (multiplier, current)
-        result[category] = current
-    return result
+    
+    
+    
 
 
 def new_badges(old_data, new_data):
@@ -231,7 +203,11 @@ def colate_agents():
         exec_mysql(sql)
 
 def test(group='iSBAR'):
-    headers = ['name', 'date', 'flag', 'apdiff', 'level', 'ap', 'explorer', 'seer',
+    pass
+    
+
+
+    '''headers = ['name', 'date', 'flag', 'apdiff', 'level', 'ap', 'explorer', 'seer',
                'trekker', 'builder', 'connector', 'mind-controller', 'illuminator', 
                'recharger', 'liberator', 'pioneer', 'engineer', 'purifier', 'guardian', 
                'specops', 'hacker', 'translator', 'sojourner', 'recruiter', 'collector', 
@@ -257,8 +233,7 @@ def test(group='iSBAR'):
             temp = min_ap-datum['ap']
             if datum['ap'] < min_ap and len(data) > 1:
                 print("UPDATE agents SET apdiff='{ap}' WHERE name='{name}' and apdiff > {ap}; '{date}".format(ap=min_ap-datum['ap'], name=datum['name'], date=datum['date']))
-                #input()
-        
+        '''
     
     #print(get_badges(dict(zip(headers, data[-1]))))
 
@@ -290,22 +265,17 @@ def snarf(group=None):
         
         table = read_table(soup.table)
         for data in table:
-            agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{Agent name}';".format(**data))
-            if agent_id:
-                agent_id = agent_id[0][0]
-            else:
-                sql = '''INSERT INTO `agents`
-                         SET `name`='{Agent name}', `faction`='{Faction}';'''.format(**data)
-                exec_mysql(sql)
-                agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{Agent name}';".format(**data))[0][0]
+            stat = Stat(**data)
+            print(stat.name, stat.level, stat.min_level())
+
             try:
-                remaining_roster.remove(agent_id)
+                remaining_roster.remove(stat.agent_id)
             except ValueError:
-                logging.info('Agent added: {Agent name}'.format(**data))
+                logging.info('Agent added: {0}'.format(stat.name))
             
             sql = '''INSERT INTO `membership`
                      VALUES ('{0}', '{1}')
-                     ON DUPLICATE KEY UPDATE idagents=idagents;'''.format(agent_id, group_id)
+                     ON DUPLICATE KEY UPDATE idagents=idagents;'''.format(stat.agent_id, group_id)
             exec_mysql(sql)
             
             sql = '''INSERT INTO `stats`
@@ -370,8 +340,8 @@ def snarf(group=None):
                                              smuggler='{smuggler}',
                                             `link-master`='{link-master}',
                                              controller='{controller}',
-                                             `field-master`='{field-master}';'''.format(agent_id=agent_id, **data)
-            exec_mysql(sql)
+                                             `field-master`='{field-master}';'''.format(agent_id=stat.agent_id, **data)
+            #exec_mysql(sql)
         
         if remaining_roster:
             remaining_roster = str(tuple(remaining_roster)).replace(',)',')')
