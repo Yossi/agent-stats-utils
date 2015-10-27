@@ -6,7 +6,7 @@ CREATE TABLE `agents` (
   `idagents` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(16) NOT NULL,
   `faction` varchar(3) DEFAULT NULL,
-  `apdiff` bigint(11) unsigned NOT NULL DEFAULT '0',
+  `apdiff` bigint(11) NOT NULL DEFAULT '0',
 
   PRIMARY KEY (`idagents`,`name`),
   UNIQUE KEY `idagents_UNIQUE` (`idagents`),

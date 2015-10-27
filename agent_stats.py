@@ -165,9 +165,8 @@ def read_table(table):
 def get_groups():
     soup = BeautifulSoup(get_html(), "html.parser")
     return [(li.find('a').text, li.find('a').get('href')[18:]) for li in soup.find_all('ul')[1].find_all('li')[2:]]
-    
-    
-    
+
+
 
 
 def new_badges(old_data, new_data):
@@ -266,8 +265,8 @@ def snarf(group=None):
         table = read_table(soup.table)
         for data in table:
             stat = Stat(**data)
-            print(stat.name, stat.level, stat.min_level())
-
+            stat.save()
+            
             try:
                 remaining_roster.remove(stat.agent_id)
             except ValueError:
@@ -278,71 +277,6 @@ def snarf(group=None):
                      ON DUPLICATE KEY UPDATE idagents=idagents;'''.format(stat.agent_id, group_id)
             exec_mysql(sql)
             
-            sql = '''INSERT INTO `stats`
-                     SET idagents={agent_id},
-                         `date`='{Last submission}',
-                         `level`='{Level}',
-                         ap='{ap}',
-                         explorer='{explorer}',
-                         seer='{seer}',
-                         trekker='{trekker}',
-                         builder='{builder}',
-                         connector='{connector}',
-                         `mind-controller`='{mind-controller}',
-                         illuminator='{illuminator}',
-                         recharger='{recharger}',
-                         liberator='{liberator}',
-                         pioneer='{pioneer}',
-                         engineer='{engineer}',
-                         purifier='{purifier}',
-                         guardian='{guardian}',
-                         specops='{specops}',
-                         hacker='{hacker}',
-                         translator='{translator}',
-                         sojourner='{sojourner}',
-                         recruiter='{recruiter}',
-                         collector='{collector}',
-                         binder='{binder}',
-                         `country-master`='{country-master}',
-                         neutralizer='{neutralizer}',
-                         disruptor='{disruptor}',
-                         salvator='{salvator}',
-                         smuggler='{smuggler}',
-                        `link-master`='{link-master}',
-                         controller='{controller}',
-                         `field-master`='{field-master}'
-                     ON DUPLICATE KEY UPDATE `level`='{Level}',
-                                             ap='{ap}',
-                                             explorer='{explorer}',
-                                             seer='{seer}',
-                                             trekker='{trekker}',
-                                             builder='{builder}',
-                                             connector='{connector}',
-                                             `mind-controller`='{mind-controller}',
-                                             illuminator='{illuminator}',
-                                             recharger='{recharger}',
-                                             liberator='{liberator}',
-                                             pioneer='{pioneer}',
-                                             engineer='{engineer}',
-                                             purifier='{purifier}',
-                                             guardian='{guardian}',
-                                             specops='{specops}',
-                                             hacker='{hacker}',
-                                             translator='{translator}',
-                                             sojourner='{sojourner}',
-                                             recruiter='{recruiter}',
-                                             collector='{collector}',
-                                             binder='{binder}',
-                                             `country-master`='{country-master}',
-                                             neutralizer='{neutralizer}',
-                                             disruptor='{disruptor}',
-                                             salvator='{salvator}',
-                                             smuggler='{smuggler}',
-                                            `link-master`='{link-master}',
-                                             controller='{controller}',
-                                             `field-master`='{field-master}';'''.format(agent_id=stat.agent_id, **data)
-            #exec_mysql(sql)
-        
         if remaining_roster:
             remaining_roster = str(tuple(remaining_roster)).replace(',)',')')
             logging.info('Agent(s) removed: %s' % str(sum(exec_mysql("SELECT name FROM agents WHERE idagents in {};".format(remaining_roster)), ())))
@@ -531,8 +465,6 @@ if __name__ == '__main__':
     if not args.mail:
         if result and args.action != 'snarf':
             print(result)
-        else:
-            print('Done')
     else:
         if not args.group: args.group=''
         subject = args.action+' '+args.group if not args.subject else args.subject

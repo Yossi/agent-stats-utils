@@ -51,7 +51,8 @@ class Stat(object):
             sql = '''INSERT INTO `agents` SET `name`='{0}', `faction`='{1}';'''.format(self.name, self.faction)
             exec_mysql(sql)
             self.agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name))[0][0]
-
+            
+        self.apdiff = 0
 
     def get_badges(self):
         categories = {'explorer': [100, 1000, 2000, 10000, 30000],
@@ -89,8 +90,8 @@ class Stat(object):
 
     def min_level(self):
         ranks = ['Onyx', 'Platinum', 'Gold', 'Silver', 'Bronze', 'Locked']
-        badges = sorted([a.split(' ')[-1] for a in self.get_badges().values()], key=lambda x: ranks.index(x))
-        expanded_badges = list(chain.from_iterable([ranks[ranks.index(a):] for a in badges]))
+        sorted_badges = sorted([a.split(' ')[-1] for a in self.get_badges().values()], key=lambda x: ranks.index(x))
+        expanded_badges = list(chain.from_iterable([ranks[ranks.index(a):] for a in sorted_badges]))
         
         if 0 <= self.ap:
             level = 1
@@ -145,7 +146,11 @@ class Stat(object):
 
     @property
     def flag(self):
-        return bool(self.validate())
+        try:
+            return self._flag
+        except AttributeError:
+            self._flag = bool(self.validate())
+            return self._flag
 
     def validate(self):
         if self.date == '0/0/0': return ['date missing']
@@ -153,16 +158,16 @@ class Stat(object):
         max_sojourner = (self.date - sojourner_start).days + 1
         max_guardian = (self.date - game_start).days + 1
         min_level = self.min_level()
-        min_ap = self.liberator*125 + min(-(-max(0,(self.builder-self.liberator*8))//7)*65, -(-max(0,(self.builder-self.liberator*8))//8)*125) \
-                 + self.connector*313 + self.mind_controller*1250 + self.liberator*500 + self.engineer*125 \
-                 + self.purifier*75 + self.recharger//15000*10 + self.disruptor*187 + self.salvator*750
+        self.min_ap = self.liberator*125 + min(-(-max(0,(self.builder-self.liberator*8))//7)*65, -(-max(0,(self.builder-self.liberator*8))//8)*125) \
+                      + self.connector*313 + self.mind_controller*1250 + self.liberator*500 + self.engineer*125 \
+                      + self.purifier*75 + self.recharger//15000*10 + self.disruptor*187 + self.salvator*750
 
         apdiff = exec_mysql("SELECT apdiff FROM agents WHERE `name` = '{0}';".format(self.name))
-        if apdiff: apdiff = apdiff[0][0]
+        if apdiff: self.apdiff = apdiff[0][0]
 
         reasons = []
-        if min_level > self.level:
-            reasons.append( 'reported level too low: %s Min: %s' % (self.level, min_level) )
+        #if min_level > self.level:
+        #    reasons.append( 'reported level too low: %s Min: %s' % (self.level, min_level) )
         if self.guardian > max_guardian:
             reasons.append( '%s %s %s %s %s' % (self.name.ljust(16), self.date, str(self.guardian).rjust(8), 'high guardian, max =', max_guardian) )
         if self.sojourner > max(0, max_sojourner):
@@ -189,15 +194,84 @@ class Stat(object):
             reasons.append( '%s %s %s %s %s' % (self.name.ljust(16), self.date, str(self.neutralizer).rjust(8), 'high neutralizer, max =', self.purifier) )
         if (self.translator/15) > self.hacker:
             reasons.append( '%s %s %s %s %s' % (self.name.ljust(16), self.date, str(self.translator).rjust(8), 'high translator, max =', self.hacker*15) )
-        if self.ap < min_ap-apdiff:
-            reasons.append( '%s : %s %s | Reported AP %s, Calulated min AP %s' % (str(min_ap-self.ap).rjust(10), self.name.ljust(16), self.date, str(self.ap).rjust(8), min_ap) )
+
+        if self.min_ap-self.apdiff > self.ap:
+            reasons.append( '%s : %s %s | Reported AP %s, Calulated min AP %s' % (str(self.min_ap-self.ap).rjust(10), self.name.ljust(16), self.date, str(self.ap).rjust(8), self.min_ap) )
+        elif not reasons:
+            exec_mysql("UPDATE agents SET apdiff={0} WHERE `name`='{1}';".format(self.min_ap-self.ap, self.name))
 
         return reasons
 
-    def load(self, name, date=None):
-        pass
-
     def save(self):
+        sql = '''INSERT INTO `stats`
+                 SET idagents={agent_id},
+                     `date`='{date}',
+                     `level`='{level}',
+                     flag={flag},
+                     ap='{ap}',
+                     explorer='{explorer}',
+                     seer='{seer}',
+                     trekker='{trekker}',
+                     builder='{builder}',
+                     connector='{connector}',
+                     `mind-controller`='{mind_controller}',
+                     illuminator='{illuminator}',
+                     recharger='{recharger}',
+                     liberator='{liberator}',
+                     pioneer='{pioneer}',
+                     engineer='{engineer}',
+                     purifier='{purifier}',
+                     guardian='{guardian}',
+                     specops='{specops}',
+                     hacker='{hacker}',
+                     translator='{translator}',
+                     sojourner='{sojourner}',
+                     recruiter='{recruiter}',
+                     collector='{collector}',
+                     binder='{binder}',
+                     `country-master`='{country_master}',
+                     neutralizer='{neutralizer}',
+                     disruptor='{disruptor}',
+                     salvator='{salvator}',
+                     smuggler='{smuggler}',
+                    `link-master`='{link_master}',
+                     controller='{controller}',
+                     `field-master`='{field_master}'
+                 ON DUPLICATE KEY UPDATE `level`='{level}',
+                                         flag={flag},
+                                         ap='{ap}',
+                                         explorer='{explorer}',
+                                         seer='{seer}',
+                                         trekker='{trekker}',
+                                         builder='{builder}',
+                                         connector='{connector}',
+                                         `mind-controller`='{mind_controller}',
+                                         illuminator='{illuminator}',
+                                         recharger='{recharger}',
+                                         liberator='{liberator}',
+                                         pioneer='{pioneer}',
+                                         engineer='{engineer}',
+                                         purifier='{purifier}',
+                                         guardian='{guardian}',
+                                         specops='{specops}',
+                                         hacker='{hacker}',
+                                         translator='{translator}',
+                                         sojourner='{sojourner}',
+                                         recruiter='{recruiter}',
+                                         collector='{collector}',
+                                         binder='{binder}',
+                                         `country-master`='{country_master}',
+                                         neutralizer='{neutralizer}',
+                                         disruptor='{disruptor}',
+                                         salvator='{salvator}',
+                                         smuggler='{smuggler}',
+                                        `link-master`='{link_master}',
+                                         controller='{controller}',
+                                         `field-master`='{field_master}';'''.format(flag=self.flag, **self.__dict__)
+        exec_mysql(sql)
+
+    def load(self, name, date=None):
+        #be sure this is an empty object first
         pass
 
     def __repr__(self):
