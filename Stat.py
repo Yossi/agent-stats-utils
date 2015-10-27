@@ -2,7 +2,7 @@ from util import exec_mysql
 import datetime
 import logging
 from itertools import chain
-
+from dateutil.parser import parse
 
 today = datetime.date.today()
 sojourner_start = datetime.date(2015, 3, 5)
@@ -10,7 +10,7 @@ game_start = datetime.date(2012, 11, 15)
 
 class Stat(object):
     def __init__(self, **kwargs):
-        self.date = kwargs['Last submission']
+        self.date = parse(kwargs['Last submission']).date() if not kwargs['Last submission'].startswith('0') else '0/0/0'
         self.name = kwargs['Agent name']
         self.faction = kwargs['Faction']
         self.level = int(kwargs['Level'])
@@ -148,22 +148,7 @@ class Stat(object):
         return bool(self.validate())
 
     def validate(self):
-    
-    # today >= date
-    # connector >= mind_controller/2
-    # hacker+builder+engineer+connector >= explorer
-    # explorer >= pioneer
-    # builder >= liberator
-    # liberator >= pioneer
-    # disruptor >= salvator/2
-    # purifier >= disruptor
-    # purifier >= neutralizer
-    # hacker >= translator/15
-    # min_ap = liberator*125 + min(-(-max(0,(builder-liberator*8))/7)*65, -(-max(0,(builder-liberator*8))/8)*125) + connector*313 + mind_controller*1250 + liberator*500 + engineer*125 + purifier*75 + recharger/15000*10 + disruptor*187 + salvator*750
-
-    # requirement[level] <= ap
-    
-        if not self.date: return ['date missing']
+        if self.date == '0/0/0': return ['date missing']
 
         max_sojourner = (self.date - sojourner_start).days + 1
         max_guardian = (self.date - game_start).days + 1
@@ -172,15 +157,18 @@ class Stat(object):
                  + self.connector*313 + self.mind_controller*1250 + self.liberator*500 + self.engineer*125 \
                  + self.purifier*75 + self.recharger//15000*10 + self.disruptor*187 + self.salvator*750
 
-        apdiff = exec_mysql('SELECT apdiff FROM ')
+        apdiff = exec_mysql("SELECT apdiff FROM agents WHERE `name` = '{0}';".format(self.name))
+        if apdiff: apdiff = apdiff[0][0]
 
         reasons = []
         if min_level > self.level:
-            reasons.append( 'reported level too low %s Min: %s' % (self.level, min_level) )
+            reasons.append( 'reported level too low: %s Min: %s' % (self.level, min_level) )
         if self.guardian > max_guardian:
             reasons.append( '%s %s %s %s %s' % (self.name.ljust(16), self.date, str(self.guardian).rjust(8), 'high guardian, max =', max_guardian) )
-        if self.sojourner > max_sojourner:
+        if self.sojourner > max(0, max_sojourner):
             reasons.append( '%s %s %s %s %s' % (self.name.ljust(16), self.date, str(self.sojourner).rjust(8), 'high sojourner, max =', max_sojourner) )
+        if game_start > self.date:
+            reasons.append( '%s %s %s' % (self.name.ljust(16), self.date, 'date from before the game') )
         if self.date > today+datetime.timedelta(days=1):
             reasons.append( '%s %s %s' % (self.name.ljust(16), self.date, 'date in the future') )
         if (self.mind_controller/2) > self.connector:
@@ -214,3 +202,17 @@ class Stat(object):
 
     def __repr__(self):
         return '<Stat: {} {}>'.format(self.name, self.date)
+
+# date >= game_start
+# today >= date
+# connector >= mind_controller/2
+# hacker+builder+engineer+connector >= explorer
+# explorer >= pioneer
+# builder >= liberator
+# liberator >= pioneer
+# disruptor >= salvator/2
+# purifier >= disruptor
+# purifier >= neutralizer
+# hacker >= translator/15
+# min_ap = liberator*125 + min(-(-max(0,(builder-liberator*8))/7)*65, -(-max(0,(builder-liberator*8))/8)*125) + connector*313 + mind_controller*1250 + liberator*500 + engineer*125 + purifier*75 + recharger/15000*10 + disruptor*187 + salvator*750
+# requirement[level] <= ap
