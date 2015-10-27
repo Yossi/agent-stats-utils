@@ -70,3 +70,46 @@ CREATE TABLE `stats` (
   PRIMARY KEY (`idagents`,`date`),
   CONSTRAINT `FK_idagents` FOREIGN KEY (`idagents`) REFERENCES `agents` (`idagents`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DELIMITER $$
+CREATE PROCEDURE `FindAgentByName`(IN `agentname` varchar(16))
+BEGIN
+SELECT
+  `agents`.`name`, 
+  `stats`.`date`, 
+  `stats`.`flag`, 
+  `agents`.`apdiff`, 
+  `stats`.`level`,
+  `stats`.`ap`,
+  `stats`.`explorer`,
+  `stats`.`seer`,
+  `stats`.`trekker`,
+  `stats`.`builder`,
+  `stats`.`connector`,
+  `stats`.`mind-controller`,
+  `stats`.`illuminator`,
+  `stats`.`recharger`,
+  `stats`.`liberator`,
+  `stats`.`pioneer`,
+  `stats`.`engineer`,
+  `stats`.`purifier`,
+  `stats`.`guardian`,
+  `stats`.`specops`,
+  `stats`.`hacker`,
+  `stats`.`translator`,
+  `stats`.`sojourner`,
+  `stats`.`recruiter`,
+  `stats`.`collector`,
+  `stats`.`binder`,
+  `stats`.`country-master`,
+  `stats`.`neutralizer`,
+  `stats`.`disruptor`,
+  `stats`.`salvator`,
+  `stats`.`smuggler`,
+  `stats`.`link-master`,
+  `stats`.`controller`,
+  `stats`.`field-master`
+FROM `stats`, `agents`
+WHERE `stats`.`idagents` = `agents`.`idagents` AND `agents`.`name` = `agentname`;
+END$$
+DELIMITER ;
