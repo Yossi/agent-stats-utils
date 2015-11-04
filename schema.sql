@@ -2,12 +2,11 @@ DROP TABLE IF EXISTS `stats`;
 DROP TABLE IF EXISTS `membership`;
 DROP TABLE IF EXISTS `groups`;
 DROP TABLE IF EXISTS `agents`;
+
 CREATE TABLE `agents` (
   `idagents` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(16) NOT NULL,
   `faction` varchar(3) DEFAULT NULL,
-  `apdiff` bigint(11) NOT NULL DEFAULT '0',
-
   PRIMARY KEY (`idagents`,`name`),
   UNIQUE KEY `idagents_UNIQUE` (`idagents`),
   UNIQUE KEY `name_UNIQUE` (`name`)
@@ -66,7 +65,8 @@ CREATE TABLE `stats` (
   `link-master` bigint(20) unsigned DEFAULT NULL,
   `controller` bigint(20) unsigned DEFAULT NULL,
   `field-master` bigint(20) unsigned DEFAULT NULL,
-  `flag` int(10) unsigned DEFAULT NULL,
+  `flag` int(1) unsigned DEFAULT NULL,
+  `min-ap` bigint(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`idagents`,`date`),
   CONSTRAINT `FK_idagents` FOREIGN KEY (`idagents`) REFERENCES `agents` (`idagents`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -78,9 +78,9 @@ SELECT
   `agents`.`name`, 
   `stats`.`date`, 
   `stats`.`flag`, 
-  `agents`.`apdiff`, 
-  `stats`.`level`,
+  `stats`.`min-ap`, 
   `stats`.`ap`,
+  `stats`.`level`,
   `stats`.`explorer`,
   `stats`.`seer`,
   `stats`.`trekker`,
