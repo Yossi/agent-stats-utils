@@ -3,8 +3,8 @@ pymysql.install_as_MySQLdb()
 import MySQLdb
 import logging
 
-#import warnings
-#warnings.filterwarnings('error', category=MySQLdb.Warning)
+import warnings
+warnings.filterwarnings('error', category=MySQLdb.Warning)
 
 class CM(object):
     ''' connection manager '''

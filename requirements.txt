@@ -2,4 +2,4 @@ beautifulsoup4==4.4.1
 PyMySQL==0.6.7
 python-dateutil==2.4.2
 selenium==2.48.0
-
+cached-property==1.2.0

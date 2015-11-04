@@ -4,45 +4,55 @@ import logging
 from itertools import chain
 from dateutil.parser import parse
 
+from cached_property import cached_property
+
+
 today = datetime.date.today()
 sojourner_start = datetime.date(2015, 3, 5)
 game_start = datetime.date(2012, 11, 15)
 
 class Stat(object):
-    def __init__(self, **kwargs):
-        self.date = parse(kwargs['Last submission']).date() if not kwargs['Last submission'].startswith('0') else '0/0/0'
-        self.name = kwargs['Agent name']
-        self.faction = kwargs['Faction']
-        self.level = int(kwargs['Level'])
-        self.ap = int(kwargs['ap'])
-        self.explorer = int(kwargs['explorer'])
-        self.seer = int(kwargs['seer'])
-        self.collector = int(kwargs['collector'])
-        self.trekker = int(kwargs['trekker'])
-        self.builder = int(kwargs['builder'])
-        self.connector = int(kwargs['connector'])
-        self.mind_controller = int(kwargs['mind-controller'])
-        self.illuminator = int(kwargs['illuminator'])
-        self.binder = int(kwargs['binder'])
-        self.country_master = int(kwargs['country-master'])
-        self.recharger = int(kwargs['recharger'])
-        self.liberator = int(kwargs['liberator'])
-        self.pioneer = int(kwargs['pioneer'])
-        self.engineer = int(kwargs['engineer'])
-        self.purifier = int(kwargs['purifier'])
-        self.neutralizer = int(kwargs['neutralizer'])
-        self.disruptor = int(kwargs['disruptor'])
-        self.salvator = int(kwargs['salvator'])
-        self.guardian = int(kwargs['guardian'])
-        self.smuggler = int(kwargs['smuggler'])
-        self.link_master = int(kwargs['link-master'])
-        self.controller = int(kwargs['controller'])
-        self.field_master = int(kwargs['field-master'])
-        self.specops = int(kwargs['specops'])
-        self.hacker = int(kwargs['hacker'])
-        self.translator = int(kwargs['translator'])
-        self.sojourner = int(kwargs['sojourner'])
-        self.recruiter = int(kwargs['recruiter'])
+    def __init__(self):
+        pass
+
+    def db_load(self, data):
+        #be sure this is an empty object first
+        pass
+
+    def table_load(self, **row):
+        self.date = parse(row['Last submission']).date() if not row['Last submission'].startswith('0') else '0/0/0'
+        self.name = row['Agent name']
+        self.faction = row['Faction']
+        self.level = int(row['Level'])
+        self.ap = int(row['ap'])
+        self.explorer = int(row['explorer'])
+        self.seer = int(row['seer'])
+        self.collector = int(row['collector'])
+        self.trekker = int(row['trekker'])
+        self.builder = int(row['builder'])
+        self.connector = int(row['connector'])
+        self.mind_controller = int(row['mind-controller'])
+        self.illuminator = int(row['illuminator'])
+        self.binder = int(row['binder'])
+        self.country_master = int(row['country-master'])
+        self.recharger = int(row['recharger'])
+        self.liberator = int(row['liberator'])
+        self.pioneer = int(row['pioneer'])
+        self.engineer = int(row['engineer'])
+        self.purifier = int(row['purifier'])
+        self.neutralizer = int(row['neutralizer'])
+        self.disruptor = int(row['disruptor'])
+        self.salvator = int(row['salvator'])
+        self.guardian = int(row['guardian'])
+        self.smuggler = int(row['smuggler'])
+        self.link_master = int(row['link-master'])
+        self.controller = int(row['controller'])
+        self.field_master = int(row['field-master'])
+        self.specops = int(row['specops'])
+        self.hacker = int(row['hacker'])
+        self.translator = int(row['translator'])
+        self.sojourner = int(row['sojourner'])
+        self.recruiter = int(row['recruiter'])
 
         agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name))
         if agent_id:
@@ -51,46 +61,18 @@ class Stat(object):
             sql = '''INSERT INTO `agents` SET `name`='{0}', `faction`='{1}';'''.format(self.name, self.faction)
             exec_mysql(sql)
             self.agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name))[0][0]
-            
-        self.apdiff = 0
 
-    def get_badges(self):
-        categories = {'explorer': [100, 1000, 2000, 10000, 30000],
-                      'seer': [10, 50, 200, 500, 5000],
-                      'trekker': [10, 100, 300, 1000, 2500],
-                      'builder': [2000, 10000, 30000, 100000, 200000],
-                      'connector': [50, 1000, 5000, 25000, 100000],
-                      'mind_controller': [100, 500, 2000, 10000, 40000],
-                      'illuminator': [5000, 50000, 250000, 1000000, 4000000],
-                      'recharger': [100000, 1000000, 3000000, 10000000, 25000000],
-                      'liberator': [100, 1000, 5000, 15000, 40000],
-                      'pioneer': [20, 200, 1000, 5000, 20000],
-                      'engineer': [150, 1500, 5000, 20000, 50000],
-                      'purifier': [2000, 10000, 30000, 100000, 300000],
-                      'guardian': [3, 10, 20, 90, 150],
-                      'specops': [5, 25, 100, 200, 500],
-                      'hacker': [2000, 10000, 30000, 100000, 200000],
-                      'translator': [200, 2000, 6000, 20000, 50000],
-                      'sojourner': [15, 30, 60, 180, 360],
-                      'recruiter': [2, 10, 25, 50, 100]}
+    @cached_property
+    def min_ap(self):
+        return self.liberator*125 + min(-(-max(0,(self.builder-self.liberator*8))//7)*65, -(-max(0,(self.builder-self.liberator*8))//8)*125) \
+               + self.connector*313 + self.mind_controller*1250 + self.liberator*500 + self.engineer*125 \
+               + self.purifier*75 + self.recharger//15000*10 + self.disruptor*187 + self.salvator*750
 
-        result = {}
-        for category, ranks in categories.items():
-            current = 'Locked'
-            multiplier = 1
-            for rank, badge in zip(ranks, ['Bronze', 'Silver', 'Gold', 'Platinum', 'Onyx']):
-                if getattr(self, category) != '-' and int(getattr(self, category)) >= rank:
-                    current = badge
-                if current == 'Onyx':
-                    multiplier = getattr(self, category) // rank
-                    if multiplier > 2: 
-                        current = '%sx %s' % (multiplier, current)
-            result[category] = current
-        return result
-
+    @cached_property
     def min_level(self):
+        from agent_stats import get_badges
         ranks = ['Onyx', 'Platinum', 'Gold', 'Silver', 'Bronze', 'Locked']
-        sorted_badges = sorted([a.split(' ')[-1] for a in self.get_badges().values()], key=lambda x: ranks.index(x))
+        sorted_badges = sorted([a.split(' ')[-1] for a in get_badges(self.__dict__).values()], key=lambda x: ranks.index(x))
         expanded_badges = list(chain.from_iterable([ranks[ranks.index(a):] for a in sorted_badges]))
         
         if 0 <= self.ap:
@@ -144,30 +126,22 @@ class Stat(object):
         
         return level
 
-    @property
+    @cached_property
     def flag(self):
-        try:
-            return self._flag
-        except AttributeError:
-            self._flag = bool(self.validate())
-            return self._flag
+        return bool(self.validate())
 
     def validate(self):
         if self.date == '0/0/0': return ['date missing']
 
         max_sojourner = (self.date - sojourner_start).days + 1
         max_guardian = (self.date - game_start).days + 1
-        min_level = self.min_level()
-        self.min_ap = self.liberator*125 + min(-(-max(0,(self.builder-self.liberator*8))//7)*65, -(-max(0,(self.builder-self.liberator*8))//8)*125) \
-                      + self.connector*313 + self.mind_controller*1250 + self.liberator*500 + self.engineer*125 \
-                      + self.purifier*75 + self.recharger//15000*10 + self.disruptor*187 + self.salvator*750
 
-        apdiff = exec_mysql("SELECT apdiff FROM agents WHERE `name` = '{0}';".format(self.name))
-        if apdiff: self.apdiff = apdiff[0][0]
+        #apdiff = exec_mysql("SELECT apdiff FROM agents WHERE `name` = '{0}';".format(self.name))
+        #if apdiff: self.apdiff = apdiff[0][0]
 
         reasons = []
-        #if min_level > self.level:
-        #    reasons.append( 'reported level too low: %s Min: %s' % (self.level, min_level) )
+        #if self.min_level > self.level:
+        #    reasons.append( 'reported level too low: %s Min: %s' % (self.level, self.min_level) )
         if self.guardian > max_guardian:
             reasons.append( '%s %s %s %s %s' % (self.name.ljust(16), self.date, str(self.guardian).rjust(8), 'high guardian, max =', max_guardian) )
         if self.sojourner > max(0, max_sojourner):
@@ -195,19 +169,20 @@ class Stat(object):
         if (self.translator/15) > self.hacker:
             reasons.append( '%s %s %s %s %s' % (self.name.ljust(16), self.date, str(self.translator).rjust(8), 'high translator, max =', self.hacker*15) )
 
-        if self.min_ap-self.apdiff > self.ap:
-            reasons.append( '%s : %s %s | Reported AP %s, Calulated min AP %s' % (str(self.min_ap-self.ap).rjust(10), self.name.ljust(16), self.date, str(self.ap).rjust(8), self.min_ap) )
-        elif not reasons:
-            exec_mysql("UPDATE agents SET apdiff={0} WHERE `name`='{1}';".format(self.min_ap-self.ap, self.name))
+        #if self.min_ap-self.apdiff > self.ap:
+        #    reasons.append( '%s : %s %s | Reported AP %s, Calulated min AP %s' % (str(self.min_ap-self.ap).rjust(10), self.name.ljust(16), self.date, str(self.ap).rjust(8), self.min_ap) )
+        #elif not reasons:
+        #    exec_mysql("UPDATE agents SET apdiff={0} WHERE `name`='{1}';".format(self.min_ap-self.ap, self.name))
 
         return reasons
 
     def save(self):
+        self.flag, self.min_ap # hack to make sure these are in the cache
+        
         sql = '''INSERT INTO `stats`
                  SET idagents={agent_id},
                      `date`='{date}',
                      `level`='{level}',
-                     flag={flag},
                      ap='{ap}',
                      explorer='{explorer}',
                      seer='{seer}',
@@ -236,9 +211,10 @@ class Stat(object):
                      smuggler='{smuggler}',
                     `link-master`='{link_master}',
                      controller='{controller}',
-                     `field-master`='{field_master}'
+                     `field-master`='{field_master}',
+                     flag={flag},
+                     `min-ap`='{min_ap}'
                  ON DUPLICATE KEY UPDATE `level`='{level}',
-                                         flag={flag},
                                          ap='{ap}',
                                          explorer='{explorer}',
                                          seer='{seer}',
@@ -267,12 +243,10 @@ class Stat(object):
                                          smuggler='{smuggler}',
                                         `link-master`='{link_master}',
                                          controller='{controller}',
-                                         `field-master`='{field_master}';'''.format(flag=self.flag, **self.__dict__)
+                                         `field-master`='{field_master}',
+                                         flag={flag},
+                                         `min-ap`='{min_ap}';'''.format(**self.__dict__)
         exec_mysql(sql)
-
-    def load(self, name, date=None):
-        #be sure this is an empty object first
-        pass
 
     def __repr__(self):
         return '<Stat: {} {}>'.format(self.name, self.date)
@@ -289,4 +263,4 @@ class Stat(object):
 # purifier >= neutralizer
 # hacker >= translator/15
 # min_ap = liberator*125 + min(-(-max(0,(builder-liberator*8))/7)*65, -(-max(0,(builder-liberator*8))/8)*125) + connector*313 + mind_controller*1250 + liberator*500 + engineer*125 + purifier*75 + recharger/15000*10 + disruptor*187 + salvator*750
-# requirement[level] <= ap
+## requirement[level] <= ap

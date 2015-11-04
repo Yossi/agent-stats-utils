@@ -264,7 +264,8 @@ def snarf(group=None):
         
         table = read_table(soup.table)
         for data in table:
-            stat = Stat(**data)
+            stat = Stat()
+            stat.table_load(**data)
             stat.save()
             
             try:
@@ -281,7 +282,40 @@ def snarf(group=None):
             remaining_roster = str(tuple(remaining_roster)).replace(',)',')')
             logging.info('Agent(s) removed: %s' % str(sum(exec_mysql("SELECT name FROM agents WHERE idagents in {};".format(remaining_roster)), ())))
             exec_mysql("DELETE FROM membership WHERE idagents in {0} and idgroups = {1};".format(remaining_roster, group_id))
-            
+
+def get_badges(data):
+    categories = {'explorer': [100, 1000, 2000, 10000, 30000],
+                  'seer': [10, 50, 200, 500, 5000],
+                  'trekker': [10, 100, 300, 1000, 2500],
+                  'builder': [2000, 10000, 30000, 100000, 200000],
+                  'connector': [50, 1000, 5000, 25000, 100000],
+                  'mind_controller': [100, 500, 2000, 10000, 40000],
+                  'illuminator': [5000, 50000, 250000, 1000000, 4000000],
+                  'recharger': [100000, 1000000, 3000000, 10000000, 25000000],
+                  'liberator': [100, 1000, 5000, 15000, 40000],
+                  'pioneer': [20, 200, 1000, 5000, 20000],
+                  'engineer': [150, 1500, 5000, 20000, 50000],
+                  'purifier': [2000, 10000, 30000, 100000, 300000],
+                  'guardian': [3, 10, 20, 90, 150],
+                  'specops': [5, 25, 100, 200, 500],
+                  'hacker': [2000, 10000, 30000, 100000, 200000],
+                  'translator': [200, 2000, 6000, 20000, 50000],
+                  'sojourner': [15, 30, 60, 180, 360],
+                  'recruiter': [2, 10, 25, 50, 100]}
+
+    result = {}
+    for category, ranks in categories.items():
+        current = 'Locked'
+        multiplier = 1
+        for rank, badge in zip(ranks, ['Bronze', 'Silver', 'Gold', 'Platinum', 'Onyx']):
+            if data[category] != '-' and int(data[category]) >= rank:
+                current = badge
+            if current == 'Onyx':
+                multiplier = data[category] // rank
+                if multiplier > 2: 
+                    current = '%sx %s' % (multiplier, current)
+        result[category] = current
+    return result
 
 def summary(group='all', days=7):
     if not group: group = 'all'
@@ -293,7 +327,7 @@ def summary(group='all', days=7):
                'trekker',
                'builder',
                'connector',
-               'mind-controller',
+               'mind_controller',
                'illuminator',
                'recharger',
                'liberator',
@@ -307,7 +341,7 @@ def summary(group='all', days=7):
                'sojourner',
                'recruiter')
     
-    sql_before = '''SELECT `name`, `date`, `level`, ap, explorer, seer, trekker, builder, connector, `mind-controller`, illuminator, recharger,
+    sql_before = '''SELECT `name`, `date`, `level`, ap, explorer, seer, trekker, builder, connector, `mind-controller` mind_controller, illuminator, recharger,
                            liberator, pioneer, engineer, purifier, guardian, specops, hacker, translator, sojourner, recruiter
                     FROM (
                         SELECT a.`name` `name`, s.* 
@@ -318,7 +352,7 @@ def summary(group='all', days=7):
                     ) as t1
                     GROUP BY `name`;
                  '''.format(group, days)
-    
+
     baseline = {}
     for row in exec_mysql(sql_before):
         agent = row[0]
@@ -326,7 +360,7 @@ def summary(group='all', days=7):
             baseline[agent] = {'date': row[1], 'level': row[2], #'ap': row[3],
                                'badges': get_badges(dict(zip(headers, row[4:])))}
 
-    sql_now = '''SELECT `name`, `date`, `level`, ap, explorer, seer, trekker, builder, connector, `mind-controller`, illuminator, recharger,
+    sql_now = '''SELECT `name`, `date`, `level`, ap, explorer, seer, trekker, builder, connector, `mind-controller` mind_controller, illuminator, recharger,
                         liberator, pioneer, engineer, purifier, guardian, specops, hacker, translator, sojourner, recruiter
                  FROM (
                      SELECT a.`name` `name`, s.* 
@@ -365,7 +399,7 @@ def summary(group='all', days=7):
                 if date_old < stale:
                     note = '¹'
                     footnote =  '¹Start date more than 2 %s ago' % ('weeks' if days == 7 else 'months',)
-                output.append('*{0}* earned {1} sometime between {2}{4} and {3}'.format(agent, earnings, date_old.strftime('%-m/%d'), date_new.strftime('%-m/%d'), note))
+                output.append('*{0}* earned {1} sometime between {old.month}/{old.day}{2} and {new.month}/{new.day}'.format(agent, earnings, note, old=date_old, new=date_new))
     if footnote:
         output.append(footnote)
     return '\n'.join(output)
