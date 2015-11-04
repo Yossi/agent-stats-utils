@@ -3,7 +3,7 @@ import datetime
 import logging
 from itertools import chain
 from dateutil.parser import parse
-
+from collections import namedtuple
 from cached_property import cached_property
 
 
@@ -11,13 +11,59 @@ today = datetime.date.today()
 sojourner_start = datetime.date(2015, 3, 5)
 game_start = datetime.date(2012, 11, 15)
 
-class Stat(object):
-    def __init__(self):
-        pass
+fields = '''name, date, flag, min_ap, ap, level, explorer, seer, trekker, builder,
+connector, mind_controller, illuminator, recharger, liberator, pioneer, engineer,
+purifier, guardian, specops, hacker, translator, sojourner, recruiter, collector,
+binder, country_master, neutralizer, disruptor, salvator, smuggler, link_master,
+controller, field_master'''
 
-    def db_load(self, data):
-        #be sure this is an empty object first
-        pass
+Row = namedtuple('Row', fields)
+
+class Stat(object):
+    def load(self, name):
+        if not name.startswith('@'):
+            name = '@' + name
+        self.db_load(exec_mysql("call FindAgentByName('{name}');".format(name=name))[-1])
+
+    def db_load(self, row):
+        row = Row(*row) # your boat...
+    
+        self.name = row.name
+        self.date = row.date if row.date else '0/0/0'
+        #self.flag = row.flag
+        #self.min_ap = row.min_ap
+        self.ap = row.ap
+        self.level = row.level
+        self.explorer = row.explorer
+        self.seer = row.seer
+        self.collector = row.collector
+        self.trekker = row.trekker
+        self.builder = row.builder
+        self.connector = row.connector
+        self.mind_controller = row.mind_controller
+        self.illuminator = row.illuminator
+        self.binder = row.binder
+        self.country_master = row.country_master
+        self.recharger = row.recharger
+        self.liberator = row.liberator
+        self.pioneer = row.pioneer
+        self.engineer = row.engineer
+        self.purifier = row.purifier
+        self.neutralizer = row.neutralizer
+        self.disruptor = row.disruptor
+        self.salvator = row.salvator
+        self.guardian = row.guardian
+        self.smuggler = row.smuggler
+        self.link_master = row.link_master
+        self.controller = row.controller
+        self.field_master = row.field_master
+        self.specops = row.specops
+        self.hacker = row.hacker
+        self.translator = row.translator
+        self.sojourner = row.sojourner
+        self.recruiter = row.recruiter
+
+        self.agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name))[0][0]
 
     def table_load(self, **row):
         self.date = parse(row['Last submission']).date() if not row['Last submission'].startswith('0') else '0/0/0'
