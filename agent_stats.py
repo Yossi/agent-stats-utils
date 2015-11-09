@@ -203,38 +203,6 @@ def colate_agents():
 
 def test(group='iSBAR'):
     pass
-    
-
-
-    '''headers = ['name', 'date', 'flag', 'apdiff', 'level', 'ap', 'explorer', 'seer',
-               'trekker', 'builder', 'connector', 'mind-controller', 'illuminator', 
-               'recharger', 'liberator', 'pioneer', 'engineer', 'purifier', 'guardian', 
-               'specops', 'hacker', 'translator', 'sojourner', 'recruiter', 'collector', 
-               'binder', 'country-master', 'neutralizer', 'disruptor', 'salvator', 
-               'smuggler', 'link-master', 'controller', 'field-master']
-
-    for name, apdiff in exec_mysql('select name, apdiff from agents;'):
-        data = exec_mysql("call FindAgentByName('{}');".format(name))
-        temp = 100000000000000000
-        for datum in data:
-            datum = dict(zip(headers, datum))
-            if (not datum['date']) or datum['date'] < datetime.date(2015, 9, 1):
-                continue
-            for badge in headers[-9:]:
-                datum[badge] = datum[badge] if datum[badge] else 0
-                
-            min_ap = datum['liberator']*125 + min(-(-max(0,(datum['builder']-datum['liberator']*8))//7)*65, -(-max(0,(datum['builder']-datum['liberator']*8))//8)*125) \
-                     + datum['connector']*313 + datum['mind-controller']*1250 + datum['liberator']*500 + datum['engineer']*125 \
-                     + datum['purifier']*75 + datum['recharger']//15000*10 + datum['disruptor']*187 + datum['salvator']*750
-            if temp < min_ap-datum['ap']:
-                print('went back up', datum['name'])
-                break
-            temp = min_ap-datum['ap']
-            if datum['ap'] < min_ap and len(data) > 1:
-                print("UPDATE agents SET apdiff='{ap}' WHERE name='{name}' and apdiff > {ap}; '{date}".format(ap=min_ap-datum['ap'], name=datum['name'], date=datum['date']))
-        '''
-    
-    #print(get_badges(dict(zip(headers, data[-1]))))
 
 def snarf(group=None):
     if group in ('smurfs', 'frogs', 'all'):
@@ -255,6 +223,7 @@ def snarf(group=None):
             snarf(group) # getting all recursive and shiz
         colate_agents()
     else:
+        added, removed = [], []
         group_id = exec_mysql("SELECT idgroups FROM groups WHERE name = '{0}';".format(group))[0][0]
         remaining_roster = [item for sublist in exec_mysql("SELECT idagents FROM membership WHERE idgroups = {0};".format(group_id)) for item in sublist]
         html = get_html(group)
@@ -272,6 +241,7 @@ def snarf(group=None):
                 remaining_roster.remove(stat.agent_id)
             except ValueError:
                 logging.info('Agent added: {0}'.format(stat.name))
+                added.append(stat.name)
             
             sql = '''INSERT INTO `membership`
                      VALUES ('{0}', '{1}')
@@ -280,7 +250,8 @@ def snarf(group=None):
             
         if remaining_roster:
             remaining_roster = str(tuple(remaining_roster)).replace(',)',')')
-            logging.info('Agent(s) removed: %s' % str(sum(exec_mysql("SELECT name FROM agents WHERE idagents in {};".format(remaining_roster)), ())))
+            removed = sum(exec_mysql("SELECT name FROM agents WHERE idagents in {};".format(remaining_roster)), ())
+            logging.info('Agent(s) removed: %s' % str(removed))
             exec_mysql("DELETE FROM membership WHERE idagents in {0} and idgroups = {1};".format(remaining_roster, group_id))
 
 def get_badges(data):
