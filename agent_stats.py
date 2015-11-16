@@ -318,7 +318,7 @@ def summary(group='all', days=7):
                         SELECT a.`name` `name`, s.* 
                         FROM agents a, stats s, membership m, groups g 
                         WHERE a.idagents = s.idagents AND a.idagents = m.idagents AND m.idgroups = g.idgroups AND g.`name` = '{}'
-                          AND s.`date` < ( CURDATE() - INTERVAL {} DAY )
+                          AND s.flag != 1 AND s.`date` < ( CURDATE() - INTERVAL {} DAY )
                         ORDER BY `date` DESC
                     ) as t1
                     GROUP BY `name`;
@@ -337,7 +337,7 @@ def summary(group='all', days=7):
                      SELECT a.`name` `name`, s.* 
                      FROM agents a, stats s, membership m, groups g 
                      WHERE a.idagents = s.idagents AND a.idagents = m.idagents AND m.idgroups = g.idgroups AND g.`name` = '{}'
-                       AND s.`date` >= ( CURDATE() - INTERVAL {} DAY )
+                       AND s.flag != 1 AND s.`date` >= ( CURDATE() - INTERVAL {} DAY )
                      ORDER BY `date` DESC
                  ) as t1
                  GROUP BY `name`;
@@ -368,7 +368,7 @@ def summary(group='all', days=7):
                 stale = datetime.date.today() - datetime.timedelta(days=days*2)
                 note =''
                 if date_old < stale:
-                    note = '¹'
+                    note = '¹' # chcp 65001
                     footnote =  '¹Start date more than 2 %s ago' % ('weeks' if days == 7 else 'months',)
                 output.append('*{0}* earned {1} sometime between {old.month}/{old.day}{2} and {new.month}/{new.day}'.format(agent, earnings, note, old=date_old, new=date_new))
     if footnote:
