@@ -187,8 +187,8 @@ class Stat(object):
         if apdiff: self.apdiff = apdiff[0][0]
 
         reasons = []
-        #if self.min_level > self.level:
-        #    reasons.append( 'reported level too low: %s Min: %s' % (self.level, self.min_level) )
+        if self.min_level > self.level + 1: # +1 is for special case where agents just dinged and scanner hasn't caught up yet. better to let some slip through than to flag an exited agent's ding 
+            reasons.append( 'reported level too low: %s Min: %s' % (self.level, self.min_level) )
         if self.guardian > max_guardian:
             reasons.append( '%s %s %s %s %s' % (self.name.ljust(16), self.date, str(self.guardian).rjust(8), 'high guardian, max =', max_guardian) )
         if self.sojourner > max(0, max_sojourner):
@@ -218,6 +218,7 @@ class Stat(object):
 
         if self.apdiff > self.ap-self.min_ap:
             reasons.append( '%s : %s %s | Reported AP %s, Calulated min AP %s' % (str(self.ap-self.min_ap).rjust(10), self.name.ljust(16), self.date, str(self.ap).rjust(8), self.min_ap) )
+        
         
         if not reasons:
             exec_mysql("UPDATE agents SET apdiff={0} WHERE `name`='{1}';".format(self.ap-self.min_ap, self.name))
