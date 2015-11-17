@@ -106,6 +106,7 @@ class Stat(object):
         else:
             sql = '''INSERT INTO `agents` SET `name`='{0}', `faction`='{1}';'''.format(self.name, self.faction)
             exec_mysql(sql)
+            logging.info('new entry created for {} in agents table'.format(self.name))
             self.agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name))[0][0]
 
     @cached_property
@@ -182,8 +183,8 @@ class Stat(object):
         max_sojourner = (self.date - sojourner_start).days + 1
         max_guardian = (self.date - game_start).days + 1
 
-        #apdiff = exec_mysql("SELECT apdiff FROM agents WHERE `name` = '{0}';".format(self.name))
-        #if apdiff: self.apdiff = apdiff[0][0]
+        apdiff = exec_mysql("SELECT apdiff FROM agents WHERE `name` = '{0}';".format(self.name))
+        if apdiff: self.apdiff = apdiff[0][0]
 
         reasons = []
         #if self.min_level > self.level:
@@ -215,10 +216,11 @@ class Stat(object):
         if (self.translator/15) > self.hacker:
             reasons.append( '%s %s %s %s %s' % (self.name.ljust(16), self.date, str(self.translator).rjust(8), 'high translator, max =', self.hacker*15) )
 
-        #if self.min_ap-self.apdiff > self.ap:
-        #    reasons.append( '%s : %s %s | Reported AP %s, Calulated min AP %s' % (str(self.min_ap-self.ap).rjust(10), self.name.ljust(16), self.date, str(self.ap).rjust(8), self.min_ap) )
-        #elif not reasons:
-        #    exec_mysql("UPDATE agents SET apdiff={0} WHERE `name`='{1}';".format(self.min_ap-self.ap, self.name))
+        if self.apdiff > self.ap-self.min_ap:
+            reasons.append( '%s : %s %s | Reported AP %s, Calulated min AP %s' % (str(self.ap-self.min_ap).rjust(10), self.name.ljust(16), self.date, str(self.ap).rjust(8), self.min_ap) )
+        
+        if not reasons:
+            exec_mysql("UPDATE agents SET apdiff={0} WHERE `name`='{1}';".format(self.ap-self.min_ap, self.name))
 
         return reasons
 
