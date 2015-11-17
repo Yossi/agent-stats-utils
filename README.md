@@ -7,7 +7,7 @@ Agent-stats Utils
 
 ## Setting up
 ###Reqirements
-python3+
+python3.5+
 mysql server
 
 clone this repo.
