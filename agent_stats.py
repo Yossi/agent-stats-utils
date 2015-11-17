@@ -201,14 +201,12 @@ def colate_agents():
                  ON DUPLICATE KEY UPDATE idagents=idagents;'''.format(agent_id, general_groups[faction])
         exec_mysql(sql)
 
-def test(group='iSBAR'):
-    pass
-
 def snarf(group=None):
     if group in ('smurfs', 'frogs', 'all'):
         group = None
     
     if not group:
+        membership_changes = ''
         for group, url in get_groups():
             logging.info('snarfing '+group)
             group_id = exec_mysql("SELECT idgroups FROM groups WHERE name = '{0}';".format(group))
@@ -220,8 +218,10 @@ def snarf(group=None):
                          #ON DUPLICATE KEY UPDATE idgroups=LAST_INSERT_ID(idgroups)
                 exec_mysql(sql)
                 group_id = exec_mysql("SELECT idgroups FROM groups WHERE name = '{0}';".format(group))[0][0]
-            snarf(group) # getting all recursive and shiz
+            membership_changes += snarf(group) # getting all recursive and shiz
         colate_agents()
+        print(membership_changes)
+        return membership_changes
     else:
         added, removed = [], []
         group_id = exec_mysql("SELECT idgroups FROM groups WHERE name = '{0}';".format(group))[0][0]
@@ -253,6 +253,22 @@ def snarf(group=None):
             removed = sum(exec_mysql("SELECT name FROM agents WHERE idagents in {};".format(remaining_roster)), ())
             logging.info('Agent(s) removed: %s' % str(removed))
             exec_mysql("DELETE FROM membership WHERE idagents in {0} and idgroups = {1};".format(remaining_roster, group_id))
+        
+        output = []
+        if added or removed:
+            output.append(group+':')
+            if added:
+                output.append('  Added:')
+                output.append('    '+'\n    '.join(added))
+                
+            if removed:
+                output.append('  Removed:')
+                output.append('    '+'\n    '.join(removed))
+        return '\n'.join(output)
+        
+def test(group='iSBAR'):
+    pass
+
 
 def get_badges(data):
     categories = {'explorer': [100, 1000, 2000, 10000, 30000],
@@ -445,8 +461,6 @@ def check_for_applicants(group):
             message.append('    @{}'.format(agent))
         message.append('\nGo to {} and click on the [View admin panel] button to take care of it.'.format(html.partition('give them this url: <a href="')[2].partition('">https://www.agent-stats.com/groups.php')[0]))
     return '\n'.join(message)
-
-
 
 
     
