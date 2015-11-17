@@ -264,7 +264,7 @@ def snarf(group=None):
             if removed:
                 output.append('  Removed:')
                 output.append('    '+'\n    '.join(removed))
-        return '\n'.join(output)
+        return '\n'.join(output) + '\n'
         
 def test(group='iSBAR'):
     pass
@@ -487,7 +487,7 @@ if __name__ == '__main__':
     else:
         if not args.group: args.group=''
         subject = args.action+' '+args.group if not args.subject else args.subject
-        if result:
+        if result.strip():
             mail(args.mail, subject, result)
             logging.info('email sent')
     logging.info('Done')
