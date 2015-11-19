@@ -35,6 +35,8 @@ def exec_mysql(sql, retries=2):
         cur = db.cursor()
         cur.execute(sql)
         rows = [r for r in cur.fetchall()]
+        if not rows and not sql.strip().lower().startswith('select'):
+            rows = cur.rowcount
         cur.close()
         db.commit()
         return rows

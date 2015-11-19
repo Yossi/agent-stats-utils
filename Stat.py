@@ -174,8 +174,12 @@ class Stat(object):
         return level
 
     @cached_property
+    def reasons(self):
+        return self.validate()
+        
+    @cached_property
     def flag(self):
-        return bool(self.validate())
+        return bool(self.reasons)
 
     def validate(self):
         if self.date == '0/0/0': return ['date missing']
@@ -188,36 +192,36 @@ class Stat(object):
 
         reasons = []
         if self.min_level > self.level + 1: # +1 is for special case where agents just dinged and scanner hasn't caught up yet. better to let some slip through than to flag an exited agent's ding 
-            reasons.append( 'reported level too low: %s Min: %s' % (self.level, self.min_level) )
+            reasons.append( 'reported level %s < %s' % (self.level, self.min_level) )
         if self.guardian > max_guardian:
-            reasons.append( '%s %s %s %s %s' % (self.name.ljust(16), self.date, str(self.guardian).rjust(8), 'high guardian, max =', max_guardian) )
+            reasons.append( 'guardian %s > %s' % (self.guardian, max_guardian) )
         if self.sojourner > max(0, max_sojourner):
-            reasons.append( '%s %s %s %s %s' % (self.name.ljust(16), self.date, str(self.sojourner).rjust(8), 'high sojourner, max =', max_sojourner) )
+            reasons.append( 'souorner %s > %s' % (self.sojourner, max_sojourner) )
         if game_start > self.date:
-            reasons.append( '%s %s %s' % (self.name.ljust(16), self.date, 'date from before the game') )
+            reasons.append( 'date %s < %s' % (self.date, game_start) )
         if self.date > today+datetime.timedelta(days=1):
-            reasons.append( '%s %s %s' % (self.name.ljust(16), self.date, 'date in the future') )
+            reasons.append( 'date %s > %s' % (self.date, today+datetime.timedelta(days=1)) )
         if (self.mind_controller/2) > self.connector:
-            reasons.append( '%s %s %s %s %s' % (self.name.ljust(16), self.date, str(self.mind_controller).rjust(8), 'high mind_controller, max =', self.connector*2) )
+            reasons.append( 'connector:mind controller %s < %s/2' % (self.connector, self.mind_controller) )
         if self.explorer > self.hacker+self.builder+self.engineer+self.connector:
-            reasons.append( '%s %s %s %s %s' % (self.name.ljust(16), self.date, str(self.explorer).rjust(8), 'high explorer, max =', self.hacker+self.builder+self.engineer+self.connector) )
+            reasons.append( 'explorer:H+B+E+C %s > %s' % (self.explorer, self.hacker+self.builder+self.engineer+self.connector) )
         if self.pioneer > self.explorer:
-            reasons.append( '%s %s %s %s %s' % (self.name.ljust(16), self.date, str(self.pioneer).rjust(8), 'high pioneer, (exp)max =', self.explorer) )
+            reasons.append( 'pioneer:explorer %s > %s' % (self.pioneer, self.explorer) )
         if self.pioneer > self.liberator:
-            reasons.append( '%s %s %s %s %s' % (self.name.ljust(16), self.date, str(self.pioneer).rjust(8), 'high pioneer, (lib)max =', self.liberator) )
+            reasons.append( 'pioneer:liberator %s > %s' % (self.pioneer, self.liberator) )
         if self.liberator > self.builder:
-            reasons.append( '%s %s %s %s %s' % (self.name.ljust(16), self.date, str(self.liberator).rjust(8), 'high liberator, max =', self.builder) )
+            reasons.append( 'liberator:builder %s > %s' % (self.liberator, self.builder) )
         if (self.salvator/2) > self.disruptor:
-            reasons.append( '%s %s %s %s %s' % (self.name.ljust(16), self.date, str(self.salvator).rjust(8), 'high salvator, max =', self.disruptor*2) )
+            reasons.append( 'disruptor:salvator %s < %s/2' % (self.disruptor*2, self.salvator) )
         if self.disruptor > self.purifier:
-            reasons.append( '%s %s %s %s %s' % (self.name.ljust(16), self.date, str(self.disruptor).rjust(8), 'high disruptor, max =', self.purifier) )
+            reasons.append( 'disruptor:purifier %s > %s' % (self.disruptor, self.purifier) )
         if self.neutralizer > self.purifier:
-            reasons.append( '%s %s %s %s %s' % (self.name.ljust(16), self.date, str(self.neutralizer).rjust(8), 'high neutralizer, max =', self.purifier) )
+            reasons.append( 'neutralizer:purifier %s > %s' % (self.neutralizer, self.purifier) )
         if (self.translator/15) > self.hacker:
-            reasons.append( '%s %s %s %s %s' % (self.name.ljust(16), self.date, str(self.translator).rjust(8), 'high translator, max =', self.hacker*15) )
+            reasons.append( 'hacker:translator %s < %s/15' % (self.hacker*15, self.translator) )
 
         if self.apdiff > self.ap-self.min_ap:
-            reasons.append( '%s : %s %s | Reported AP %s, Calulated min AP %s' % (str(self.ap-self.min_ap).rjust(10), self.name.ljust(16), self.date, str(self.ap).rjust(8), self.min_ap) )
+            reasons.append( 'apdiff %s > %s' % (self.apdiff, self.ap-self.min_ap) )
         
         
         if not reasons:
@@ -295,7 +299,7 @@ class Stat(object):
                                          `field-master`='{field_master}',
                                          flag={flag},
                                          `min-ap`='{min_ap}';'''.format(**self.__dict__)
-        exec_mysql(sql)
+        self.changed = exec_mysql(sql)
 
     def __repr__(self):
         return '<Stat: {} {}>'.format(self.name, self.date)
