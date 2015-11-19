@@ -206,7 +206,7 @@ def snarf(group=None):
         group = None
     
     if not group:
-        membership_changes = ''
+        results = ''
         for group, url in get_groups():
             logging.info('snarfing '+group)
             group_id = exec_mysql("SELECT idgroups FROM groups WHERE name = '{0}';".format(group))
@@ -218,12 +218,12 @@ def snarf(group=None):
                          #ON DUPLICATE KEY UPDATE idgroups=LAST_INSERT_ID(idgroups)
                 exec_mysql(sql)
                 group_id = exec_mysql("SELECT idgroups FROM groups WHERE name = '{0}';".format(group))[0][0]
-            membership_changes += snarf(group) # getting all recursive and shiz
+            results += snarf(group) # getting all recursive and shiz
         colate_agents()
-        print(membership_changes)
-        return membership_changes
+        #print(results)
+        return results
     else:
-        added, removed = [], []
+        added, removed, flagged = [], [], []
         group_id = exec_mysql("SELECT idgroups FROM groups WHERE name = '{0}';".format(group))[0][0]
         remaining_roster = [item for sublist in exec_mysql("SELECT idagents FROM membership WHERE idgroups = {0};".format(group_id)) for item in sublist]
         html = get_html(group)
@@ -233,9 +233,12 @@ def snarf(group=None):
         
         table = read_table(soup.table)
         for data in table:
+        
             stat = Stat()
             stat.table_load(**data)
             stat.save()
+            if stat.flag and stat.changed:
+                flagged.append((stat.date, stat.name, stat.reasons))
             
             try:
                 remaining_roster.remove(stat.agent_id)
@@ -255,7 +258,7 @@ def snarf(group=None):
             exec_mysql("DELETE FROM membership WHERE idagents in {0} and idgroups = {1};".format(remaining_roster, group_id))
         
         output = []
-        if added or removed:
+        if added or removed or flagged:
             output.append(group+':')
             if added:
                 output.append('  Added:')
@@ -264,6 +267,13 @@ def snarf(group=None):
             if removed:
                 output.append('  Removed:')
                 output.append('    '+'\n    '.join(removed))
+            
+            if flagged:
+                output.append('  Flagged:')
+                for flagged_agent in flagged:
+                    output.append('    {0} {1}'.format(*flagged_agent))
+                    output.append('      '+'\n      '.join(flagged_agent[2]))
+                
         return '\n'.join(output) + '\n'
         
 def test(group='iSBAR'):
@@ -481,13 +491,14 @@ if __name__ == '__main__':
                'test': test}
     result = actions.get(args.action)(args.group)
 
-    if not args.mail:
-        if result and args.action != 'snarf':
+    if result:
+        result = result.strip()
+
+        if not args.mail:
             print(result)
-    else:
-        if not args.group: args.group=''
-        subject = args.action+' '+args.group if not args.subject else args.subject
-        if result.strip():
+        else:
+            if not args.group: args.group=''
+            subject = args.action+' '+args.group if not args.subject else args.subject
             mail(args.mail, subject, result)
             logging.info('email sent')
     logging.info('Done')
