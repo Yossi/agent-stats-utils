@@ -196,7 +196,7 @@ class Stat(object):
         if self.guardian > max_guardian:
             reasons.append( 'guardian %s > %s' % (self.guardian, max_guardian) )
         if self.sojourner > max(0, max_sojourner):
-            reasons.append( 'souorner %s > %s' % (self.sojourner, max_sojourner) )
+            reasons.append( 'sojourner %s > %s' % (self.sojourner, max_sojourner) )
         if game_start > self.date:
             reasons.append( 'date %s < %s' % (self.date, game_start) )
         if self.date > today+datetime.timedelta(days=1):
