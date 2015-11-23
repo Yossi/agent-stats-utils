@@ -276,7 +276,7 @@ def snarf(group=None):
                 
         return '\n'.join(output) + '\n'
         
-def test(group='iSBAR'):
+def test():
     pass
 
 
@@ -408,8 +408,8 @@ To have your stats show up you need to upload your stats at least right after
 you see this (right now) and then again right before you see this next week (just upload 
 your stats late Sunday night / early Monday morning when you are done for the night). 
 It’s also a good idea to upload your stats every night.'''
-def weekly_roundup(group='iSBAR'):
-    if not group: group = 'iSBAR'
+def weekly_roundup(group):
+    if not group: return 'please specify group'
     output = []
     logging.info('starting weekly roundup')
     start = datetime.datetime.now()
@@ -436,8 +436,8 @@ To have your stats show up you need to upload your stats at least right after
 you see this (right now) and then again right before you see this next month (just upload 
 your stats late on the night / early morning before the 1st of the month when you are done for the night). 
 It’s also a good idea to upload your stats every night.'''
-def monthly_roundup(group='iSBAR'):
-    if not group: group = 'iSBAR'
+def monthly_roundup(group):
+    if not group: return 'please specify group'
     output = []
     logging.info('starting monthly roundup')
     start = datetime.datetime.now()
