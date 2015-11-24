@@ -4,23 +4,27 @@ Handy utilities for managing an ingress agent-stats group.
 
 ## Setting up
 ###Reqirements
-python3.5+
-mysql server
+  * python3.5+
+  * mysql server
 
 Clone this repo.
 Get phantomjs https://bitbucket.org/ariya/phantomjs/downloads the 2.0 version is
 a steaming pile of crap, get the 1.9.8 version. Throw it in the same dir as the 
 other checked out files, or change the code in util.py that looks like this
-     driver = webdriver.PhantomJS('phantomjs', service_args=['--cookies-file=cookies.txt'])
+```python
+    driver = webdriver.PhantomJS('phantomjs', service_args=['--cookies-file=cookies.txt'])
+```
 to point to the path where you installed phantomjs.
 Create database from schema.sql (This is destructive to existing tables. Do not 
 run on an existing setup with data you dont want to lose.)
 Copy secrets.py.example to secrets.py and change the settings and credentials in 
 there to real values.
 Then create a virtualenv, activate it and install the requirements:
+```
 virtualenv -p /usr/bin/python3 venv
 source venv/bin/activate
 pip install -r requirements.txt
+```
 
 ## How to use
 python agent_stats.py -h
@@ -43,7 +47,7 @@ the -m option. If you are redirecting to email, you can set a custom subject
 with -s. Default subject is the command name + the group name.
 
 Once you get a feel for what this does, you will want to set it up to run with
-chrontab, or the like.
+crontab, or the like.
 
 ## Features
 ###snarf
@@ -68,8 +72,7 @@ Typically not used stand alone. Gets all the badge dings that happened between
 each agent's most recent data point and their most recent data point over 7 days
 old. Searches across all groups, unless passed a specific group.
 
-###weekly
-###monthly
+###weekly/monthly
 This is the main reason all this was written. Grabs the weekly (or monthly) page
 for your group and extracts the top 10 agents for each category. Ties for 10th
 place are all included. 
@@ -79,6 +82,7 @@ Formats everything with G+ markup so it looks decent when you post it to G+.
 ## Stat validation
 Often stats get screwed up. Usually because agent-stats.com botched the OCR.
 If any of the following are not true, the stat is considered suspect:
+```
     date >= game_start
     today >= date
     connector >= mind_controller/2
@@ -90,11 +94,14 @@ If any of the following are not true, the stat is considered suspect:
     purifier >= disruptor
     purifier >= neutralizer
     hacker >= translator/15
+```
 Also, minimum level is calculated based on knowable badges and ap.
 In addition, minimum AP is calculated by the following formula 
 (good luck teasing this monstrosity apart):
+```python
     min_ap = liberator*125 + min(-(-max(0,(builder-liberator*8))/7)*65, -(-max(0,(builder-liberator*8))/8)*125) + connector*313 + mind_controller*1250 + liberator*500 + engineer*125 + purifier*75 + recharger/15000*10 + disruptor*187 + salvator*750
-reported_ap - min_ap is then expected to always be increasing. If it is not,
+```
+reported_ap - min_ap is then expected to always be increasing. If it is not, then
 flag. Keep an eye on this last one, it's possible that it might come out huge
 one time and then all subsequent stats will be flagged. If this happens, please
 find the user in the agents table and adjust the apdiff column manually. (learn
