@@ -220,8 +220,8 @@ class Stat(object):
         if (self.translator/15) > self.hacker:
             reasons.append( 'hacker:translator %s < %s/15' % (self.hacker*15, self.translator) )
 
-        if self.apdiff > self.ap-self.min_ap:
-            reasons.append( 'apdiff %s > %s' % (self.apdiff, self.ap-self.min_ap) )
+        #if self.apdiff > self.ap-self.min_ap:
+        #    reasons.append( 'apdiff %s > %s' % (self.apdiff, self.ap-self.min_ap) )
         
         
         if not reasons:

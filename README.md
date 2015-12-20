@@ -101,8 +101,8 @@ In addition, minimum AP is calculated by the following formula
 ```python
     min_ap = liberator*125 + min(-(-max(0,(builder-liberator*8))/7)*65, -(-max(0,(builder-liberator*8))/8)*125) + connector*313 + mind_controller*1250 + liberator*500 + engineer*125 + purifier*75 + recharger/15000*10 + disruptor*187 + salvator*750
 ```
-reported_ap - min_ap is then expected to always be increasing. If it is not, then
+~~reported_ap - min_ap is then expected to always be increasing. If it is not, then
 flag. Keep an eye on this last one, it's possible that it might come out huge
 one time and then all subsequent stats will be flagged. If this happens, please
-find the user in the agents table and adjust the apdiff column manually. (learn
+find the user in the agents table and adjust the apdiff column manually.~~ (learn
 some SQL, you lazy bum)
