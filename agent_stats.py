@@ -91,7 +91,7 @@ def get_stats(group, time_span='current'):
     for category in categories:
         output.append('\n*Top %s* %s' % (category.title(), definitions.get(category.title().lower(), '')))
         for i, line in enumerate(sorted(data, key=lambda k: int(k[category]), reverse=True)):
-            if i > 9 and int(line[category]) != temp or int(line[category]) == 0:
+            if i > args.number-1 and int(line[category]) != temp or int(line[category]) == 0:
                 break
             output.append('{}  {:,}'.format(line['Agent name'], int(line[category])))
             temp = int(line[category])
@@ -473,10 +473,11 @@ def check_for_applicants(group):
     return '\n'.join(message)
 
 
-    
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Tools for agent-stats admins')
     parser.add_argument('action', help='task to perform', choices=['snarf', 'check_for_applicants', 'summary', 'weekly', 'monthly', 'test'])
+    parser.add_argument('-n', '--number', default=10, type=int, help='number of ranks to show')
     parser.add_argument('-g', '--group', help='group to focus on', choices=[name for row in exec_mysql('SELECT name FROM groups;') for name in row])
     parser.add_argument('-m', '--mail', nargs='*', help='email address to get output')
     parser.add_argument('-s', '--subject', help='optional email subject')
