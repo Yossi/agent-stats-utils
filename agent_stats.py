@@ -392,10 +392,10 @@ def summary(group='all', days=7):
                 #print changes
                 earnings = englishify(changes)
                 stale = datetime.date.today() - datetime.timedelta(days=days*2)
-                note =''
+                note = ''
                 if date_old < stale:
                     note = '¹' # chcp 65001
-                    footnote =  '¹Start date more than 2 %s ago' % ('weeks' if days == 7 else 'months',)
+                    footnote = '¹Start date more than 2 %s ago' % ('weeks' if days == 7 else 'months',)
                 output.append('*{0}* earned {1} sometime between {old.month}/{old.day}{2} and {new.month}/{new.day}'.format(agent, earnings, note, old=date_old, new=date_new))
     if footnote:
         output.append(footnote)
