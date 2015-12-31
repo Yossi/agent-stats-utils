@@ -497,7 +497,7 @@ if __name__ == '__main__':
 
         if not args.mail:
             print(result)
-        else:
+        elif result:
             if not args.group: args.group=''
             subject = args.action+' '+args.group if not args.subject else args.subject
             mail(args.mail, subject, result)
