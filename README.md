@@ -7,7 +7,7 @@ Handy utilities for managing an ingress agent-stats group.
   * python3.4+
   * mysql server
 
-Clone this repo.
+Clone this repo.  
 Get phantomjs https://bitbucket.org/ariya/phantomjs/downloads the 2.0 version is
 a steaming pile of crap, get the 1.9.8 version. Throw it in the same dir as the 
 other checked out files, or change the code in util.py that looks like this
@@ -27,7 +27,9 @@ pip install -r requirements.txt
 ```
 
 ## How to use
-python agent_stats.py -h
+```
+    python agent_stats.py snarf
+```
 First time this is run it will ask you to log in to your google account.
 The script just takes what you enter and passes it to phantomjs where a google
 login page is open (headless). It also stores a cookie so you don't have to
