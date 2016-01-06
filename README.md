@@ -4,7 +4,7 @@ Handy utilities for managing an ingress agent-stats group.
 
 ## Setting up
 ###Reqirements
-  * python3.5+
+  * python3.4+
   * mysql server
 
 Clone this repo.
