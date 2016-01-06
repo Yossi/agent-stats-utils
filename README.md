@@ -12,7 +12,7 @@ Get phantomjs https://bitbucket.org/ariya/phantomjs/downloads the 2.0 version is
 a steaming pile of crap, get the 1.9.8 version. Throw it in the same dir as the 
 other checked out files, or change the code in util.py that looks like this
 ```python
-    driver = webdriver.PhantomJS('phantomjs', service_args=['--cookies-file=cookies.txt'])
+    driver = webdriver.PhantomJS('./phantomjs', service_args=['--cookies-file=cookies.txt'])
 ```
 to point to the path where you installed phantomjs.
 Create database from schema.sql (This is destructive to existing tables. Do not 

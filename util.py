@@ -95,7 +95,7 @@ from selenium.webdriver.support.ui import Select
 def get_html(scoreboard=None, time_span='current'):
     logging.info("get_html({}, {})".format(scoreboard, time_span))
     
-    driver = webdriver.PhantomJS('phantomjs', service_args=['--cookies-file=cookies.txt'])
+    driver = webdriver.PhantomJS('./phantomjs', service_args=['--cookies-file=cookies.txt'])
     logging.info('driver created')
 
     try:
