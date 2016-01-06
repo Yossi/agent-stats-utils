@@ -46,7 +46,7 @@ Any command that has text output can have that output redirected to email with
 the -m option. If you are redirecting to email, you can set a custom subject
 with -s. Default subject is the command name + the group name.
 
-Sometimes you find yourself neding to change how many ranks make it into the charts.
+Sometimes you find yourself needing to change how many ranks make it into the charts.
 By default this is 10 but you can change it to whatever with the -n option.
 Note that this does not change any of the places where it says "Top ten" whatever.
 Only use in special cases.
