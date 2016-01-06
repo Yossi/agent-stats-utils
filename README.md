@@ -3,6 +3,7 @@ Agent-stats Utils
 Handy utilities for managing an ingress agent-stats group.
 
 ## Setting up
+"Easy" instructions for getting started on ubuntu 14.04 are now on the [wiki](https://github.com/Yossi/agent-stats-utils/wiki/Ubuntu-14.04-instructions-from-scratch).
 ###Reqirements
   * python3.4+
   * mysql server
