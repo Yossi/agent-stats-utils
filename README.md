@@ -14,11 +14,11 @@ other checked out files, or change the code in util.py that looks like this
 ```python
     driver = webdriver.PhantomJS('./phantomjs', service_args=['--cookies-file=cookies.txt'])
 ```
-to point to the path where you installed phantomjs.
+to point to the path where you installed phantomjs.  
 Create database from schema.sql (This is destructive to existing tables. Do not 
-run on an existing setup with data you dont want to lose.)
+run on an existing setup with data you dont want to lose.)  
 Copy secrets.py.example to secrets.py and change the settings and credentials in 
-there to real values.
+there to real values.  
 Then create a virtualenv, activate it and install the requirements:
 ```
 virtualenv -p /usr/bin/python3 venv
@@ -28,7 +28,7 @@ pip install -r requirements.txt
 
 ## How to use
 ```
-    python agent_stats.py snarf
+python agent_stats.py snarf
 ```
 First time this is run it will ask you to log in to your google account.
 The script just takes what you enter and passes it to phantomjs where a google
