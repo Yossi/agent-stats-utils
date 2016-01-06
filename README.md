@@ -51,8 +51,8 @@ By default this is 10 but you can change it to whatever with the -n option.
 Note that this does not change any of the places where it says "Top ten" whatever.
 Only use in special cases.
 
-Once you get a feel for what this script does, you will want to set it up to run with
-crontab, or the like.
+Once you get a feel for what this script does, you may want to set it up to run with
+crontab, or something similar.
 
 ## Features
 ###snarf
@@ -82,11 +82,11 @@ This is the main reason all this was written. Grabs the weekly (or monthly) page
 for your group and extracts the top 10 agents for each category. Ties for 10th
 place are all included. 
 Also includes a ding summary for the week or month (see above: summary). 
-Formats everything with G+ markup so it looks decent when you post it to G+.
+Formats everything with G+ markup so it looks decent when you post to G+.
 
 ## Stat validation
 Often stats get screwed up. Usually because agent-stats.com botched the OCR.
-If any of the following are not true, the stat is considered suspect:
+If any of the following conditions are not true, the stat is considered suspect:
 ```
     date >= game_start
     today >= date
@@ -109,5 +109,6 @@ In addition, minimum AP is calculated by the following formula
 ~~reported_ap - min_ap is then expected to always be increasing. If it is not, then
 flag. Keep an eye on this last one, it's possible that it might come out huge
 one time and then all subsequent stats will be flagged. If this happens, please
-find the user in the agents table and adjust the apdiff column manually.~~ (learn
-some SQL, you lazy bum)
+find the user in the agents table and adjust the apdiff column manually. (learn
+some SQL, you lazy bum)~~ (While this was fun to work out, it doesn't really provide a very good
+signal. Far too much noise. So I cut it out)
