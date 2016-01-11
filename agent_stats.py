@@ -309,7 +309,7 @@ def get_badges(data):
                 current = badge
             if current == 'Onyx':
                 multiplier = data[category] // rank
-                if multiplier > 2: 
+                if multiplier > 1: 
                     current = '%sx %s' % (multiplier, current)
         result[category] = current
     return result
