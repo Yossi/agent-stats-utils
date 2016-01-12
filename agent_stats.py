@@ -403,7 +403,7 @@ def summary(group='all', days=7):
 
 weekly_template = '''Great work agents!! If you would like to be included in future top ten lists please 
 join our agent-stats group https://www.agent-stats.com/groups.php?group={} . 
-Don’t know what agent-stats is? See here: https://www.agent-stats.com/doc.php . 
+Don’t know what agent-stats is? See here: https://www.agent-stats.com/manual.php . 
 To have your stats show up you need to upload your stats at least right after 
 you see this (right now) and then again right before you see this next week (just upload 
 your stats late Sunday night / early Monday morning when you are done for the night). 
@@ -418,12 +418,12 @@ def weekly_roundup(group):
     logging.info('getting weekly top tens')
     output.append(get_stats(group, 'weekly'))
     output.append('')
-    output.append(weekly_template.format(exec_mysql('SELECT url FROM groups WHERE name = "{}"'.format(group))[0][0]).replace('\n', ''))
-    output.append('')
     output.append('Recent badge dings:')
     output.append('')
     logging.info('getting badge dings')
     output.append(summary(group, 7))
+    output.append('')
+    output.append(weekly_template.format(exec_mysql('SELECT url FROM groups WHERE name = "{}"'.format(group))[0][0]).replace('\n', ''))
     end = datetime.datetime.now()
     output.append('')
     output.append('_Job started on {} and ran for {}_'.format(start, end-start))
@@ -431,7 +431,7 @@ def weekly_roundup(group):
 
 monthly_template = '''Great work agents!! If you would like to be included in future top ten lists please 
 join our agent-stats group https://www.agent-stats.com/groups.php?group={} . 
-Don’t know what agent-stats is? See here: https://www.agent-stats.com/doc.php . 
+Don’t know what agent-stats is? See here: https://www.agent-stats.com/manual.php . 
 To have your stats show up you need to upload your stats at least right after 
 you see this (right now) and then again right before you see this next month (just upload 
 your stats late on the night / early morning before the 1st of the month when you are done for the night). 
@@ -446,12 +446,12 @@ def monthly_roundup(group):
     logging.info('getting monthly top tens')
     output.append(get_stats(group, 'monthly'))
     output.append('')
-    output.append(monthly_template.format(exec_mysql('SELECT url FROM groups WHERE name = "{}"'.format(group))[0][0]).replace('\n', ''))
-    output.append('')
     output.append('Recent badge dings:')
     output.append('')
     logging.info('getting badge dings')
     output.append(summary(group, 30))
+    output.append('')
+    output.append(monthly_template.format(exec_mysql('SELECT url FROM groups WHERE name = "{}"'.format(group))[0][0]).replace('\n', ''))
     end = datetime.datetime.now()
     output.append('')
     output.append('_Job started on {} and ran for {}_'.format(start, end-start))
