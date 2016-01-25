@@ -89,7 +89,7 @@ def get_stats(group, time_span='current', number=10):
                   'specops', 'seer', 'collector', 'neutralizer', 'disruptor',
                   'salvator')
     for category in categories:
-        output.append('\n*Top %s* %s' % (category.title(), definitions.get(category.title().lower(), '')))
+        output.append('\n*Top %s* %s' % (category.title(), definitions.get(category.lower(), '')))
         for i, line in enumerate(sorted(data, key=lambda k: int(k[category]), reverse=True)):
             if i > number-1 and int(line[category]) != temp or int(line[category]) == 0:
                 break
