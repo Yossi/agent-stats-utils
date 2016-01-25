@@ -33,7 +33,7 @@ game_start = datetime.date(2012, 11, 15)
 
 
 
-def get_stats(group, time_span='current'):
+def get_stats(group, time_span='current', number=10):
     definitions = {'explorer': '_(Unique Portals Visited)_',
                    'seer': '_(Portals Discovered)_',
                    'trekker': '_(Distance Walked)_',
@@ -91,7 +91,7 @@ def get_stats(group, time_span='current'):
     for category in categories:
         output.append('\n*Top %s* %s' % (category.title(), definitions.get(category.title().lower(), '')))
         for i, line in enumerate(sorted(data, key=lambda k: int(k[category]), reverse=True)):
-            if i > args.number-1 and int(line[category]) != temp or int(line[category]) == 0:
+            if i > number-1 and int(line[category]) != temp or int(line[category]) == 0:
                 break
             output.append('{}  {:,}'.format(line['Agent name'], int(line[category])))
             temp = int(line[category])
@@ -416,7 +416,7 @@ def weekly_roundup(group):
     output.append(group)
     output.append('*Top Ten for the week of %s*' % (start - datetime.timedelta(days=7)).date().strftime("%m/%d"))
     logging.info('getting weekly top tens')
-    output.append(get_stats(group, 'weekly'))
+    output.append(get_stats(group, 'weekly', args.number))
     output.append('')
     output.append('Recent badge dings:')
     output.append('')
@@ -444,7 +444,7 @@ def monthly_roundup(group):
     output.append(group)
     output.append('*Top Ten for the month of %s*' % (start - datetime.timedelta(days=7)).date().strftime("%B"))
     logging.info('getting monthly top tens')
-    output.append(get_stats(group, 'monthly'))
+    output.append(get_stats(group, 'monthly', args.number))
     output.append('')
     output.append('Recent badge dings:')
     output.append('')
