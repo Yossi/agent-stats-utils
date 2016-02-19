@@ -191,8 +191,9 @@ class Stat(object):
         if apdiff: self.apdiff = apdiff[0][0]
 
         reasons = []
-        if self.min_level > self.level + 1: # +1 is for special case where agents just dinged and scanner hasn't caught up yet. better to let some slip through than to flag an exited agent's ding 
-            reasons.append( 'reported level %s < %s' % (self.level, self.min_level) )
+        # this seems to be a more common bug, and until there is some action agents can take to fix it, it wont be flagged
+        #if self.min_level > self.level + 1: # +1 is for special case where agents just dinged and scanner hasn't caught up yet. better to let some slip through than to flag an exited agent's ding 
+        #    reasons.append( 'reported level %s < %s' % (self.level, self.min_level) )
         if self.guardian > max_guardian:
             reasons.append( 'guardian %s > %s' % (self.guardian, max_guardian) )
         if self.sojourner > max(0, max_sojourner):
