@@ -287,7 +287,6 @@ def get_badges(data):
     return result
 
 def summary(group='all', days=7):
-    if not group: group = 'all'
     snarf(group)
 
     headers = ('explorer',
