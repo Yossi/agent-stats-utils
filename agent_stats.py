@@ -111,7 +111,7 @@ def cleanup_data(data):
 def read_table(table):
     logging.info('read table')
     rows = table.find_all('tr')
-    
+
     headers = [cell.text.replace('↓', '') for cell in rows[0].find_all('td')]
     headers[0] = 'Faction'
 
@@ -119,11 +119,11 @@ def read_table(table):
     for row in rows[1:]:
         count += 1
         cells = row.find_all('td')
-        
+
         d = [cell.text for cell in cells]
         try: d[0] = cells[1]['class'][0]
         except KeyError: d[0] = 'nul'
-        
+
         data = dict(zip(headers, d))
 
         yield cleanup_data(data)
@@ -167,7 +167,7 @@ def colate_agents():
                  VALUES ('{0}', '{1}')
                  ON DUPLICATE KEY UPDATE idagents=idagents;'''.format(agent_id, general_groups['all'])
         exec_mysql(sql)
-     
+
         sql = '''INSERT INTO `membership`
                  VALUES ('{0}', '{1}')
                  ON DUPLICATE KEY UPDATE idagents=idagents;'''.format(agent_id, general_groups[faction])
@@ -176,7 +176,7 @@ def colate_agents():
 def snarf(group=None):
     if group in ('smurfs', 'frogs', 'all'):
         group = None
-    
+
     if not group:
         results = ''
         for group, url in get_groups():
@@ -202,7 +202,7 @@ def snarf(group=None):
         logging.info('mix the soup')
         soup = BeautifulSoup(html, "html.parser")
         logging.info("soup's up")
-        
+
         table = read_table(soup.table)
         for data in table:
             stat = Stat()
@@ -210,43 +210,43 @@ def snarf(group=None):
             stat.save()
             if stat.flag and stat.changed:
                 flagged.append((stat.date, stat.name, stat.reasons))
-            
+
             try:
                 remaining_roster.remove(stat.agent_id)
             except ValueError:
                 logging.info('Agent added: {0}'.format(stat.name))
                 added.append(stat.name)
-            
+
             sql = '''INSERT INTO `membership`
                      VALUES ('{0}', '{1}')
                      ON DUPLICATE KEY UPDATE idagents=idagents;'''.format(stat.agent_id, group_id)
             exec_mysql(sql)
-            
+
         if remaining_roster:
             remaining_roster = str(tuple(remaining_roster)).replace(',)',')')
             removed = sum(exec_mysql("SELECT name FROM agents WHERE idagents in {};".format(remaining_roster)), ())
             logging.info('Agent(s) removed: %s' % str(removed))
             exec_mysql("DELETE FROM membership WHERE idagents in {0} and idgroups = {1};".format(remaining_roster, group_id))
-        
+
         output = []
         if added or removed or flagged:
             output.append(group+':')
             if added:
                 output.append('  Added:')
                 output.append('    '+'\n    '.join(added))
-                
+
             if removed:
                 output.append('  Removed:')
                 output.append('    '+'\n    '.join(removed))
-            
+
             if flagged:
                 output.append('  Flagged:')
                 for flagged_agent in flagged:
                     output.append('    {0} {1}'.format(*flagged_agent))
                     output.append('      '+'\n      '.join(flagged_agent[2]))
-                
+
         return '\n'.join(output) + '\n'
-        
+
 def test():
     pass
 
@@ -281,16 +281,15 @@ def get_badges(data):
                 current = badge
             if current == 'Onyx':
                 multiplier = data[category] // rank
-                if multiplier > 1: 
+                if multiplier > 1:
                     current = '%sx %s' % (multiplier, current)
         result[category] = current
     return result
 
 def summary(group='all', days=7):
     if not group: group = 'all'
-
     snarf(group)
-    
+
     headers = ('explorer',
                'seer',
                'trekker',
@@ -310,12 +309,12 @@ def summary(group='all', days=7):
                'translator',
                'sojourner',
                'recruiter')
-    
+
     sql_before = '''SELECT `name`, `date`, `level`, ap, explorer, seer, trekker, builder, connector, `mind-controller` mind_controller, illuminator, recharger,
                            liberator, pioneer, engineer, purifier, guardian, specops, missionday, hacker, translator, sojourner, recruiter
                     FROM (
-                        SELECT a.`name` `name`, s.* 
-                        FROM agents a, stats s, membership m, groups g 
+                        SELECT a.`name` `name`, s.*
+                        FROM agents a, stats s, membership m, groups g
                         WHERE a.idagents = s.idagents AND a.idagents = m.idagents AND m.idgroups = g.idgroups AND g.`name` = '{}'
                           AND s.flag != 1 AND s.`date` < ( CURDATE() - INTERVAL {} DAY )
                         ORDER BY `date` DESC
@@ -333,8 +332,8 @@ def summary(group='all', days=7):
     sql_now = '''SELECT `name`, `date`, `level`, ap, explorer, seer, trekker, builder, connector, `mind-controller` mind_controller, illuminator, recharger,
                         liberator, pioneer, engineer, purifier, guardian, specops, missionday, hacker, translator, sojourner, recruiter
                  FROM (
-                     SELECT a.`name` `name`, s.* 
-                     FROM agents a, stats s, membership m, groups g 
+                     SELECT a.`name` `name`, s.*
+                     FROM agents a, stats s, membership m, groups g
                      WHERE a.idagents = s.idagents AND a.idagents = m.idagents AND m.idgroups = g.idgroups AND g.`name` = '{}'
                        AND s.flag != 1 AND s.`date` >= ( CURDATE() - INTERVAL {} DAY )
                      ORDER BY `date` DESC
@@ -352,7 +351,7 @@ def summary(group='all', days=7):
             date_new = row[1]
             level_old = baseline[agent]['level']
             level_new = row[2]
-            #ap_old = 
+            #ap_old =
             #ap_new = row[3]
             badges_old = baseline[agent]['badges']
             badges_new = get_badges(dict(zip(headers, row[4:])))
