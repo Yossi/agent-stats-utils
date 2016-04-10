@@ -48,6 +48,7 @@ def get_stats(group, time_span='current', number=10):
                    'purifier': '_(Resonators Destroyed)_',
                    'guardian': '_(Max Time Portal Held)_',
                    'specops': '_(Unique Missions Completed)_',
+                   'missionday': '_(Mission Day(s) Attended)_',
                    'hacker': '_(Hacks)_',
                    'translator': '_(Glyph Hack Points)_',
                    'sojourner': '_(Longest Hacking Streak)_',
@@ -76,12 +77,12 @@ def get_stats(group, time_span='current', number=10):
                        'country-master', 'recharger', 'liberator', 'pioneer',
                        'engineer', 'purifier', 'neutralizer', 'disruptor',
                        'salvator', 'guardian', 'smuggler', 'link-master',
-                       'controller', 'field-master', 'specops', 'hacker',
+                       'controller', 'field-master', 'specops', 'missionday', 'hacker',
                        'translator', 'sojourner', 'recruiter')
     categories_badges = ('ap', 'explorer', 'seer', 'trekker', 'builder',
                          'connector', 'mind-controller', 'illuminator',
                          'recharger', 'liberator', 'pioneer', 'engineer',
-                         'purifier', 'guardian',  'specops', 'hacker',
+                         'purifier', 'guardian',  'specops', 'missionday', 'hacker',
                          'translator', 'sojourner', 'recruiter')
     categories = ('ap', 'explorer', 'trekker', 'builder', 'connector',
                   'mind-controller', 'illuminator', 'recharger', 'liberator',
@@ -265,6 +266,7 @@ def get_badges(data):
                   'purifier': [2000, 10000, 30000, 100000, 300000],
                   'guardian': [3, 10, 20, 90, 150],
                   'specops': [5, 25, 100, 200, 500],
+                  'missionday': [1, 3, 6, 10, 20],
                   'hacker': [2000, 10000, 30000, 100000, 200000],
                   'translator': [200, 2000, 6000, 20000, 50000],
                   'sojourner': [15, 30, 60, 180, 360],
@@ -303,13 +305,14 @@ def summary(group='all', days=7):
                'purifier',
                'guardian',
                'specops',
+               'missionday',
                'hacker',
                'translator',
                'sojourner',
                'recruiter')
     
     sql_before = '''SELECT `name`, `date`, `level`, ap, explorer, seer, trekker, builder, connector, `mind-controller` mind_controller, illuminator, recharger,
-                           liberator, pioneer, engineer, purifier, guardian, specops, hacker, translator, sojourner, recruiter
+                           liberator, pioneer, engineer, purifier, guardian, specops, missionday, hacker, translator, sojourner, recruiter
                     FROM (
                         SELECT a.`name` `name`, s.* 
                         FROM agents a, stats s, membership m, groups g 
@@ -328,7 +331,7 @@ def summary(group='all', days=7):
                                'badges': get_badges(dict(zip(headers, row[4:])))}
 
     sql_now = '''SELECT `name`, `date`, `level`, ap, explorer, seer, trekker, builder, connector, `mind-controller` mind_controller, illuminator, recharger,
-                        liberator, pioneer, engineer, purifier, guardian, specops, hacker, translator, sojourner, recruiter
+                        liberator, pioneer, engineer, purifier, guardian, specops, missionday, hacker, translator, sojourner, recruiter
                  FROM (
                      SELECT a.`name` `name`, s.* 
                      FROM agents a, stats s, membership m, groups g 

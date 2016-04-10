@@ -13,9 +13,9 @@ game_start = datetime.date(2012, 11, 15)
 
 fields = '''name, date, flag, min_ap, ap, level, explorer, seer, trekker, builder,
 connector, mind_controller, illuminator, recharger, liberator, pioneer, engineer,
-purifier, guardian, specops, hacker, translator, sojourner, recruiter, collector,
-binder, country_master, neutralizer, disruptor, salvator, smuggler, link_master,
-controller, field_master'''
+purifier, guardian, specops, missionday, hacker, translator, sojourner, recruiter,
+collector, binder, country_master, neutralizer, disruptor, salvator, smuggler,
+link_master, controller, field_master'''
 
 Row = namedtuple('Row', fields)
 
@@ -58,6 +58,7 @@ class Stat(object):
         self.controller = row.controller
         self.field_master = row.field_master
         self.specops = row.specops
+        self.missionday = row.missionday
         self.hacker = row.hacker
         self.translator = row.translator
         self.sojourner = row.sojourner
@@ -95,6 +96,7 @@ class Stat(object):
         self.controller = int(row['controller'])
         self.field_master = int(row['field-master'])
         self.specops = int(row['specops'])
+        self.missionday = int(row['missionday'])
         self.hacker = int(row['hacker'])
         self.translator = int(row['translator'])
         self.sojourner = int(row['sojourner'])
@@ -256,6 +258,7 @@ class Stat(object):
                      purifier='{purifier}',
                      guardian='{guardian}',
                      specops='{specops}',
+                     missionday='{missionday}',
                      hacker='{hacker}',
                      translator='{translator}',
                      sojourner='{sojourner}',
@@ -288,6 +291,7 @@ class Stat(object):
                                          purifier='{purifier}',
                                          guardian='{guardian}',
                                          specops='{specops}',
+                                         missionday='{missionday}',
                                          hacker='{hacker}',
                                          translator='{translator}',
                                          sojourner='{sojourner}',
