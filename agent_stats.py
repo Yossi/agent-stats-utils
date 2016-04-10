@@ -104,51 +104,22 @@ def cleanup_data(data):
     for k, v in data.items():
         data[k] = v.replace(',','').replace('-','0')
     data['Last submission'] = parse(data['Last submission'].replace('\u200b', '')).strftime("%Y-%m-%d") if not data['Last submission'].startswith('0') else '0/0/0'
-    data['Agent name'] = data['Agent name'][:16]
+    data['Agent name'] = data['Agent name'].strip()[:16]
     return data
 
 def read_table(table):
     logging.info('read table')
-    headers = ['Faction',
-               'Agent name',
-               'Level',
-               'ap',
-               'explorer',
-               'seer',
-               'collector',
-               'trekker',
-               'builder',
-               'connector',
-               'mind-controller',
-               'illuminator',
-               'binder',
-               'country-master',
-               'recharger',
-               'liberator',
-               'pioneer',
-               'engineer',
-               'purifier',
-               'neutralizer',
-               'disruptor',
-               'salvator',
-               'guardian',
-               'smuggler',
-               'link-master',
-               'controller',
-               'field-master',
-               'specops',
-               'hacker',
-               'translator',
-               'sojourner',
-               'recruiter',
-               'Last submission']
+    rows = table.find_all('tr')
+    
+    headers = [cell.text.replace('↓', '') for cell in rows[0].find_all('td')]
+    headers[0] = 'Faction'
 
     count = 0
-    for row in table.find_all('tr')[1:]:
+    for row in rows[1:]:
         count += 1
         cells = row.find_all('td')
         
-        d = [cell.text.strip() for cell in cells]
+        d = [cell.text for cell in cells]
         try: d[0] = cells[1]['class'][0]
         except KeyError: d[0] = 'nul'
         
@@ -233,7 +204,6 @@ def snarf(group=None):
         
         table = read_table(soup.table)
         for data in table:
-        
             stat = Stat()
             stat.table_load(**data)
             stat.save()
