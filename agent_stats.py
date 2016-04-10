@@ -277,7 +277,7 @@ def get_badges(data):
         current = 'Locked'
         multiplier = 1
         for rank, badge in zip(ranks, ['Bronze', 'Silver', 'Gold', 'Platinum', 'Onyx']):
-            if data[category] != '-' and int(data[category]) >= rank:
+            if data[category] not in ['-', None] and int(data[category]) >= rank:
                 current = badge
             if current == 'Onyx':
                 multiplier = data[category] // rank
