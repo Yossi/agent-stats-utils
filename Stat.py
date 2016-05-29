@@ -215,13 +215,13 @@ class Stat(object):
         if self.liberator > self.builder:
             reasons.append( 'liberator:builder %s > %s' % (self.liberator, self.builder) )
         if (self.salvator/2) > self.disruptor:
-            reasons.append( 'disruptor:salvator %s < %s/2' % (self.disruptor*2, self.salvator) )
+            reasons.append( 'disruptor:salvator %s < %s/2' % (self.disruptor, self.salvator) )
         if self.disruptor > self.purifier:
             reasons.append( 'disruptor:purifier %s > %s' % (self.disruptor, self.purifier) )
         if self.neutralizer > self.purifier:
             reasons.append( 'neutralizer:purifier %s > %s' % (self.neutralizer, self.purifier) )
         if (self.translator/15) > self.hacker:
-            reasons.append( 'hacker:translator %s < %s/15' % (self.hacker*15, self.translator) )
+            reasons.append( 'hacker:translator %s < %s/15' % (self.hacker, self.translator) )
         
         # this catches faction flippers unfortunately
         #if self.min_ap > self.ap:
