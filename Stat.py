@@ -29,7 +29,7 @@ class Stat(object):
         row = Row(*row) # your boat...
     
         self.name = row.name
-        self.date = row.date if row.date else '0/0/0'
+        self.date = row.date if row.date else '1000/1/1'
         #self.flag = row.flag
         #self.min_ap = row.min_ap
         self.ap = row.ap
@@ -67,7 +67,7 @@ class Stat(object):
         self.agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name))[0][0]
 
     def table_load(self, **row):
-        self.date = parse(row['Last submission']).date() if not row['Last submission'].startswith('0') else '0/0/0'
+        self.date = parse(row['Last submission']).date() if not row['Last submission'].startswith('0') else '1000/1/1'
         self.name = row['Agent name']
         self.faction = row['Faction']
         self.level = int(row['Level'])
@@ -184,7 +184,7 @@ class Stat(object):
         return bool(self.reasons)
 
     def validate(self):
-        if self.date == '0/0/0': return ['date missing']
+        if self.date == '1000/1/1': return ['date missing']
 
         max_sojourner = (self.date - sojourner_start).days + 1
         max_guardian = (self.date - game_start).days + 1

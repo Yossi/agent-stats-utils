@@ -104,7 +104,7 @@ def get_stats(group, time_span='current', number=10):
 def cleanup_data(data):
     for k, v in data.items():
         data[k] = v.replace(',','').replace('-','0')
-    data['Last submission'] = parse(data['Last submission'].replace('\u200b', '')).strftime("%Y-%m-%d") if not data['Last submission'].startswith('0') else '0/0/0'
+    data['Last submission'] = parse(data['Last submission'].replace('\u200b', '')).strftime("%Y-%m-%d") if not data['Last submission'].startswith('0') else '1000/1/1'
     data['Agent name'] = data['Agent name'].strip()[:16]
     return data
 
