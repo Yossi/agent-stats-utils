@@ -440,7 +440,7 @@ def check_for_applicants(group):
         message.append('Agent(s) awaiting validation to the {} group:'.format(group))
         for agent in applicants:
             message.append('    @{}'.format(agent))
-        message.append('\nGo to {} and click on the [View admin panel] button to take care of it.'.format(html.partition('give them this url: <a href="')[2].partition('">https://www.agent-stats.com/groups.php')[0]))
+        message.append('\nGo to {} and click on the [View admin panel] button to take care of it.'.format(html.partition('give them this url: <a href="')[2].partition('">https://www.agent-stats.com/groups.php')[0]).partition('&')[0])
     return '\n'.join(message)
 
 
