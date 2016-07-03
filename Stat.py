@@ -184,7 +184,7 @@ class Stat(object):
         return bool(self.reasons)
 
     def validate(self):
-        if self.date == '1000/1/1': return ['date missing']
+        if str(self.date) == '1000-01-01': return ['date missing']
 
         max_sojourner = (self.date - sojourner_start).days + 1
         max_guardian = (self.date - game_start).days + 1
