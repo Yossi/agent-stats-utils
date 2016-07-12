@@ -309,16 +309,19 @@ def summary(group='all', days=7):
                'sojourner',
                'recruiter')
 
-    sql_before = '''SELECT `name`, `date`, `level`, ap, explorer, seer, trekker, builder, connector, `mind-controller` mind_controller, illuminator, recharger,
-                           liberator, pioneer, engineer, purifier, guardian, specops, missionday, hacker, translator, sojourner, recruiter
+    sql_before = '''SELECT x.name, s.`date`, `level`, ap, explorer, seer, trekker, builder, connector, `mind-controller` mind_controller, illuminator, 
+                           recharger, liberator, pioneer, engineer, purifier, guardian, specops, missionday, hacker, translator, sojourner, recruiter
                     FROM (
-                        SELECT a.`name` `name`, s.*
+                        SELECT a.name name, s.idagents id, MAX(s.date) AS date
                         FROM agents a, stats s, membership m, groups g
-                        WHERE a.idagents = s.idagents AND a.idagents = m.idagents AND m.idgroups = g.idgroups AND g.`name` = '{}'
-                          AND s.flag != 1 AND s.`date` < ( CURDATE() - INTERVAL {} DAY )
-                        ORDER BY `date` DESC
-                    ) as t1
-                    GROUP BY `name`;
+                        WHERE a.idagents = s.idagents AND
+                              s.idagents = m.idagents AND
+                              m.idgroups = g.idgroups AND
+                              g.`name` = '{}' AND
+                              s.flag != 1 AND
+                              date < ( CURDATE() - INTERVAL {} DAY )
+                        GROUP BY id ) x 
+                    JOIN stats s ON x.id = s.idagents AND x.date = s.date
                  '''.format(group, days)
 
     baseline = {}
@@ -328,16 +331,19 @@ def summary(group='all', days=7):
             baseline[agent] = {'date': row[1], 'level': row[2], #'ap': row[3],
                                'badges': get_badges(dict(zip(headers, row[4:])))}
 
-    sql_now = '''SELECT `name`, `date`, `level`, ap, explorer, seer, trekker, builder, connector, `mind-controller` mind_controller, illuminator, recharger,
-                        liberator, pioneer, engineer, purifier, guardian, specops, missionday, hacker, translator, sojourner, recruiter
-                 FROM (
-                     SELECT a.`name` `name`, s.*
-                     FROM agents a, stats s, membership m, groups g
-                     WHERE a.idagents = s.idagents AND a.idagents = m.idagents AND m.idgroups = g.idgroups AND g.`name` = '{}'
-                       AND s.flag != 1 AND s.`date` >= ( CURDATE() - INTERVAL {} DAY )
-                     ORDER BY `date` DESC
-                 ) as t1
-                 GROUP BY `name`;
+    sql_now = '''SELECT x.name, s.`date`, `level`, ap, explorer, seer, trekker, builder, connector, `mind-controller` mind_controller, illuminator, 
+                           recharger, liberator, pioneer, engineer, purifier, guardian, specops, missionday, hacker, translator, sojourner, recruiter
+                    FROM (
+                        SELECT a.name name, s.idagents id, MAX(s.date) AS date
+                        FROM agents a, stats s, membership m, groups g
+                        WHERE a.idagents = s.idagents AND
+                              s.idagents = m.idagents AND
+                              m.idgroups = g.idgroups AND
+                              g.`name` = '{}' AND
+                              s.flag != 1 AND
+                              date >= ( CURDATE() - INTERVAL {} DAY )
+                        GROUP BY id ) x 
+                    JOIN stats s ON x.id = s.idagents AND x.date = s.date
               '''.format(group, days)
     output = []
     footnote = ''
@@ -368,6 +374,7 @@ def summary(group='all', days=7):
                     note = '¹' # chcp 65001
                     footnote = '¹Start date more than 2 %s ago' % ('weeks' if days == 7 else 'months',)
                 output.append('*{0}* earned {1} sometime between {old.month}/{old.day}{2} and {new.month}/{new.day}'.format(agent, earnings, note, old=date_old, new=date_new))
+    output.sort()
     if footnote:
         output.append(footnote)
     return '\n'.join(output)
