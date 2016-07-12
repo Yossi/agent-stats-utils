@@ -120,7 +120,7 @@ def get_html(scoreboard=None, time_span='current'):
                 #driver.find_element_by_id("trustDevice").click()
                 driver.find_element_by_id("submit").click()
 
-        driver.get('https://www.agent-stats.com/groups.php') # hacky fix becaue the new owners redirect to the main page on first visit
+        driver.get('https://www.agent-stats.com/groups.php') # hacky fix because the new owners redirect to the main page on first visit
         
         #logging.info('saving screenshot')
         #driver.save_screenshot('../www/selenium.png')
