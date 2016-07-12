@@ -109,3 +109,6 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 Code
+phantomjs-1.9.8-windows.zip
+sql.py
+tabcomplete.py
