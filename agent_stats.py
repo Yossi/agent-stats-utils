@@ -328,7 +328,7 @@ def summary(group='all', days=7):
     for row in exec_mysql(sql_before):
         agent = row[0]
         if row[1]: # if it has a date. filters out the agents with rows of all 0s
-            baseline[agent] = {'date': row[1], 'level': row[2], #'ap': row[3],
+            baseline[agent] = {'date': row[1], 'level': row[2], 'ap': row[3],
                                'badges': get_badges(dict(zip(headers, row[4:])))}
 
     sql_now = '''SELECT x.name, s.`date`, `level`, ap, explorer, seer, trekker, builder, connector, `mind-controller` mind_controller, illuminator, 
@@ -356,17 +356,20 @@ def summary(group='all', days=7):
             date_new = row[1]
             level_old = baseline[agent]['level']
             level_new = row[2]
-            #ap_old =
-            #ap_new = row[3]
+            ap_old = baseline[agent]['ap']
+            ap_new = row[3]
+            ap_40m_old = int(ap_old)//40000000
+            ap_40m_new = int(ap_new)//40000000
             badges_old = baseline[agent]['badges']
             badges_new = get_badges(dict(zip(headers, row[4:])))
             changes = OrderedDict()
             if badges_old != badges_new:
                 changes.update(new_badges(badges_old, badges_new))
+            if ap_40m_old != ap_40m_new:
+                changes['ap'] = ['{} MILLION'.format((l+1)*40) for l in range(ap_40m_old, ap_40m_new)]
             if level_old < level_new:
                 changes['level'] = [str(l+1) for l in range(level_old, level_new)]
             if changes:
-                #print changes
                 earnings = englishify(changes)
                 stale = datetime.date.today() - datetime.timedelta(days=days*2)
                 note = ''
