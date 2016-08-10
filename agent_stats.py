@@ -327,7 +327,7 @@ def summary(group='all', days=7):
     baseline = {}
     for row in exec_mysql(sql_before):
         agent = row[0]
-        if row[1]: # if it has a date. filters out the agents with rows of all 0s
+        if row[1]: # if has date. filters out the agents with rows of all 0s
             baseline[agent] = {'date': row[1], 'level': row[2], 'ap': row[3],
                                'badges': get_badges(dict(zip(headers, row[4:])))}
 
@@ -350,7 +350,7 @@ def summary(group='all', days=7):
     for row in exec_mysql(sql_now):
         agent = row[0]
         #print row
-       # print agent, baseline.get(agent, None)
+        #print agent, baseline.get(agent, None)
         if agent in baseline:
             date_old = baseline[agent]['date']
             date_new = row[1]

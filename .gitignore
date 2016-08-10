@@ -5,6 +5,7 @@ cookies.txt
 ghostdriver.log
 phantomjs
 phantomjs.exe
+dbcompare/
 
 
 # Byte-compiled / optimized / DLL files
