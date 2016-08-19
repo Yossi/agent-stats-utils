@@ -31,8 +31,6 @@ game_start = datetime.date(2012, 11, 15)
 
 
 
-
-
 def get_stats(group, time_span='current', number=10):
     definitions = {'explorer': '_(New Portals Visited)_',
                    'seer': '_(Portals Discovered)_',
