@@ -34,7 +34,7 @@ game_start = datetime.date(2012, 11, 15)
 
 
 def get_stats(group, time_span='current', number=10):
-    definitions = {'explorer': '_(Unique Portals Visited)_',
+    definitions = {'explorer': '_(New Portals Visited)_',
                    'seer': '_(Portals Discovered)_',
                    'trekker': '_(Distance Walked)_',
                    'builder': '_(Resonators Deployed)_',
@@ -43,11 +43,11 @@ def get_stats(group, time_span='current', number=10):
                    'illuminator': '_(Mind Units Captured)_',
                    'recharger': '_(XM Recharged)_',
                    'liberator': '_(Portals Captured)_',
-                   'pioneer': '_(Unique Portals Captured)_',
+                   'pioneer': '_(New Portals Captured)_',
                    'engineer': '_(Mods Deployed)_',
                    'purifier': '_(Resonators Destroyed)_',
                    'guardian': '_(Max Time Portal Held)_',
-                   'specops': '_(Unique Missions Completed)_',
+                   'specops': '_(New Missions Completed)_',
                    'missionday': '_(Mission Day(s) Attended)_',
                    'hacker': '_(Hacks)_',
                    'translator': '_(Glyph Hack Points)_',
@@ -72,18 +72,6 @@ def get_stats(group, time_span='current', number=10):
     soup = BeautifulSoup(html, "html.parser")
     table = soup.table
     data = list(read_table(table))
-    categories_full = ('ap', 'explorer', 'seer', 'collector', 'trekker', 'builder',
-                       'connector', 'mind-controller', 'illuminator', 'binder',
-                       'country-master', 'recharger', 'liberator', 'pioneer',
-                       'engineer', 'purifier', 'neutralizer', 'disruptor',
-                       'salvator', 'guardian', 'smuggler', 'link-master',
-                       'controller', 'field-master', 'specops', 'missionday', 'hacker',
-                       'translator', 'sojourner', 'recruiter')
-    categories_badges = ('ap', 'explorer', 'seer', 'trekker', 'builder',
-                         'connector', 'mind-controller', 'illuminator',
-                         'recharger', 'liberator', 'pioneer', 'engineer',
-                         'purifier', 'guardian',  'specops', 'missionday', 'hacker',
-                         'translator', 'sojourner', 'recruiter')
     categories = ('ap', 'explorer', 'trekker', 'builder', 'connector',
                   'mind-controller', 'illuminator', 'recharger', 'liberator',
                   'pioneer', 'engineer', 'purifier', 'hacker', 'translator',
@@ -99,7 +87,6 @@ def get_stats(group, time_span='current', number=10):
         if not i:
             output.pop()
     return '\n'.join(output)
-
 
 def cleanup_data(data):
     for k, v in data.items():
@@ -129,17 +116,9 @@ def read_table(table):
         yield cleanup_data(data)
     logging.info('%s rows' % count)
 
-
-
-
-
-
 def get_groups():
     soup = BeautifulSoup(get_html(), "html.parser")
     return [(li.find('a').text, li.find('a').get('href')[18:]) for li in soup.find_all('ul')[1].find_all('li')[2:]]
-
-
-
 
 def new_badges(old_data, new_data):
     ranks = ['Locked', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Onyx']
