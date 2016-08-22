@@ -75,15 +75,20 @@ def get_stats(group, time_span='current', number=10):
                   'pioneer', 'engineer', 'purifier', 'hacker', 'translator',
                   'specops', 'seer', 'collector', 'neutralizer', 'disruptor',
                   'salvator')
+    submitters = 0
     for category in categories:
         output.append('\n*Top %s* %s' % (category.title(), definitions.get(category.lower(), '')))
-        for i, line in enumerate(sorted(data, key=lambda k: int(k[category]), reverse=True)):
-            if i > number-1 and int(line[category]) != temp or int(line[category]) == 0:
+        top_list = sorted((line for line in data if int(line[category])), key=lambda k: int(k[category]), reverse=True)
+        submitters = max(submitters, len(top_list))
+        i = 0
+        for i, line in enumerate(top_list):
+            if i > number-1 and int(line[category]) != temp:# or int(line[category]) == 0: # the 0s get filtered out on that inscrutable line above
                 break
             output.append('{}  {:,}'.format(line['Agent name'], int(line[category])))
             temp = int(line[category])
         if not i:
             output.pop()
+    #print(submitters) # submitters now contains the info we're after but the manner of disseminating it is still undecided
     return '\n'.join(output)
 
 def cleanup_data(data):
