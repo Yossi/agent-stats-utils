@@ -7,6 +7,7 @@ import datetime
 import logging
 from collections import OrderedDict, namedtuple
 
+from num2words import num2words
 from bs4 import BeautifulSoup
 from dateutil.parser import parse
 
@@ -383,8 +384,8 @@ def weekly_roundup(group):
     logging.info('starting weekly roundup')
     start = datetime.datetime.now()
     output.append(group)
-    output.append('*Top Ten for the week of %s*' % (start - datetime.timedelta(days=7)).date().strftime("%m/%d"))
-    logging.info('getting weekly top tens')
+    output.append('*Top %s for the week of %s*' % (num2words(args.number).title(), (start - datetime.timedelta(days=7)).date().strftime("%m/%d")))
+    logging.info('getting weekly top lists')
     output.append(get_stats(group, 'weekly', args.number))
     output.append('')
     output.append('Recent badge dings:')
@@ -411,8 +412,8 @@ def monthly_roundup(group):
     logging.info('starting monthly roundup')
     start = datetime.datetime.now()
     output.append(group)
-    output.append('*Top Ten for the month of %s*' % (start - datetime.timedelta(days=7)).date().strftime("%B"))
-    logging.info('getting monthly top tens')
+    output.append('*Top %s for the month of %s*' % (num2words(args.number).title(), (start - datetime.timedelta(days=7)).date().strftime("%B")))
+    logging.info('getting monthly top lists')
     output.append(get_stats(group, 'monthly', args.number))
     output.append('')
     output.append('Recent badge dings:')
@@ -465,7 +466,7 @@ if __name__ == '__main__':
         result = result.strip()
 
         if not args.mail:
-            print(result)
+            print(result) # chcp 65001
         elif result:
             if not args.group: args.group=''
             subject = args.action+' '+args.group if not args.subject else args.subject
