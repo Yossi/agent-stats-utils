@@ -368,7 +368,7 @@ your stats late Sunday night / early Monday morning when you are done for the ni
 It’s also a good idea to upload your stats every night.'''
 def weekly_roundup(group):
     group_id, group_name = get_groups(group)
-    if not group_id: return 'please specify group' # could also be you passed something like 'all'. Still not supported, so get lost.
+    if not group_id: return 'please specify group'
     output = []
     logging.info('starting weekly roundup')
     start = datetime.datetime.now()
@@ -397,21 +397,23 @@ you see this (right now) and then again right before you see this next month (ju
 your stats late on the night / early morning before the 1st of the month when you are done for the night). 
 It’s also a good idea to upload your stats every night.'''
 def monthly_roundup(group):
-    if not group: return 'please specify group'
+    group_id, group_name = get_groups(group)
+    if not group_id: return 'please specify group'
     output = []
     logging.info('starting monthly roundup')
     start = datetime.datetime.now()
-    output.append(group)
-    output.append('*Top %s for the month of %s*' % (num2words(args.number).title(), (start - datetime.timedelta(days=7)).date().strftime("%B")))
+    output.append(group_name)
     logging.info('getting monthly top lists')
-    output.append(get_stats(group, 'monthly', args.number))
+    charts = get_stats(group_id, 'monthly', args.number)
+    output.append('*Top %s for the month of %s*' % (num2words(args.number).title(), (start - datetime.timedelta(days=7)).date().strftime("%B")))
+    output.append(charts)
     output.append('')
     output.append('Recent badge dings:')
     output.append('')
     logging.info('getting badge dings')
-    output.append(summary(group, 30))
+    output.append(summary(group_id, 30))
     output.append('')
-    output.append(monthly_template.format(exec_mysql('SELECT url FROM groups WHERE name = "{}"'.format(group))[0][0]).replace('\n', ''))
+    output.append(monthly_template.format(group_id).replace('\n', ''))
     end = datetime.datetime.now()
     output.append('')
     output.append('_Job started on {} and ran for {}_'.format(start, end-start))
