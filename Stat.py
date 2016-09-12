@@ -67,7 +67,7 @@ class Stat(object):
         self.agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name))[0][0]
 
     def table_load(self, **row):
-        self.date = parse(row['last_submit']).date()
+        self.date = parse(row['last_submit'] if not row['last_submit'].startswith('0') else '1000/1/1').date()
         self.name = row['name']
         self.faction = row['faction']
         self.level = row['level']
