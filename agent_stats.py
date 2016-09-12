@@ -434,11 +434,23 @@ def check_for_applicants(group):
         message.append('\nGo to {} and click on the [View admin panel] button to take care of it.'.format(html.partition('give them this url: <a href="')[2].partition('">https://www.agent-stats.com/groups.php')[0]).partition('&')[0])
     return '\n'.join(message)
 
+def update_group_names(group):
+    db = dict(exec_mysql('SELECT url, `name` FROM groups WHERE url IS NOT NULL;'))
+    web = dict(groups())
+    allgood = True
+    for gid in web:
+        if web[gid] != db[gid]:
+            allgood = False
+            print('{} was named "{}" is now "{}"'.format(gid, db[gid], web[gid]))
+            if input('Update the db? (y/N) ').lower().startswith('y'):
+                exec_mysql('UPDATE groups SET `name`="{}" WHERE url="{}" AND `name`="{}"; '.format(web[gid], gid, db[gid]))
 
+    if allgood:
+        print('\nAll group names match\n')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Tools for agent-stats admins')
-    parser.add_argument('action', help='task to perform', choices=['snarf', 'check_for_applicants', 'summary', 'weekly', 'monthly', 'test'])
+    parser.add_argument('action', help='task to perform', choices=['snarf', 'check_for_applicants', 'weekly', 'monthly', 'update_group_names', 'summary', 'test'])
     parser.add_argument('-n', '--number', default=10, type=int, help='number of ranks to show')
     parser.add_argument('-g', '--group', help='group to focus on', choices=[name for row in exec_mysql('SELECT name FROM groups;') for name in row])
     parser.add_argument('-m', '--mail', nargs='*', help='email address to get output')
@@ -451,6 +463,7 @@ if __name__ == '__main__':
                'weekly': weekly_roundup,
                'monthly': monthly_roundup,
                'check_for_applicants': check_for_applicants,
+               'update_group_names': update_group_names,
                'test': test}
     result = actions.get(args.action)(args.group)
 

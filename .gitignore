@@ -109,8 +109,8 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+#assorted garbage
 Code
 phantomjs-1.9.8-windows.zip
-sql.py
-tabcomplete.py
-test.py
+sandbox/
