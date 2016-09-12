@@ -218,7 +218,7 @@ def snarf(group=None):
 
         output = []
         if added or removed or flagged:
-            output.append(group+':')
+            output.append(group_name+':')
             if added:
                 output.append('  Added:')
                 output.append('    '+'\n    '.join(added))
