@@ -22,7 +22,7 @@ CREATE TABLE `groups` (
   UNIQUE KEY `idgroups_UNIQUE` (`idgroups`),
   UNIQUE KEY `url_UNIQUE` (`url`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
-INSERT INTO `groups` VALUES (1,'all',NULL),(2,'smurfs',NULL),(3,'frogs',NULL);
+INSERT INTO `groups` VALUES (1,'all',1),(2,'smurfs',2),(3,'frogs',3);
 
 CREATE TABLE `membership` (
   `idagents` int(11) NOT NULL,

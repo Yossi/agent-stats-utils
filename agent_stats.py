@@ -255,8 +255,12 @@ def get_badges(data):
         result[category] = current
     return result
 
-def summary(group_id='all', days=7):
+def summary(group='all', days=7):
     snarf(group_id)
+    
+    group_id, group_name = get_groups(group)
+    if not group_id:
+        group_id = {'all': 1, 'smurfs': 2, 'frogs':3}.get(group, None)
 
     headers = ('explorer',
                'seer',
@@ -318,8 +322,6 @@ def summary(group_id='all', days=7):
     footnote = ''
     for row in exec_mysql(sql_now):
         agent = row[0]
-        #print row
-        #print agent, baseline.get(agent, None)
         if agent in baseline:
             date_old = baseline[agent]['date']
             date_new = row[1]
