@@ -121,10 +121,22 @@ def read_table(table):
         yield cleanup_data(data)
     logging.info('%s rows' % count)
 
-@lru_cache(maxsize=None)
-def get_groups():
-    r = s.get('https://api.agent-stats.com/groups')
-    return bidict([(g['groupid'], g['groupname']) for g in r.json() if '.' in g['groupid']])
+def get_groups(group=None):
+    @lru_cache(maxsize=None)
+    def groups():
+        r = s.get('https://api.agent-stats.com/groups')
+        return bidict([(g['groupid'], g['groupname']) for g in r.json() if '.' in g['groupid']])
+
+    if group in ('smurfs', 'frogs', 'all', None):
+        group_id, group_name = None, None
+    elif re.fullmatch(r'([0-9a-f]{14}\.[\d]{8})', group):
+        group_id = group
+        group_name = groups()[group]
+    else:
+        group_id = groups().inv[group]
+        group_name = group
+        
+    return group_id, group_name
 
 def new_badges(old_data, new_data):
     ranks = ['Locked', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Onyx']
@@ -158,18 +170,9 @@ def colate_agents():
         exec_mysql(sql)
 
 def snarf(group=None):
-    groups = get_groups()
+    group_id, group_name = get_groups(group)
 
-    if group in ('smurfs', 'frogs', 'all', None):
-        group = None
-    elif re.fullmatch(r'([0-9a-f]{14}\.[\d]{8})', group):
-        group_id = group
-        group_name = groups[group]
-    else:
-        group_id = groups.inv[group]
-        group_name = group
-
-    if not group:
+    if not group_id:
         results = ''
         for group_id, group_name in groups.items():
             logging.info('snarfing '+group_name)
