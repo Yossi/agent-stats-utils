@@ -158,7 +158,7 @@ def snarf(group=None):
 
     if not group_id:
         results = ''
-        for group_id, group_name in groups.items():
+        for group_id, group_name in groups().items():
             logging.info('snarfing '+group_name)
             idgroups = exec_mysql("SELECT idgroups FROM groups WHERE url = '{0}';".format(group_id))
             if not idgroups:
