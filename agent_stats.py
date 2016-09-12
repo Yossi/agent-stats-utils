@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from pprint import pprint
 import argparse
 import datetime
 import logging
@@ -11,7 +10,6 @@ from collections import OrderedDict, namedtuple
 import requests
 from num2words import num2words
 from bs4 import BeautifulSoup
-from dateutil.parser import parse
 from bidict import bidict
 from functools import lru_cache
 
