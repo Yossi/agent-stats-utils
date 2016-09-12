@@ -32,7 +32,7 @@ s = requests.Session()
 s.headers.update({'AS-Key': api_key})
 API_url = 'https://api.agent-stats.com/groups/{}/{}'
 
-def get_stats(group, time_span='current', number=10):
+def get_stats(group_id, time_span='now', number=10):
     definitions = {'explorer': '_(New Portals Visited)_',
                    'seer': '_(Portals Discovered)_',
                    'trekker': '_(Distance Walked)_',
@@ -63,14 +63,12 @@ def get_stats(group, time_span='current', number=10):
                    'controller': '_(Max Time Field Held)_',
                    'field-master': '_(Largest Field MUs × Days)_'}
 
-    time_span = {'all time': 'current',
-                 'monthly': 'last month',
-                 'weekly': 'last week'}.get(time_span, time_span)
+    time_span = {'all time': 'now',
+                 'monthly': 'month',
+                 'weekly': 'week'}.get(time_span, time_span)
     output = []
-    html = get_html(scoreboard=group, time_span=time_span)
-    soup = BeautifulSoup(html, "html.parser")
-    table = soup.table
-    data = list(read_table(table))
+    logging.info('read table: group {}, span {}'.format(groups()[group_id], time_span))
+    data = list(read_table(group_id, time_span))
     categories = ('ap', 'explorer', 'trekker', 'builder', 'connector',
                   'mind-controller', 'illuminator', 'recharger', 'liberator',
                   'pioneer', 'engineer', 'purifier', 'hacker', 'translator',
@@ -85,7 +83,7 @@ def get_stats(group, time_span='current', number=10):
         for i, line in enumerate(top_list):
             if i > number-1 and int(line[category]) != temp:# or int(line[category]) == 0: # the 0s get filtered out on that inscrutable line above
                 break
-            output.append('{}  {:,}'.format(line['Agent name'], int(line[category])))
+            output.append('{}  {:,}'.format(line['name'], int(line[category])))
             temp = int(line[category])
         if not i:
             output.pop()
@@ -100,33 +98,21 @@ def cleanup_data(data):
     data['last_submit'] = last_submit
     return data
 
-def read_table(table):
-    logging.info('read table')
-    rows = table.find_all('tr')
-
-    headers = [cell.text.replace('↓', '') for cell in rows[0].find_all('td')]
-    headers[0] = 'Faction'
-
+def read_table(group_id, time_span):
     count = 0
-    for row in rows[1:]:
+    r = s.get(API_url.format(group_id, time_span), stream=True)
+    for agent, data in r.json().items():
+        data['name'] = '@'+agent
         count += 1
-        cells = row.find_all('td')
-
-        d = [cell.text for cell in cells]
-        try: d[0] = cells[1]['class'][0]
-        except KeyError: d[0] = 'nul'
-
-        data = dict(zip(headers, d))
-
         yield cleanup_data(data)
     logging.info('%s rows' % count)
 
-def get_groups(group=None):
-    @lru_cache(maxsize=None)
-    def groups():
-        r = s.get('https://api.agent-stats.com/groups')
-        return bidict([(g['groupid'], g['groupname']) for g in r.json() if '.' in g['groupid']])
+@lru_cache(maxsize=None)
+def groups():
+    r = s.get('https://api.agent-stats.com/groups')
+    return bidict([(g['groupid'], g['groupname']) for g in r.json() if '.' in g['groupid']])
 
+def get_groups(group=None):
     if group in ('smurfs', 'frogs', 'all', None):
         group_id, group_name = None, None
     elif re.fullmatch(r'([0-9a-f]{14}\.[\d]{8})', group):
@@ -188,14 +174,9 @@ def snarf(group=None):
         added, removed, flagged = [], [], []
         idgroups = exec_mysql("SELECT idgroups FROM groups WHERE url = '{0}';".format(group_id))[0][0]
         remaining_roster = [item for sublist in exec_mysql("SELECT idagents FROM membership WHERE idgroups = {0};".format(idgroups)) for item in sublist]
-        
-        def table():
-            r = s.get(API_url.format(group_id, 'now'), stream=True)
-            for k, v in r.json().items():
-                v['name'] = '@'+k
-                yield cleanup_data(v)
 
-        for data in table():
+        logging.info('read table: group {}, span {}'.format(group_name, 'now'))
+        for data in read_table(group_id, 'now'):
             stat = Stat()
             stat.table_load(**data)
             stat.save()
@@ -276,8 +257,8 @@ def get_badges(data):
         result[category] = current
     return result
 
-def summary(group='all', days=7):
-    snarf(group)
+def summary(group_id='all', days=7):
+    snarf(group_id)
 
     headers = ('explorer',
                'seer',
@@ -307,12 +288,12 @@ def summary(group='all', days=7):
                         WHERE a.idagents = s.idagents AND
                               s.idagents = m.idagents AND
                               m.idgroups = g.idgroups AND
-                              g.`name` = '{}' AND
+                              g.`url` = '{}' AND
                               s.flag != 1 AND
                               date < ( CURDATE() - INTERVAL {} DAY )
                         GROUP BY id ) x 
                     JOIN stats s ON x.id = s.idagents AND x.date = s.date
-                 '''.format(group, days)
+                 '''.format(group_id, days)
 
     baseline = {}
     for row in exec_mysql(sql_before):
@@ -329,12 +310,12 @@ def summary(group='all', days=7):
                         WHERE a.idagents = s.idagents AND
                               s.idagents = m.idagents AND
                               m.idgroups = g.idgroups AND
-                              g.`name` = '{}' AND
+                              g.`url` = '{}' AND
                               s.flag != 1 AND
                               date >= ( CURDATE() - INTERVAL {} DAY )
                         GROUP BY id ) x 
                     JOIN stats s ON x.id = s.idagents AND x.date = s.date
-              '''.format(group, days)
+              '''.format(group_id, days)
     output = []
     footnote = ''
     for row in exec_mysql(sql_now):
@@ -386,21 +367,23 @@ you see this (right now) and then again right before you see this next week (jus
 your stats late Sunday night / early Monday morning when you are done for the night). 
 It’s also a good idea to upload your stats every night.'''
 def weekly_roundup(group):
-    if not group: return 'please specify group'
+    group_id, group_name = get_groups(group)
+    if not group_id: return 'please specify group' # could also be you passed something like 'all'. Still not supported, so get lost.
     output = []
     logging.info('starting weekly roundup')
     start = datetime.datetime.now()
-    output.append(group)
-    output.append('*Top %s for the week of %s*' % (num2words(args.number).title(), (start - datetime.timedelta(days=7)).date().strftime("%m/%d")))
+    output.append(group_name)
     logging.info('getting weekly top lists')
-    output.append(get_stats(group, 'weekly', args.number))
+    charts = get_stats(group_id, 'weekly', args.number)
+    output.append('*Top %s for the week of %s*' % (num2words(args.number).title(), (start - datetime.timedelta(days=7)).date().strftime("%m/%d")))
+    output.append(charts)
     output.append('')
     output.append('Recent badge dings:')
     output.append('')
     logging.info('getting badge dings')
-    output.append(summary(group, 7))
+    output.append(summary(group_id, 7))
     output.append('')
-    output.append(weekly_template.format(exec_mysql('SELECT url FROM groups WHERE name = "{}"'.format(group))[0][0]).replace('\n', ''))
+    output.append(weekly_template.format(group_id).replace('\n', ''))
     end = datetime.datetime.now()
     output.append('')
     output.append('_Job started on {} and ran for {}_'.format(start, end-start))
