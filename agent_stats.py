@@ -10,7 +10,6 @@ from collections import OrderedDict, namedtuple
 import requests
 from num2words import num2words
 from bs4 import BeautifulSoup
-from bidict import bidict
 from functools import lru_cache
 
 from Stat import Stat
@@ -108,7 +107,7 @@ def read_table(group_id, time_span):
 @lru_cache(maxsize=None)
 def groups():
     r = s.get('https://api.agent-stats.com/groups')
-    return bidict([(g['groupid'], g['groupname']) for g in r.json() if '.' in g['groupid']])
+    return dict([(g['groupid'], g['groupname']) for g in r.json() if '.' in g['groupid']])
 
 def get_groups(group=None):
     if group in ('smurfs', 'frogs', 'all', None):
@@ -117,7 +116,7 @@ def get_groups(group=None):
         group_id = group
         group_name = groups()[group]
     else:
-        group_id = groups().inv[group]
+        group_id = exec_mysql('SELECT url FROM groups WHERE `name` = "{}"'.format(group))[0][0]
         group_name = group
         
     return group_id, group_name
@@ -256,7 +255,7 @@ def get_badges(data):
     return result
 
 def summary(group='all', days=7):
-    snarf(group_id)
+    snarf(group)
     
     group_id, group_name = get_groups(group)
     if not group_id:
