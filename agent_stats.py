@@ -5,32 +5,32 @@ from pprint import pprint
 import argparse
 import datetime
 import logging
+import re
 from collections import OrderedDict, namedtuple
 
+import requests
 from num2words import num2words
 from bs4 import BeautifulSoup
 from dateutil.parser import parse
+from bidict import bidict
+from functools import lru_cache
 
+from Stat import Stat
 from util import mail, get_html
 
 from util import exec_mysql, cm
-from secrets import dbhost, db, dbuser, dbpasswd
+from secrets import dbhost, db, dbuser, dbpasswd, api_key
 
 cm.set_credentials({'host': dbhost, 'db': db, 'user': dbuser, 'passwd': dbpasswd})
 
 logging.basicConfig(level=logging.INFO,
                     format="%(asctime)s %(message)s",
                     datefmt="%H:%M:%S")
+logging.getLogger("requests").setLevel(logging.WARNING)
 
-from Stat import Stat
-
-
-
-today = datetime.date.today()
-sojourner_start = datetime.date(2015, 3, 5)
-game_start = datetime.date(2012, 11, 15)
-
-
+s = requests.Session()
+s.headers.update({'AS-Key': api_key})
+API_url = 'https://api.agent-stats.com/groups/{}/{}'
 
 def get_stats(group, time_span='current', number=10):
     definitions = {'explorer': '_(New Portals Visited)_',
@@ -93,10 +93,11 @@ def get_stats(group, time_span='current', number=10):
     return '\n'.join(output)
 
 def cleanup_data(data):
+    last_submit = data['last_submit']
     for k, v in data.items():
-        data[k] = v.replace(',','').replace('-','0')
-    data['Last submission'] = parse(data['Last submission'].replace('\u200b', '')).strftime("%Y-%m-%d") if not data['Last submission'].startswith('0') else '1000/1/1'
-    data['Agent name'] = data['Agent name'].strip()[:16]
+        if v == '-':
+            data[k] = 0
+    data['last_submit'] = last_submit
     return data
 
 def read_table(table):
@@ -120,9 +121,10 @@ def read_table(table):
         yield cleanup_data(data)
     logging.info('%s rows' % count)
 
+@lru_cache(maxsize=None)
 def get_groups():
-    soup = BeautifulSoup(get_html(), "html.parser")
-    return [(li.find('a').text, li.find('a').get('href')[18:]) for li in soup.find_all('ul')[1].find_all('li')[2:]]
+    r = s.get('https://api.agent-stats.com/groups')
+    return bidict([(g['groupid'], g['groupname']) for g in r.json() if '.' in g['groupid']])
 
 def new_badges(old_data, new_data):
     ranks = ['Locked', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Onyx']
@@ -140,7 +142,6 @@ def englishify(new_badges):
     data = [badge.upper()+' ' + ", ".join(ranks[:-2] + [" and ".join(ranks[-2:])]) for badge, ranks in new_badges.items()]
     return ", ".join(data[:-2] + [" and ".join(data[-2:])])
 
-
 def colate_agents():
     logging.info('colate agents')
     general_groups = dict(exec_mysql("SELECT name, idgroups FROM groups WHERE name IN ('smurfs', 'frogs', 'all');"))
@@ -157,37 +158,41 @@ def colate_agents():
         exec_mysql(sql)
 
 def snarf(group=None):
-    if group in ('smurfs', 'frogs', 'all'):
+    groups = get_groups()
+
+    if group in ('smurfs', 'frogs', 'all', None):
         group = None
+    elif re.fullmatch(r'([0-9a-f]{14}\.[\d]{8})', group):
+        group_id = group
+        group_name = groups[group]
+    else:
+        group_id = groups.inv[group]
+        group_name = group
 
     if not group:
         results = ''
-        for group, url in get_groups():
-            logging.info('snarfing '+group)
-            group_id = exec_mysql("SELECT idgroups FROM groups WHERE name = '{0}';".format(group))
-            if group_id:
-                group_id = group_id[0][0]
-            else:
+        for group_id, group_name in groups.items():
+            logging.info('snarfing '+group_name)
+            idgroups = exec_mysql("SELECT idgroups FROM groups WHERE url = '{0}';".format(group_id))
+            if not idgroups:
                 sql = '''INSERT INTO `groups`
-                         SET `name`='{0}', url='{1}';'''.format(group, url)
-                         #ON DUPLICATE KEY UPDATE idgroups=LAST_INSERT_ID(idgroups)
+                         SET `name`='{0}', url='{1}';'''.format(group_name, group_id)
                 exec_mysql(sql)
-                group_id = exec_mysql("SELECT idgroups FROM groups WHERE name = '{0}';".format(group))[0][0]
-            results += snarf(group) # getting all recursive and shiz
-        colate_agents()
-        #print(results)
+            results += snarf(group_id) # getting all recursive and shiz
+        colate_agents() # TODO: look into solving #7 in here
         return results
     else:
         added, removed, flagged = [], [], []
-        group_id = exec_mysql("SELECT idgroups FROM groups WHERE name = '{0}';".format(group))[0][0]
-        remaining_roster = [item for sublist in exec_mysql("SELECT idagents FROM membership WHERE idgroups = {0};".format(group_id)) for item in sublist]
-        html = get_html(group)
-        logging.info('mix the soup')
-        soup = BeautifulSoup(html, "html.parser")
-        logging.info("soup's up")
+        idgroups = exec_mysql("SELECT idgroups FROM groups WHERE url = '{0}';".format(group_id))[0][0]
+        remaining_roster = [item for sublist in exec_mysql("SELECT idagents FROM membership WHERE idgroups = {0};".format(idgroups)) for item in sublist]
+        
+        def table():
+            r = s.get(API_url.format(group_id, 'now'), stream=True)
+            for k, v in r.json().items():
+                v['name'] = '@'+k
+                yield cleanup_data(v)
 
-        table = read_table(soup.table)
-        for data in table:
+        for data in table():
             stat = Stat()
             stat.table_load(**data)
             stat.save()
@@ -202,14 +207,14 @@ def snarf(group=None):
 
             sql = '''INSERT INTO `membership`
                      VALUES ('{0}', '{1}')
-                     ON DUPLICATE KEY UPDATE idagents=idagents;'''.format(stat.agent_id, group_id)
+                     ON DUPLICATE KEY UPDATE idagents=idagents;'''.format(stat.agent_id, idgroups)
             exec_mysql(sql)
 
         if remaining_roster:
             remaining_roster = str(tuple(remaining_roster)).replace(',)',')')
             removed = sum(exec_mysql("SELECT name FROM agents WHERE idagents in {};".format(remaining_roster)), ())
             logging.info('Agent(s) removed: %s' % str(removed))
-            exec_mysql("DELETE FROM membership WHERE idagents in {0} and idgroups = {1};".format(remaining_roster, group_id))
+            exec_mysql("DELETE FROM membership WHERE idagents in {0} and idgroups = {1};".format(remaining_roster, idgroups))
 
         output = []
         if added or removed or flagged:
@@ -230,9 +235,8 @@ def snarf(group=None):
 
         return '\n'.join(output) + '\n'
 
-def test():
+def test(group):
     pass
-
 
 def get_badges(data):
     categories = {'explorer': [100, 1000, 2000, 10000, 30000],
