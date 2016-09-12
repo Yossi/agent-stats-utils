@@ -67,40 +67,40 @@ class Stat(object):
         self.agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name))[0][0]
 
     def table_load(self, **row):
-        self.date = parse(row['Last submission']).date() if not row['Last submission'].startswith('0') else '1000/1/1'
-        self.name = row['Agent name']
-        self.faction = row['Faction']
-        self.level = int(row['Level'])
-        self.ap = int(row['ap'])
-        self.explorer = int(row['explorer'])
-        self.seer = int(row['seer'])
-        self.collector = int(row['collector'])
-        self.trekker = int(row['trekker'])
-        self.builder = int(row['builder'])
-        self.connector = int(row['connector'])
-        self.mind_controller = int(row['mind-controller'])
-        self.illuminator = int(row['illuminator'])
-        self.binder = int(row['binder'])
-        self.country_master = int(row['country-master'])
-        self.recharger = int(row['recharger'])
-        self.liberator = int(row['liberator'])
-        self.pioneer = int(row['pioneer'])
-        self.engineer = int(row['engineer'])
-        self.purifier = int(row['purifier'])
-        self.neutralizer = int(row['neutralizer'])
-        self.disruptor = int(row['disruptor'])
-        self.salvator = int(row['salvator'])
-        self.guardian = int(row['guardian'])
-        self.smuggler = int(row['smuggler'])
-        self.link_master = int(row['link-master'])
-        self.controller = int(row['controller'])
-        self.field_master = int(row['field-master'])
-        self.specops = int(row['specops'])
-        self.missionday = int(row['missionday'])
-        self.hacker = int(row['hacker'])
-        self.translator = int(row['translator'])
-        self.sojourner = int(row['sojourner'])
-        self.recruiter = int(row['recruiter'])
+        self.date = parse(row['last_submit']).date()
+        self.name = row['name']
+        self.faction = row['faction']
+        self.level = row['level']
+        self.ap = row['ap']
+        self.explorer = row['explorer']
+        self.seer = row['seer']
+        self.collector = row['collector']
+        self.trekker = row['trekker']
+        self.builder = row['builder']
+        self.connector = row['connector']
+        self.mind_controller = row['mind-controller']
+        self.illuminator = row['illuminator']
+        self.binder = row['binder']
+        self.country_master = row['country-master']
+        self.recharger = row['recharger']
+        self.liberator = row['liberator']
+        self.pioneer = row['pioneer']
+        self.engineer = row['engineer']
+        self.purifier = row['purifier']
+        self.neutralizer = row['neutralizer']
+        self.disruptor = row['disruptor']
+        self.salvator = row['salvator']
+        self.guardian = row['guardian']
+        self.smuggler = row['smuggler']
+        self.link_master = row['link-master']
+        self.controller = row['controller']
+        self.field_master = row['field-master']
+        self.specops = row['specops']
+        self.missionday = row['missionday']
+        self.hacker = row['hacker']
+        self.translator = row['translator']
+        self.sojourner = row['sojourner']
+        self.recruiter = row['recruiter']
 
         agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name))
         if agent_id:

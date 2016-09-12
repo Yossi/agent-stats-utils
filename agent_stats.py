@@ -5,34 +5,34 @@ from pprint import pprint
 import argparse
 import datetime
 import logging
+import re
 from collections import OrderedDict, namedtuple
 
+import requests
 from num2words import num2words
 from bs4 import BeautifulSoup
 from dateutil.parser import parse
+from bidict import bidict
+from functools import lru_cache
 
+from Stat import Stat
 from util import mail, get_html
 
 from util import exec_mysql, cm
-from secrets import dbhost, db, dbuser, dbpasswd
+from secrets import dbhost, db, dbuser, dbpasswd, api_key
 
 cm.set_credentials({'host': dbhost, 'db': db, 'user': dbuser, 'passwd': dbpasswd})
 
 logging.basicConfig(level=logging.INFO,
                     format="%(asctime)s %(message)s",
                     datefmt="%H:%M:%S")
+logging.getLogger("requests").setLevel(logging.WARNING)
 
-from Stat import Stat
+s = requests.Session()
+s.headers.update({'AS-Key': api_key})
+API_url = 'https://api.agent-stats.com/groups/{}/{}'
 
-
-
-today = datetime.date.today()
-sojourner_start = datetime.date(2015, 3, 5)
-game_start = datetime.date(2012, 11, 15)
-
-
-
-def get_stats(group, time_span='current', number=10):
+def get_stats(group_id, time_span='now', number=10):
     definitions = {'explorer': '_(New Portals Visited)_',
                    'seer': '_(Portals Discovered)_',
                    'trekker': '_(Distance Walked)_',
@@ -63,14 +63,12 @@ def get_stats(group, time_span='current', number=10):
                    'controller': '_(Max Time Field Held)_',
                    'field-master': '_(Largest Field MUs × Days)_'}
 
-    time_span = {'all time': 'current',
-                 'monthly': 'last month',
-                 'weekly': 'last week'}.get(time_span, time_span)
+    time_span = {'all time': 'now',
+                 'monthly': 'month',
+                 'weekly': 'week'}.get(time_span, time_span)
     output = []
-    html = get_html(scoreboard=group, time_span=time_span)
-    soup = BeautifulSoup(html, "html.parser")
-    table = soup.table
-    data = list(read_table(table))
+    logging.info('read table: group {}, span {}'.format(groups()[group_id], time_span))
+    data = list(read_table(group_id, time_span))
     categories = ('ap', 'explorer', 'trekker', 'builder', 'connector',
                   'mind-controller', 'illuminator', 'recharger', 'liberator',
                   'pioneer', 'engineer', 'purifier', 'hacker', 'translator',
@@ -85,7 +83,7 @@ def get_stats(group, time_span='current', number=10):
         for i, line in enumerate(top_list):
             if i > number-1 and int(line[category]) != temp:# or int(line[category]) == 0: # the 0s get filtered out on that inscrutable line above
                 break
-            output.append('{}  {:,}'.format(line['Agent name'], int(line[category])))
+            output.append('{}  {:,}'.format(line['name'], int(line[category])))
             temp = int(line[category])
         if not i:
             output.pop()
@@ -93,36 +91,38 @@ def get_stats(group, time_span='current', number=10):
     return '\n'.join(output)
 
 def cleanup_data(data):
+    last_submit = data['last_submit']
     for k, v in data.items():
-        data[k] = v.replace(',','').replace('-','0')
-    data['Last submission'] = parse(data['Last submission'].replace('\u200b', '')).strftime("%Y-%m-%d") if not data['Last submission'].startswith('0') else '1000/1/1'
-    data['Agent name'] = data['Agent name'].strip()[:16]
+        if v == '-':
+            data[k] = 0
+    data['last_submit'] = last_submit
     return data
 
-def read_table(table):
-    logging.info('read table')
-    rows = table.find_all('tr')
-
-    headers = [cell.text.replace('↓', '') for cell in rows[0].find_all('td')]
-    headers[0] = 'Faction'
-
+def read_table(group_id, time_span):
     count = 0
-    for row in rows[1:]:
+    r = s.get(API_url.format(group_id, time_span), stream=True)
+    for agent, data in r.json().items():
+        data['name'] = '@'+agent
         count += 1
-        cells = row.find_all('td')
-
-        d = [cell.text for cell in cells]
-        try: d[0] = cells[1]['class'][0]
-        except KeyError: d[0] = 'nul'
-
-        data = dict(zip(headers, d))
-
         yield cleanup_data(data)
     logging.info('%s rows' % count)
 
-def get_groups():
-    soup = BeautifulSoup(get_html(), "html.parser")
-    return [(li.find('a').text, li.find('a').get('href')[18:]) for li in soup.find_all('ul')[1].find_all('li')[2:]]
+@lru_cache(maxsize=None)
+def groups():
+    r = s.get('https://api.agent-stats.com/groups')
+    return bidict([(g['groupid'], g['groupname']) for g in r.json() if '.' in g['groupid']])
+
+def get_groups(group=None):
+    if group in ('smurfs', 'frogs', 'all', None):
+        group_id, group_name = None, None
+    elif re.fullmatch(r'([0-9a-f]{14}\.[\d]{8})', group):
+        group_id = group
+        group_name = groups()[group]
+    else:
+        group_id = groups().inv[group]
+        group_name = group
+        
+    return group_id, group_name
 
 def new_badges(old_data, new_data):
     ranks = ['Locked', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Onyx']
@@ -140,7 +140,6 @@ def englishify(new_badges):
     data = [badge.upper()+' ' + ", ".join(ranks[:-2] + [" and ".join(ranks[-2:])]) for badge, ranks in new_badges.items()]
     return ", ".join(data[:-2] + [" and ".join(data[-2:])])
 
-
 def colate_agents():
     logging.info('colate agents')
     general_groups = dict(exec_mysql("SELECT name, idgroups FROM groups WHERE name IN ('smurfs', 'frogs', 'all');"))
@@ -157,37 +156,27 @@ def colate_agents():
         exec_mysql(sql)
 
 def snarf(group=None):
-    if group in ('smurfs', 'frogs', 'all'):
-        group = None
+    group_id, group_name = get_groups(group)
 
-    if not group:
+    if not group_id:
         results = ''
-        for group, url in get_groups():
-            logging.info('snarfing '+group)
-            group_id = exec_mysql("SELECT idgroups FROM groups WHERE name = '{0}';".format(group))
-            if group_id:
-                group_id = group_id[0][0]
-            else:
+        for group_id, group_name in groups.items():
+            logging.info('snarfing '+group_name)
+            idgroups = exec_mysql("SELECT idgroups FROM groups WHERE url = '{0}';".format(group_id))
+            if not idgroups:
                 sql = '''INSERT INTO `groups`
-                         SET `name`='{0}', url='{1}';'''.format(group, url)
-                         #ON DUPLICATE KEY UPDATE idgroups=LAST_INSERT_ID(idgroups)
+                         SET `name`='{0}', url='{1}';'''.format(group_name, group_id)
                 exec_mysql(sql)
-                group_id = exec_mysql("SELECT idgroups FROM groups WHERE name = '{0}';".format(group))[0][0]
-            results += snarf(group) # getting all recursive and shiz
-        colate_agents()
-        #print(results)
+            results += snarf(group_id) # getting all recursive and shiz
+        colate_agents() # TODO: look into solving #7 in here
         return results
     else:
         added, removed, flagged = [], [], []
-        group_id = exec_mysql("SELECT idgroups FROM groups WHERE name = '{0}';".format(group))[0][0]
-        remaining_roster = [item for sublist in exec_mysql("SELECT idagents FROM membership WHERE idgroups = {0};".format(group_id)) for item in sublist]
-        html = get_html(group)
-        logging.info('mix the soup')
-        soup = BeautifulSoup(html, "html.parser")
-        logging.info("soup's up")
+        idgroups = exec_mysql("SELECT idgroups FROM groups WHERE url = '{0}';".format(group_id))[0][0]
+        remaining_roster = [item for sublist in exec_mysql("SELECT idagents FROM membership WHERE idgroups = {0};".format(idgroups)) for item in sublist]
 
-        table = read_table(soup.table)
-        for data in table:
+        logging.info('read table: group {}, span {}'.format(group_name, 'now'))
+        for data in read_table(group_id, 'now'):
             stat = Stat()
             stat.table_load(**data)
             stat.save()
@@ -202,18 +191,18 @@ def snarf(group=None):
 
             sql = '''INSERT INTO `membership`
                      VALUES ('{0}', '{1}')
-                     ON DUPLICATE KEY UPDATE idagents=idagents;'''.format(stat.agent_id, group_id)
+                     ON DUPLICATE KEY UPDATE idagents=idagents;'''.format(stat.agent_id, idgroups)
             exec_mysql(sql)
 
         if remaining_roster:
             remaining_roster = str(tuple(remaining_roster)).replace(',)',')')
             removed = sum(exec_mysql("SELECT name FROM agents WHERE idagents in {};".format(remaining_roster)), ())
             logging.info('Agent(s) removed: %s' % str(removed))
-            exec_mysql("DELETE FROM membership WHERE idagents in {0} and idgroups = {1};".format(remaining_roster, group_id))
+            exec_mysql("DELETE FROM membership WHERE idagents in {0} and idgroups = {1};".format(remaining_roster, idgroups))
 
         output = []
         if added or removed or flagged:
-            output.append(group+':')
+            output.append(group_name+':')
             if added:
                 output.append('  Added:')
                 output.append('    '+'\n    '.join(added))
@@ -230,9 +219,8 @@ def snarf(group=None):
 
         return '\n'.join(output) + '\n'
 
-def test():
+def test(group):
     pass
-
 
 def get_badges(data):
     categories = {'explorer': [100, 1000, 2000, 10000, 30000],
@@ -269,8 +257,8 @@ def get_badges(data):
         result[category] = current
     return result
 
-def summary(group='all', days=7):
-    snarf(group)
+def summary(group_id='all', days=7):
+    snarf(group_id)
 
     headers = ('explorer',
                'seer',
@@ -300,12 +288,12 @@ def summary(group='all', days=7):
                         WHERE a.idagents = s.idagents AND
                               s.idagents = m.idagents AND
                               m.idgroups = g.idgroups AND
-                              g.`name` = '{}' AND
+                              g.`url` = '{}' AND
                               s.flag != 1 AND
                               date < ( CURDATE() - INTERVAL {} DAY )
                         GROUP BY id ) x 
                     JOIN stats s ON x.id = s.idagents AND x.date = s.date
-                 '''.format(group, days)
+                 '''.format(group_id, days)
 
     baseline = {}
     for row in exec_mysql(sql_before):
@@ -322,12 +310,12 @@ def summary(group='all', days=7):
                         WHERE a.idagents = s.idagents AND
                               s.idagents = m.idagents AND
                               m.idgroups = g.idgroups AND
-                              g.`name` = '{}' AND
+                              g.`url` = '{}' AND
                               s.flag != 1 AND
                               date >= ( CURDATE() - INTERVAL {} DAY )
                         GROUP BY id ) x 
                     JOIN stats s ON x.id = s.idagents AND x.date = s.date
-              '''.format(group, days)
+              '''.format(group_id, days)
     output = []
     footnote = ''
     for row in exec_mysql(sql_now):
@@ -379,21 +367,23 @@ you see this (right now) and then again right before you see this next week (jus
 your stats late Sunday night / early Monday morning when you are done for the night). 
 It’s also a good idea to upload your stats every night.'''
 def weekly_roundup(group):
-    if not group: return 'please specify group'
+    group_id, group_name = get_groups(group)
+    if not group_id: return 'please specify group'
     output = []
     logging.info('starting weekly roundup')
     start = datetime.datetime.now()
-    output.append(group)
-    output.append('*Top %s for the week of %s*' % (num2words(args.number).title(), (start - datetime.timedelta(days=7)).date().strftime("%m/%d")))
+    output.append(group_name)
     logging.info('getting weekly top lists')
-    output.append(get_stats(group, 'weekly', args.number))
+    charts = get_stats(group_id, 'weekly', args.number)
+    output.append('*Top %s for the week of %s*' % (num2words(args.number).title(), (start - datetime.timedelta(days=7)).date().strftime("%m/%d")))
+    output.append(charts)
     output.append('')
     output.append('Recent badge dings:')
     output.append('')
     logging.info('getting badge dings')
-    output.append(summary(group, 7))
+    output.append(summary(group_id, 7))
     output.append('')
-    output.append(weekly_template.format(exec_mysql('SELECT url FROM groups WHERE name = "{}"'.format(group))[0][0]).replace('\n', ''))
+    output.append(weekly_template.format(group_id).replace('\n', ''))
     end = datetime.datetime.now()
     output.append('')
     output.append('_Job started on {} and ran for {}_'.format(start, end-start))
@@ -407,21 +397,23 @@ you see this (right now) and then again right before you see this next month (ju
 your stats late on the night / early morning before the 1st of the month when you are done for the night). 
 It’s also a good idea to upload your stats every night.'''
 def monthly_roundup(group):
-    if not group: return 'please specify group'
+    group_id, group_name = get_groups(group)
+    if not group_id: return 'please specify group'
     output = []
     logging.info('starting monthly roundup')
     start = datetime.datetime.now()
-    output.append(group)
-    output.append('*Top %s for the month of %s*' % (num2words(args.number).title(), (start - datetime.timedelta(days=7)).date().strftime("%B")))
+    output.append(group_name)
     logging.info('getting monthly top lists')
-    output.append(get_stats(group, 'monthly', args.number))
+    charts = get_stats(group_id, 'monthly', args.number)
+    output.append('*Top %s for the month of %s*' % (num2words(args.number).title(), (start - datetime.timedelta(days=7)).date().strftime("%B")))
+    output.append(charts)
     output.append('')
     output.append('Recent badge dings:')
     output.append('')
     logging.info('getting badge dings')
-    output.append(summary(group, 30))
+    output.append(summary(group_id, 30))
     output.append('')
-    output.append(monthly_template.format(exec_mysql('SELECT url FROM groups WHERE name = "{}"'.format(group))[0][0]).replace('\n', ''))
+    output.append(monthly_template.format(group_id).replace('\n', ''))
     end = datetime.datetime.now()
     output.append('')
     output.append('_Job started on {} and ran for {}_'.format(start, end-start))
