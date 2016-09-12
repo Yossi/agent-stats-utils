@@ -9,6 +9,7 @@ Handy utilities for managing an ingress agent-stats group.
   * mysql server
 
 Clone this repo.  
+(Optional. phantomjs is only needed if you are monitoring for pending agents)  
 Get phantomjs https://bitbucket.org/ariya/phantomjs/downloads the 2.0 version is
 a steaming pile of crap, get the 1.9.8 version. Throw it in the same dir as the 
 other checked out files, or change the code in util.py that looks like this
@@ -16,10 +17,10 @@ other checked out files, or change the code in util.py that looks like this
     driver = webdriver.PhantomJS('./phantomjs', service_args=['--cookies-file=cookies.txt'])
 ```
 to point to the path where you installed phantomjs.  
-Create database from schema.sql (This is destructive to existing tables. Do not 
-run on an existing setup with data you dont want to lose.)  
+Create database from schema.sql (This is destructive to existing tables. Do NOT 
+run on an existing setup with data you don't want to lose.)  
 Copy secrets.py.example to secrets.py and change the settings and credentials in 
-there to real values.  
+there to real values. Get yourself an API key and put it in secrets.py .  
 Then create a virtualenv, activate it and install the requirements:
 ```
 virtualenv -p /usr/bin/python3 venv
@@ -31,7 +32,20 @@ pip install -r requirements.txt
 ```
 python agent_stats.py snarf
 ```
-First time this is run it will ask you to log in to your google account.
+
+You can operate on a group with the -g option (group names are case sensitive).
+If -g is left out, it will either do all groups or error out. Whatever works.
+Any command that has text output can have that output redirected to email with
+the -m option. If you are redirecting to email, you can set a custom subject
+with -s. Default subject is the command name + the group name.
+
+Sometimes you find yourself needing to change how many ranks make it into the charts.
+By default this is 10 but you can change it to whatever with the -n option.
+
+Once you get a feel for what this script does, you may want to set it up to run with
+crontab, or something similar.
+
+First time phantomjs is run (only needed for check_for_applicants now) it will ask you to log in to your google account.
 The script just takes what you enter and passes it to phantomjs where a google
 login page is open (headless). It also stores a cookie so you don't have to
 login every time.
@@ -42,20 +56,6 @@ VERY IMPORTANT!
  
  If you suspect your cookie file has leaked, you need to hop into gmail and force
  sign out all your other sessions.
-
-You can operate on a group with the -g option (group names are case sensitive).
-If -g is left out, it will either do all groups or error out. Whatever works.
-Any command that has text output can have that output redirected to email with
-the -m option. If you are redirecting to email, you can set a custom subject
-with -s. Default subject is the command name + the group name.
-
-Sometimes you find yourself needing to change how many ranks make it into the charts.
-By default this is 10 but you can change it to whatever with the -n option.
-Note that this does not change any of the places where it says "Top ten" whatever.
-Only use in special cases.
-
-Once you get a feel for what this script does, you may want to set it up to run with
-crontab, or something similar.
 
 ## Features
 ###snarf
@@ -82,10 +82,15 @@ old. Searches across all groups, unless passed a specific group.
 
 ###weekly/monthly
 This is the main reason all this was written. Grabs the weekly (or monthly) page
-for your group and extracts the top 10 agents for each category. Ties for 10th
+for your group and extracts the top *N* agents for each category. Ties for *N*th
 place are all included. 
 Also includes a ding summary for the week or month (see above: summary). 
 Formats everything with G+ markup so it looks decent when you post to G+.
+
+###update_group_names
+Comapres the group names from the database to the names online. If a name has 
+changed, you are offered the opportunity to update it. You will need to update 
+the names in crontab manually after you update the database names.
 
 ## Stat validation
 Often stats get screwed up. Usually because agent-stats.com botched the OCR.
