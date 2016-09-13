@@ -165,12 +165,12 @@ def snarf(group=None):
                          SET `name`='{}', url='{}';'''.format(group_name, group_id)
                 exec_mysql(sql)
             results += snarf(group_id) # getting all recursive and shiz
-        colate_agents() # TODO: look into solving #7 in here
+        colate_agents()
         return results
     else:
-        added, removed, flagged = [], [], []
+        added, removed, flagged, flipped = [], [], [], []
         idgroups = exec_mysql("SELECT idgroups FROM groups WHERE url = '{}';".format(group_id))[0][0]
-        remaining_roster = [item for sublist in exec_mysql("SELECT idagents FROM membership WHERE idgroups = {};".format(idgroups)) for item in sublist]
+        remaining_roster = [item for sublist in exec_mysql("SELECT idagents FROM membership WHERE idgroups = {};".format(idgroups)) for item in sublist] # get the class attendance sheet
 
         logging.info('read table: group {}, span now'.format(group_name))
         for data in read_table(group_id, 'now'):
@@ -181,25 +181,33 @@ def snarf(group=None):
                 flagged.append((stat.date, stat.name, stat.reasons))
 
             try:
-                remaining_roster.remove(stat.agent_id)
+                remaining_roster.remove(stat.agent_id) # take attendance
             except ValueError:
-                logging.info('Agent added: {}'.format(stat.name))
-                added.append(stat.name)
+                logging.info('Agent added: {} {}'.format(stat.faction.upper(), stat.name)) # new kid
+                added.append(stat.faction.upper() + ' ' + stat.name)
 
             sql = '''INSERT INTO `membership`
                      VALUES ('{}', '{}')
                      ON DUPLICATE KEY UPDATE idagents=idagents;'''.format(stat.agent_id, idgroups)
             exec_mysql(sql)
+            
+            if stat.faction != exec_mysql('SELECT faction FROM agents WHERE `name` = "{}";'.format(stat.name))[0][0]:
+                flipped.append('{} -> {}'.format(stat.name, stat.faction))
+                exec_mysql('UPDATE agents SET faction="{}" WHERE `name`="{}";'.format(stat.faction, stat.name))
 
         if remaining_roster:
-            remaining_roster = str(tuple(remaining_roster)).replace(',)',')')
+            remaining_roster = str(tuple(remaining_roster)).replace(',)',')') # absentees
             removed = sum(exec_mysql("SELECT name FROM agents WHERE idagents in {};".format(remaining_roster)), ())
             logging.info('Agent(s) removed: %s' % str(removed))
             exec_mysql("DELETE FROM membership WHERE idagents in {} and idgroups = {};".format(remaining_roster, idgroups))
 
         output = []
-        if added or removed or flagged:
+        if added or removed or flagged or flipped:
             output.append(group_name+':')
+            if flipped:
+                output.append('  Flipped:')
+                output.append('    '+'\n    '.join(flipped))
+
             if added:
                 output.append('  Added:')
                 output.append('    '+'\n    '.join(added))
@@ -441,9 +449,8 @@ def update_group_names(group):
         if web[gid] != db[gid]:
             allgood = False
             print('{} was named "{}" is now "{}"'.format(gid, db[gid], web[gid]))
-            if input('Update the db? (y/N) ').lower().startswith('y'):
+            if input('Update the database? (y/N) ').lower().startswith('y'):
                 exec_mysql('UPDATE groups SET `name`="{}" WHERE url="{}" AND `name`="{}"; '.format(web[gid], gid, db[gid]))
-
     if allgood:
         print('\nAll group names match\n')
 
