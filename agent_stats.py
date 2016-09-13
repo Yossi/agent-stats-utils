@@ -143,12 +143,12 @@ def colate_agents():
     for agent_id, name, faction in exec_mysql('select idagents, name, faction from agents;'):
         faction = 'frogs' if faction == 'enl' else 'smurfs'
         sql = '''INSERT INTO `membership`
-                 VALUES ('{0}', '{1}')
+                 VALUES ('{}', '{}')
                  ON DUPLICATE KEY UPDATE idagents=idagents;'''.format(agent_id, general_groups['all'])
         exec_mysql(sql)
 
         sql = '''INSERT INTO `membership`
-                 VALUES ('{0}', '{1}')
+                 VALUES ('{}', '{}')
                  ON DUPLICATE KEY UPDATE idagents=idagents;'''.format(agent_id, general_groups[faction])
         exec_mysql(sql)
 
@@ -159,20 +159,20 @@ def snarf(group=None):
         results = ''
         for group_id, group_name in groups().items():
             logging.info('snarfing '+group_name)
-            idgroups = exec_mysql("SELECT idgroups FROM groups WHERE url = '{0}';".format(group_id))
+            idgroups = exec_mysql("SELECT idgroups FROM groups WHERE url = '{}';".format(group_id))
             if not idgroups:
                 sql = '''INSERT INTO `groups`
-                         SET `name`='{0}', url='{1}';'''.format(group_name, group_id)
+                         SET `name`='{}', url='{}';'''.format(group_name, group_id)
                 exec_mysql(sql)
             results += snarf(group_id) # getting all recursive and shiz
         colate_agents() # TODO: look into solving #7 in here
         return results
     else:
         added, removed, flagged = [], [], []
-        idgroups = exec_mysql("SELECT idgroups FROM groups WHERE url = '{0}';".format(group_id))[0][0]
-        remaining_roster = [item for sublist in exec_mysql("SELECT idagents FROM membership WHERE idgroups = {0};".format(idgroups)) for item in sublist]
+        idgroups = exec_mysql("SELECT idgroups FROM groups WHERE url = '{}';".format(group_id))[0][0]
+        remaining_roster = [item for sublist in exec_mysql("SELECT idagents FROM membership WHERE idgroups = {};".format(idgroups)) for item in sublist]
 
-        logging.info('read table: group {}, span {}'.format(group_name, 'now'))
+        logging.info('read table: group {}, span now'.format(group_name))
         for data in read_table(group_id, 'now'):
             stat = Stat()
             stat.table_load(**data)
@@ -183,11 +183,11 @@ def snarf(group=None):
             try:
                 remaining_roster.remove(stat.agent_id)
             except ValueError:
-                logging.info('Agent added: {0}'.format(stat.name))
+                logging.info('Agent added: {}'.format(stat.name))
                 added.append(stat.name)
 
             sql = '''INSERT INTO `membership`
-                     VALUES ('{0}', '{1}')
+                     VALUES ('{}', '{}')
                      ON DUPLICATE KEY UPDATE idagents=idagents;'''.format(stat.agent_id, idgroups)
             exec_mysql(sql)
 
@@ -195,7 +195,7 @@ def snarf(group=None):
             remaining_roster = str(tuple(remaining_roster)).replace(',)',')')
             removed = sum(exec_mysql("SELECT name FROM agents WHERE idagents in {};".format(remaining_roster)), ())
             logging.info('Agent(s) removed: %s' % str(removed))
-            exec_mysql("DELETE FROM membership WHERE idagents in {0} and idgroups = {1};".format(remaining_roster, idgroups))
+            exec_mysql("DELETE FROM membership WHERE idagents in {} and idgroups = {};".format(remaining_roster, idgroups))
 
         output = []
         if added or removed or flagged:
@@ -211,7 +211,7 @@ def snarf(group=None):
             if flagged:
                 output.append('  Flagged:')
                 for flagged_agent in flagged:
-                    output.append('    {0} {1}'.format(*flagged_agent))
+                    output.append('    {} {}'.format(*flagged_agent))
                     output.append('      '+'\n      '.join(flagged_agent[2]))
 
         return '\n'.join(output) + '\n'
@@ -348,9 +348,9 @@ def summary(group='all', days=7):
                     footnote = '¹Start date more than 2 %s ago' % ('weeks' if days == 7 else 'months',)
 
                 if date_new - date_old > datetime.timedelta(days=365): # close enough. no one cares about leap years
-                    template = '*{0}* earned {1} sometime between {old.month}/{old.day}/{old.year}{2} and {new.month}/{new.day}/{new.year}'
+                    template = '*{}* earned {} sometime between {old.month}/{old.day}/{old.year}{} and {new.month}/{new.day}/{new.year}'
                 else:
-                    template = '*{0}* earned {1} sometime between {old.month}/{old.day}{2} and {new.month}/{new.day}'
+                    template = '*{}* earned {} sometime between {old.month}/{old.day}{} and {new.month}/{new.day}'
 
                 output.append(template.format(agent, earnings, note, old=date_old, new=date_new))
     output = sorted(output, key=lambda s: s.lower())
