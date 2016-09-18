@@ -8,7 +8,7 @@ import re
 from collections import OrderedDict, namedtuple
 
 import requests
-from num2words import num2words
+from num2words import num2words as n2w
 from bs4 import BeautifulSoup
 from functools import lru_cache
 
@@ -29,7 +29,12 @@ s = requests.Session()
 s.headers.update({'AS-Key': api_key})
 API_url = 'https://api.agent-stats.com/groups/{}/{}'
 
-def get_stats(group_id, time_span='now', number=10):
+def num2words(n):
+    if n < 10:
+        return n2w(n).title()
+    return n
+
+def get_stats(group_id, time_span='now', number=10, submitters=[0]):
     definitions = {'explorer': '_(New Portals Visited)_',
                    'seer': '_(Portals Discovered)_',
                    'trekker': '_(Distance Walked)_',
@@ -71,11 +76,11 @@ def get_stats(group_id, time_span='now', number=10):
                   'pioneer', 'engineer', 'purifier', 'hacker', 'translator',
                   'specops', 'seer', 'collector', 'neutralizer', 'disruptor',
                   'salvator')
-    submitters = 0
+    submitters[0] = 0
     for category in categories:
         output.append('\n*Top %s* %s' % (category.title(), definitions.get(category.lower(), '')))
         top_list = sorted((line for line in data if int(line[category])), key=lambda k: int(k[category]), reverse=True)
-        submitters = max(submitters, len(top_list))
+        submitters[0] = max(submitters[0], len(top_list))
         i = 0
         for i, line in enumerate(top_list):
             if i > number-1 and int(line[category]) != temp:# or int(line[category]) == 0: # the 0s get filtered out on that inscrutable line above
@@ -84,7 +89,6 @@ def get_stats(group_id, time_span='now', number=10):
             temp = int(line[category])
         if not i:
             output.pop()
-    #print(submitters) # submitters now contains the info we're after but the manner of disseminating it is still undecided
     return '\n'.join(output)
 
 def cleanup_data(data):
@@ -378,12 +382,13 @@ def weekly_roundup(group):
     group_id, group_name = get_groups(group)
     if not group_id: return 'please specify group'
     output = []
+    submitters = [0]
     logging.info('starting weekly roundup')
     start = datetime.datetime.now()
     output.append(group_name)
     logging.info('getting weekly top lists')
-    charts = get_stats(group_id, 'weekly', args.number)
-    output.append('*Top %s for the week of %s*' % (num2words(args.number).title(), (start - datetime.timedelta(days=7)).date().strftime("%m/%d")))
+    charts = get_stats(group_id, 'weekly', args.number, submitters)
+    output.append('*Top %s (of %s reporting) for the week of %s*' % (num2words(min(args.number, submitters[0])), num2words(submitters[0]), (start - datetime.timedelta(days=7)).date().strftime("%m/%d")))
     output.append(charts)
     output.append('')
     output.append('Recent badge dings:')
@@ -408,12 +413,13 @@ def monthly_roundup(group):
     group_id, group_name = get_groups(group)
     if not group_id: return 'please specify group'
     output = []
+    submitters = [0]
     logging.info('starting monthly roundup')
     start = datetime.datetime.now()
     output.append(group_name)
     logging.info('getting monthly top lists')
-    charts = get_stats(group_id, 'monthly', args.number)
-    output.append('*Top %s for the month of %s*' % (num2words(args.number).title(), (start - datetime.timedelta(days=7)).date().strftime("%B")))
+    charts = get_stats(group_id, 'monthly', args.number, submitters)
+    output.append('*Top %s (of %s reporting) for the month of %s*' % (num2words(min(args.number, submitters[0])), num2words(submitters[0]), (start - datetime.timedelta(days=7)).date().strftime("%B")))
     output.append(charts)
     output.append('')
     output.append('Recent badge dings:')
