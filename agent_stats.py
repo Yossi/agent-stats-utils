@@ -129,10 +129,12 @@ def new_badges(old_data, new_data):
     ranks = ['Locked', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Onyx']
     result = {}
     for category, old_rank in old_data.items():
-        if old_rank != new_data[category]:
+        new_rank = new_data[category]
+        if old_rank != new_rank: # still detect changes in Onyx multiples
+            old_rank = old_rank.split()[-1]
             try:
-                if ranks.index(old_rank)+1 < ranks.index(new_data[category])+1:
-                    result[category] = ranks[ranks.index(old_rank)+1:ranks.index(new_data[category])+1]
+                if ranks.index(old_rank) < ranks.index(new_rank): # if new_rank has a multiplier on it .index() will fail with ValueError
+                    result[category] = ranks[ranks.index(old_rank)+1:ranks.index(new_rank)+1]
             except ValueError:
                 result[category] = [new_data[category]]
     return result
