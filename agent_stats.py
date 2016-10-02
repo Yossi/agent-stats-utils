@@ -371,7 +371,7 @@ def summary(group='all', days=7):
         output.append(footnote)
     return '\n'.join(output)
 
-weekly_template = '''Great work agents!! If you would like to be included in future top ten lists please 
+weekly_template = '''Great work agents!! If you would like to be included in future top {} lists please 
 join our agent-stats group https://www.agent-stats.com/groups.php?group={} . 
 Don’t know what agent-stats is? See here: https://www.agent-stats.com/manual.php . 
 To have your stats show up you need to upload your stats at least right after 
@@ -396,13 +396,13 @@ def weekly_roundup(group):
     logging.info('getting badge dings')
     output.append(summary(group_id, 7))
     output.append('')
-    output.append(weekly_template.format(group_id).replace('\n', ''))
+    output.append(weekly_template.format(num2words(args.number).lower(), group_id).replace('\n', ''))
     end = datetime.datetime.now()
     output.append('')
     output.append('_Job started on {} and ran for {}_'.format(start, end-start))
     return '\n'.join(output)
 
-monthly_template = '''Great work agents!! If you would like to be included in future top ten lists please 
+monthly_template = '''Great work agents!! If you would like to be included in future top {} lists please 
 join our agent-stats group https://www.agent-stats.com/groups.php?group={} . 
 Don’t know what agent-stats is? See here: https://www.agent-stats.com/manual.php . 
 To have your stats show up you need to upload your stats at least right after 
@@ -427,7 +427,7 @@ def monthly_roundup(group):
     logging.info('getting badge dings')
     output.append(summary(group_id, 30))
     output.append('')
-    output.append(monthly_template.format(group_id).replace('\n', ''))
+    output.append(monthly_template.format(num2words(args.number).lower(), group_id).replace('\n', ''))
     end = datetime.datetime.now()
     output.append('')
     output.append('_Job started on {} and ran for {}_'.format(start, end-start))
