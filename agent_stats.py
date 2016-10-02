@@ -32,7 +32,7 @@ API_url = 'https://api.agent-stats.com/groups/{}/{}'
 def num2words(n):
     if n < 10:
         return n2w(n).title()
-    return n
+    return str(n)
 
 def get_stats(group_id, time_span='now', number=10, submitters=[0]):
     definitions = {'explorer': '_(New Portals Visited)_',
