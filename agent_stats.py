@@ -200,7 +200,7 @@ def snarf(group=None):
             if stat.faction != exec_mysql('SELECT faction FROM agents WHERE `name` = "{}";'.format(stat.name))[0][0]:
                 logging.info('Agent flipped: {} -> {}'.format(stat.name, stat.faction.upper()))
                 flipped.append('{} -> {}'.format(stat.name, stat.faction))
-                exec_mysql('UPDATE agents SET faction="{}" WHERE `name`="{}";'.format(stat.faction.upper(), stat.name))
+                exec_mysql('UPDATE agents SET faction="{}" WHERE `name`="{}";'.format(stat.faction, stat.name))
 
         if remaining_roster:
             remaining_roster = str(tuple(remaining_roster)).replace(',)',')') # absentees
