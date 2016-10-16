@@ -91,6 +91,7 @@ from time import sleep
 import getpass
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
+from selenium.common.exceptions import InvalidElementStateException
 
 def get_html(scoreboard=None, time_span='current'):
     logging.info("get_html({}, {})".format(scoreboard, time_span))
@@ -106,10 +107,13 @@ def get_html(scoreboard=None, time_span='current'):
         if 'Sign in with your Google Account' in driver.find_element_by_tag_name("BODY").text:
             print('Sign in with your Google Account')
             print('If you do this wrong, shit will explode (or not work)')
-            driver.find_element_by_id("Email").clear()
-            driver.find_element_by_id("Email").send_keys(input('Email: '))
-            driver.find_element_by_id("next").click()
-            sleep(1)
+            try:
+                driver.find_element_by_id("Email").clear()
+                driver.find_element_by_id("Email").send_keys(input('Email: '))
+                driver.find_element_by_id("next").click()
+                sleep(1)
+            except InvalidElementStateException:
+                pass
             driver.find_element_by_id("Passwd").clear()
             driver.find_element_by_id("Passwd").send_keys(getpass.getpass())
             driver.find_element_by_id("signIn").click()
