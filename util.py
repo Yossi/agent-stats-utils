@@ -50,11 +50,10 @@ def exec_mysql(sql, retries=2):
             return exec_mysql(sql, retries-1)
         else:
             raise
-            
+
     except:
         logging.error(sql)
         raise
-    
 
 
 #######
@@ -87,6 +86,7 @@ def mail(to, subject, text):
 
 #######
 
+
 from time import sleep
 import getpass
 from selenium import webdriver
@@ -95,7 +95,7 @@ from selenium.common.exceptions import InvalidElementStateException
 
 def get_html(scoreboard=None, time_span='current'):
     logging.info("get_html({}, {})".format(scoreboard, time_span))
-    
+
     driver = webdriver.PhantomJS('./phantomjs', service_args=['--cookies-file=cookies.txt'])
     logging.info('driver created')
 
@@ -103,7 +103,7 @@ def get_html(scoreboard=None, time_span='current'):
         driver.set_window_size(1024, 768)
         driver.get('https://www.agent-stats.com/groups.php')
         logging.info('url loaded')
-        
+
         if 'Sign in with your Google Account' in driver.find_element_by_tag_name("BODY").text:
             print('Sign in with your Google Account')
             print('If you do this wrong, shit will explode (or not work)')
@@ -117,28 +117,29 @@ def get_html(scoreboard=None, time_span='current'):
             driver.find_element_by_id("Passwd").clear()
             driver.find_element_by_id("Passwd").send_keys(getpass.getpass())
             driver.find_element_by_id("signIn").click()
-            
+
             if '2-Step Verification' in driver.find_element_by_tag_name("BODY").text:
                 driver.find_element_by_id("totpPin").clear()
                 driver.find_element_by_id("totpPin").send_keys(input('Enter your 2FA code: '))
                 #driver.find_element_by_id("trustDevice").click()
                 driver.find_element_by_id("submit").click()
 
-        driver.get('https://www.agent-stats.com/groups.php') # hacky fix because the new owners redirect to the main page on first visit
-        
+        # hacky fix because the new owners redirect to the main page on first visit (might not be needed anymore)
+        driver.get('https://www.agent-stats.com/groups.php')
+
         #logging.info('saving screenshot')
         #driver.save_screenshot('../www/selenium.png')
         #logging.info('screenshot saved to http://yossi.no-ip.org/selenium.png')
-        
+
         if scoreboard:
             driver.find_element_by_link_text(scoreboard).click()
             Select(driver.find_element_by_name("type")).select_by_visible_text(time_span)
             driver.find_element_by_name("additional").click()
 
         html = driver.page_source
-        
+
     finally:
         driver.quit()
-    
+
     logging.info('html acquired')
     return html
