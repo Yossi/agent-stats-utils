@@ -1,12 +1,15 @@
 secrets.py
 venv/
 winvenv/
-cookies.txt
+cookies.txt*
 ghostdriver.log
 phantomjs
 phantomjs.exe
+phantomjs-1.9.8-windows.zip
+selenium.png
 dbcompare/
-
+sandbox/
+Code
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -109,9 +112,3 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
-
-#assorted garbage
-Code
-phantomjs-1.9.8-windows.zip
-sandbox/
-selenium.png
