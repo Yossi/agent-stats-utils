@@ -64,7 +64,11 @@ class Stat(object):
         self.sojourner = row.sojourner
         self.recruiter = row.recruiter
 
-        self.agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name))[0][0]
+        if str(self.name).startswith('@'):
+            self.agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name))[0][0]
+        else: # probably good enough, but if this still blows up then make sure its a numeric id and not just a name missing its @
+            self.agent_id = self.name
+            self.name = exec_mysql("SELECT name FROM agents WHERE idagents = '{0}';".format(self.agent_id))[0][0]
 
     def table_load(self, **row):
         self.date = parse(row['last_submit'] if not row['last_submit'].startswith('0') else '1000/1/1').date()
