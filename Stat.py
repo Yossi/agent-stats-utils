@@ -29,7 +29,7 @@ class Stat(object):
         row = Row(*row) # your boat...
 
         self.name = row.name
-        self.date = row.date if row.date else '1000/1/1'
+        self.date = row.date if row.date else datetime.date(1000, 1, 1)
         #self.flag = row.flag
         #self.min_ap = row.min_ap
         self.ap = row.ap
