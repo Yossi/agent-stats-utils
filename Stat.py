@@ -325,5 +325,6 @@ class Stat(object):
 # purifier >= disruptor
 # purifier >= neutralizer
 # hacker >= translator/15
+# missionday > specops/3
 # min_ap = liberator*125 + min(-(-max(0,(builder-liberator*8))/7)*65, -(-max(0,(builder-liberator*8))/8)*125) + connector*313 + mind_controller*1250 + liberator*500 + engineer*125 + purifier*75 + recharger/15000*10 + disruptor*187 + salvator*750
 ## requirement[level] <= ap
