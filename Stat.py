@@ -27,7 +27,7 @@ class Stat(object):
 
     def db_load(self, row):
         row = Row(*row) # your boat...
-    
+
         self.name = row.name
         self.date = row.date if row.date else '1000/1/1'
         #self.flag = row.flag
@@ -123,7 +123,7 @@ class Stat(object):
         ranks = ['Onyx', 'Platinum', 'Gold', 'Silver', 'Bronze', 'Locked']
         sorted_badges = sorted([a.split(' ')[-1] for a in get_badges(self.__dict__).values()], key=lambda x: ranks.index(x))
         expanded_badges = list(chain.from_iterable([ranks[ranks.index(a):] for a in sorted_badges]))
-        
+
         if 0 <= self.ap:
             level = 1
         if 2500 <= self.ap:
@@ -172,13 +172,13 @@ class Stat(object):
             if expanded_badges.count('Platinum') < 4 or expanded_badges.count('Onyx') < 2:
                 return level
             level = 16
-        
+
         return level
 
     @cached_property
     def reasons(self):
         return self.validate()
-        
+
     @cached_property
     def flag(self):
         return bool(self.reasons)
@@ -231,8 +231,7 @@ class Stat(object):
 
         #if self.apdiff > self.ap-self.min_ap:
         #    reasons.append( 'apdiff %s > %s' % (self.apdiff, self.ap-self.min_ap) )
-        
-        
+
         if not reasons:
             exec_mysql("UPDATE agents SET apdiff={0} WHERE `name`='{1}';".format(self.ap-self.min_ap, self.name))
 
@@ -240,7 +239,7 @@ class Stat(object):
 
     def save(self):
         self.flag, self.min_ap # hack to make sure these are in the cache
-        
+
         sql = '''INSERT INTO `stats`
                  SET idagents={agent_id},
                      `date`='{date}',
