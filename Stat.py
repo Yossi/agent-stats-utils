@@ -25,7 +25,7 @@ class Stat(object):
             name = '@' + name
         self.db_load(exec_mysql("call FindAgentByName('{name}');".format(name=name))[-1])
 
-    def db_load(self, row):
+    def db_load(self, row): # ATTENTION: DO NOT simply use 'SELECT * FROM stats;' here. It will end in tears.
         row = Row(*row) # your boat...
 
         self.name = row.name
