@@ -222,7 +222,9 @@ class Stat(object):
             reasons.append( 'neutralizer:purifier %s > %s' % (self.neutralizer, self.purifier) )
         if (self.translator/15) > self.hacker:
             reasons.append( 'hacker:translator %s < %s/15' % (self.hacker, self.translator) )
-        
+        if self.missionday > self.specops/3:
+            reasons.append( 'missionday:specops %s > %s/3' % (self.missionday, self.specops) )
+
         # this catches faction flippers unfortunately
         #if self.min_ap > self.ap:
         #    reasons.append( 'ap:min_ap %s < %s' % (self.ap, self.min_ap) )
