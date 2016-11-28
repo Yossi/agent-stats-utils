@@ -226,8 +226,11 @@ class Stat(object):
             reasons.append( 'neutralizer:purifier %s > %s' % (self.neutralizer, self.purifier) )
         if (self.translator/15) > self.hacker:
             reasons.append( 'hacker:translator %s < %s/15' % (self.hacker, self.translator) )
-        if self.missionday > self.specops:
-            reasons.append( 'missionday:specops %s > %s' % (self.missionday, self.specops) )
+        
+        # there was a missionday where they didnt require missions at all. 100 UPV would get you the badge
+        # http://www.pref.iwate.jp/dbps_data/_material_/_files/000/000/031/399/morioka0621.pdf (in japanese, on page 2)
+        #if self.missionday > self.specops:
+        #    reasons.append( 'missionday:specops %s > %s' % (self.missionday, self.specops) )
 
         # this catches faction flippers unfortunately
         #if self.min_ap > self.ap:
@@ -329,6 +332,6 @@ class Stat(object):
 # purifier >= disruptor
 # purifier >= neutralizer
 # hacker >= translator/15
-# missionday > specops
+## missionday > specops
 # min_ap = liberator*125 + min(-(-max(0,(builder-liberator*8))/7)*65, -(-max(0,(builder-liberator*8))/8)*125) + connector*313 + mind_controller*1250 + liberator*500 + engineer*125 + purifier*75 + recharger/15000*10 + disruptor*187 + salvator*750
 ## requirement[level] <= ap
