@@ -452,6 +452,7 @@ def custom_roundup(group):
     startDate, endDate = get_custom_date_ranges(group)
     logging.info('setting off a refresh. waiting 10 seconds to make sure it finishes')
     r = s.post('https://api.agent-stats.com/groups/{}/refresh'.format(group_id))
+    r.raise_for_status() # debug
     sleep(10)
     logging.info('getting custom top lists')
     charts = get_stats(group_id, 'custom', args.number, submitters)
