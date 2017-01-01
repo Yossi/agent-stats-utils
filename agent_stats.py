@@ -356,13 +356,14 @@ def summary(group='all', days=7):
                 changes['level'] = [str(l+1) for l in range(level_old, level_new)]
             if changes:
                 earnings = englishify(changes)
-                stale = datetime.date.today() - datetime.timedelta(days=days*2)
+                today = datetime.date.today()
+                stale = today - datetime.timedelta(days=days*2)
                 note = ''
                 if date_old < stale:
                     note = '¹' # chcp 65001
                     footnote = '¹Start date more than 2 %s ago' % ('weeks' if days == 7 else 'months',)
 
-                if date_new - date_old > datetime.timedelta(days=365): # close enough. no one cares about leap years
+                if today - date_old > datetime.timedelta(days=365): # close enough. no one cares about leap years
                     template = '*{}* earned {} sometime between {old.month}/{old.day}/{old.year}{} and {new.month}/{new.day}/{new.year}'
                 else:
                     template = '*{}* earned {} sometime between {old.month}/{old.day}{} and {new.month}/{new.day}'
