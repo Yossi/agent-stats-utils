@@ -464,8 +464,16 @@ def update_group_names(group):
         print('\nAll group names match\n')
 
 if __name__ == '__main__':
+    actions = OrderedDict([('snarf', snarf),
+                           ('summary', summary),
+                           ('weekly', weekly_roundup),
+                           ('monthly', monthly_roundup),
+                           ('check_for_applicants', check_for_applicants),
+                           ('update_group_names', update_group_names),
+                           ('test', test)])
+
     parser = argparse.ArgumentParser(description='Tools for agent-stats admins')
-    parser.add_argument('action', help='task to perform', choices=['snarf', 'check_for_applicants', 'weekly', 'monthly', 'update_group_names', 'summary', 'test'])
+    parser.add_argument('action', help='task to perform', choices=actions)
     parser.add_argument('-n', '--number', default=10, type=int, help='number of ranks to show')
     parser.add_argument('-g', '--group', help='group to focus on', choices=[name for row in exec_mysql('SELECT name FROM groups;') for name in row])
     parser.add_argument('-m', '--mail', nargs='*', help='email address to get output')
@@ -473,13 +481,6 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    actions = {'snarf': snarf,
-               'summary': summary,
-               'weekly': weekly_roundup,
-               'monthly': monthly_roundup,
-               'check_for_applicants': check_for_applicants,
-               'update_group_names': update_group_names,
-               'test': test}
     result = actions.get(args.action)(args.group)
 
     if result:
