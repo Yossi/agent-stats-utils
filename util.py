@@ -82,6 +82,7 @@ def mail(to, subject, text):
     mailServer.sendmail(gmail_user, to, msg.as_string())
     # Should be mailServer.quit(), but that crashes...
     mailServer.close()
+    logging.info((msg['To'], msg['Subject']))
 
 
 #######

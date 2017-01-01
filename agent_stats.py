@@ -5,6 +5,7 @@ import argparse
 import datetime
 import logging
 import re
+import sys
 from time import sleep
 from collections import OrderedDict, namedtuple
 
@@ -103,6 +104,7 @@ def read_table(group_id, time_span):
     count = 0
     API_url = 'https://api.agent-stats.com/groups/{}/{}'
     r = s.get(API_url.format(group_id, time_span), stream=True)
+    r.raise_for_status() # debug
     for agent, data in r.json().items():
         data['name'] = '@'+agent
         count += 1
@@ -112,6 +114,7 @@ def read_table(group_id, time_span):
 @lru_cache(maxsize=None)
 def groups():
     r = s.get('https://api.agent-stats.com/groups')
+    r.raise_for_status() # debug
     return dict([(g['groupid'], g['groupname']) for g in r.json() if '.' in g['groupid']])
 
 def get_groups(group=None):
@@ -525,16 +528,25 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    result = actions.get(args.action)(args.group)
-
-    if result:
-        result = result.strip()
-
+    try:
+        result = actions.get(args.action)(args.group)
+    except:
         if not args.mail:
-            print(result) # chcp 65001
-        elif result:
+            raise
+        else:
             if not args.group: args.group=''
             subject = args.action+' '+args.group if not args.subject else args.subject
-            mail(args.mail, subject, result)
-            logging.info('email sent')
-    logging.info('Done')
+            mail([args.mail[0]], subject, str(sys.exc_info()[0]))
+            logging.info('CRASHED and email sent')
+    else:
+        if result:
+            result = result.strip()
+
+            if not args.mail:
+                print(result) # chcp 65001
+            elif result:
+                if not args.group: args.group=''
+                subject = args.action+' '+args.group if not args.subject else args.subject
+                mail(args.mail, subject, result)
+                logging.info('email sent')
+        logging.info('Done')
