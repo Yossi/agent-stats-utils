@@ -483,18 +483,16 @@ def test(group):
     print(get_custom_date_ranges(group))
 
 def check_for_applicants(group):
-    html = get_html(scoreboard=group)
-    soup = BeautifulSoup(html, "html.parser")
-    applicants = None
-    for elem in soup(text='Agents waiting for validation:'):
-        applicants = elem.parent.parent.text.replace('\n', '').split('@')[1:]
-        break
+    group_id, group_name = get_groups(group)
+    r = s.get('https://api.agent-stats.com/groups/{}/pending'.format(group_id), stream=True)
+    r.raise_for_status() # debug
     message = []
-    if applicants:
+    if r.json():
         message.append('Agent(s) awaiting validation to the {} group:'.format(group))
-        for agent in applicants:
-            message.append('    @{}'.format(agent))
-        message.append('\nGo to {} and click on the [View admin panel] button to take care of it.'.format(html.partition('give them this url: <a href="')[2].partition('">https://www.agent-stats.com/groups.php')[0]).partition('&')[0])
+        for agent in r.json():
+            message.append('    @{username}'.format(**dict(agent)))
+
+        message.append('\nGo to https://www.agent-stats.com/groups.php?group={} and click on the [View admin panel] button to take care of it.'.format(group_id))
     return '\n'.join(message)
 
 def update_group_names(group):
