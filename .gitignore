@@ -112,3 +112,5 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+commands.txt
+rescan.py
