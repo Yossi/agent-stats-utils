@@ -5,6 +5,7 @@ import argparse
 import datetime
 import logging
 import re
+from time import sleep
 from collections import OrderedDict, namedtuple
 
 import requests
@@ -231,9 +232,6 @@ def snarf(group=None):
 
         return '\n'.join(output) + '\n'
 
-def test(group):
-    pass
-
 def get_badges(data):
     categories = {'explorer': [100, 1000, 2000, 10000, 30000],
                   'seer': [10, 50, 200, 500, 5000],
@@ -436,6 +434,50 @@ def monthly_roundup(group):
     output.append('_Job started on {} and ran for {}_'.format(start, end-start))
     return '\n'.join(output)
 
+custom_template = '''Great work agents!! If you would like to be included in future top {} lists please 
+join our agent-stats group https://www.agent-stats.com/groups.php?group={} . 
+Don’t know what agent-stats is? See here: https://www.agent-stats.com/manual.php . 
+For your stats show up pn this list you need to have uploaded your stats at least twice between {} and {}'''
+def custom_roundup(group):
+    group_id, group_name = get_groups(group)
+    if not group_id: return 'please specify group'
+    output = []
+    submitters = [0]
+    logging.info('starting custom roundup')
+    start = datetime.datetime.now()
+    output.append(group_name)
+    startDate, endDate = get_custom_date_ranges(group)
+    logging.info('setting off a refresh. waiting 10 seconds to make sure it finishes')
+    r = s.post('https://api.agent-stats.com/groups/{}/refresh'.format(group_id))
+    sleep(10)
+    logging.info('getting custom top lists')
+    charts = get_stats(group_id, 'custom', args.number, submitters)
+    output.append('*Top %s (of %s reporting) for the span from %s to %s*' % (num2words(min(args.number, submitters[0])), num2words(submitters[0]), startDate, endDate))
+    output.append(charts)
+    output.append('')
+    output.append('Recent badge dings:')
+    output.append('')
+    logging.info('getting badge dings')
+    output.append(summary(group_id, (endDate - startDate).days))
+    output.append('')
+    output.append(custom_template.format(num2words(args.number).lower(), group_id, startDate, endDate).replace('\n', ''))
+    end = datetime.datetime.now()
+    output.append('')
+    output.append('_Job started on {} and ran for {}_'.format(start, end-start))
+    return '\n'.join(output)
+
+def get_custom_date_ranges(group):
+    html = get_html(scoreboard=group, time_span='custom')
+    soup = BeautifulSoup(html, "html.parser")
+    #soup.find('input', {'name':'startDate'}).attrs['value']
+    for span in soup('span'):
+        if span.text.startswith('Last refresh:'):
+            return (datetime.datetime.strptime(span.text[42:61], '%Y-%m-%d %H:%M:%S'),
+                    datetime.datetime.strptime(span.text[65:], '%Y-%m-%d %H:%M:%S'))
+
+def test(group):
+    print(get_custom_date_ranges(group))
+
 def check_for_applicants(group):
     html = get_html(scoreboard=group)
     soup = BeautifulSoup(html, "html.parser")
@@ -469,6 +511,7 @@ if __name__ == '__main__':
                            ('summary', summary),
                            ('weekly', weekly_roundup),
                            ('monthly', monthly_roundup),
+                           ('custom', custom_roundup),
                            ('check_for_applicants', check_for_applicants),
                            ('update_group_names', update_group_names),
                            ('test', test)])
