@@ -27,7 +27,6 @@ logging.getLogger("requests").setLevel(logging.WARNING)
 
 s = requests.Session()
 s.headers.update({'AS-Key': api_key})
-API_url = 'https://api.agent-stats.com/groups/{}/{}'
 
 def num2words(n):
     if n < 10:
@@ -101,6 +100,7 @@ def cleanup_data(data):
 
 def read_table(group_id, time_span):
     count = 0
+    API_url = 'https://api.agent-stats.com/groups/{}/{}'
     r = s.get(API_url.format(group_id, time_span), stream=True)
     for agent, data in r.json().items():
         data['name'] = '@'+agent
