@@ -440,7 +440,7 @@ def monthly_roundup(group):
 custom_template = '''Great work agents!! If you would like to be included in future top {} lists please 
 join our agent-stats group https://www.agent-stats.com/groups.php?group={} . 
 Don’t know what agent-stats is? See here: https://www.agent-stats.com/manual.php . 
-For your stats show up pn this list you need to have uploaded your stats at least twice between {} and {}'''
+For your stats show up on this list you need to have uploaded your stats at least twice between {} and {}'''
 def custom_roundup(group):
     group_id, group_name = get_groups(group)
     if not group_id: return 'please specify group'
