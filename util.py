@@ -124,17 +124,12 @@ def get_html(scoreboard=None, time_span='current'):
                 #driver.find_element_by_id("trustDevice").click()
                 driver.find_element_by_id("submit").click()
 
-        # hacky fix because the new owners redirect to the main page on first visit (might not be needed anymore)
-        driver.get('https://www.agent-stats.com/groups.php')
-
-        #logging.info('saving screenshot')
-        #driver.save_screenshot('../www/selenium.png')
-        #logging.info('screenshot saved to http://yossi.no-ip.org/selenium.png')
-
         if scoreboard:
-            driver.find_element_by_link_text(scoreboard).click()
-            Select(driver.find_element_by_name("type")).select_by_visible_text(time_span)
-            driver.find_element_by_name("additional").click()
+            from agent_stats import get_groups # recursive import. be very careful
+            group_id = get_groups(scoreboard)[0]
+            driver.get('https://www.agent-stats.com/groups.php?group={}&type={}'.format(group_id, time_span))
+            #logging.info('saving screenshot')
+            #driver.save_screenshot('selenium.png')
 
         html = driver.page_source
 
