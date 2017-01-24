@@ -45,7 +45,7 @@ By default this is 10 but you can change it to whatever with the -n option.
 Once you get a feel for what this script does, you may want to set it up to run with
 crontab, or something similar.
 
-First time phantomjs is run (only needed for check_for_applicants now) it will ask you to log in to your google account.
+First time phantomjs is run (only needed for custom range now) it will ask you to log in to your google account.
 The script just takes what you enter and passes it to phantomjs where a google
 login page is open (headless). It also stores a cookie so you don't have to
 login every time.
@@ -80,15 +80,15 @@ Typically not used stand alone. Gets all the badge dings that happened between
 each agent's most recent data point and their most recent data point over 7 days
 old. Searches across all groups, unless passed a specific group.
 
-###weekly/monthly
-This is the main reason all this was written. Grabs the weekly (or monthly) page
+###weekly/monthly/custom
+This is the main reason all this was written. Grabs the weekly (or monthly, etc.) page
 for your group and extracts the top *N* agents for each category. Ties for *N*th
 place are all included. 
 Also includes a ding summary for the week or month (see above: summary). 
 Formats everything with G+ markup so it looks decent when you post to G+.
 
 ###update_group_names
-Comapres the group names from the database to the names online. If a name has 
+Compares the group names from the database to the names online. If a name has 
 changed, you are offered the opportunity to update it. You will need to update 
 the names in crontab manually after you update the database names.
 
