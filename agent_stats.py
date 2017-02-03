@@ -147,8 +147,8 @@ def englishify(new_badges):
     data = [badge.upper()+' ' + ", ".join(ranks[:-2] + [" and ".join(ranks[-2:])]) for badge, ranks in new_badges.items()]
     return ", ".join(data[:-2] + [" and ".join(data[-2:])])
 
-def colate_agents():
-    logging.info('colate agents')
+def collate_agents():
+    logging.info('collate agents')
     general_groups = dict(exec_mysql("SELECT name, idgroups FROM groups WHERE name IN ('smurfs', 'frogs', 'all');"))
     for agent_id, name, faction in exec_mysql('select idagents, name, faction from agents;'):
         faction = 'frogs' if faction == 'enl' else 'smurfs'
@@ -175,7 +175,7 @@ def snarf(group=None):
                          SET `name`='{}', url='{}';'''.format(group_name, group_id)
                 exec_mysql(sql)
             results += snarf(group_id) # getting all recursive and shiz
-        colate_agents()
+        collate_agents()
         return results
     else:
         added, removed, flagged, flipped = [], [], [], []
@@ -297,7 +297,7 @@ def summary(group='all', days=7):
                'sojourner',
                'recruiter')
 
-    sql_before = '''SELECT x.name, s.`date`, `level`, ap, explorer, seer, trekker, builder, connector, `mind-controller` mind_controller, illuminator, 
+    sql_before = '''SELECT x.name, s.`date`, `level`, ap, explorer, seer, trekker, builder, connector, `mind-controller` mind_controller, illuminator,
                            recharger, liberator, pioneer, engineer, purifier, guardian, specops, missionday, hacker, translator, sojourner, recruiter
                     FROM (
                         SELECT a.name name, s.idagents id, MAX(s.date) AS date
@@ -308,7 +308,7 @@ def summary(group='all', days=7):
                               g.`url` = '{}' AND
                               s.flag != 1 AND
                               date < ( CURDATE() - INTERVAL {} DAY )
-                        GROUP BY id ) x 
+                        GROUP BY id ) x
                     JOIN stats s ON x.id = s.idagents AND x.date = s.date
                  '''.format(group_id, days)
 
@@ -319,7 +319,7 @@ def summary(group='all', days=7):
             baseline[agent] = {'date': row[1], 'level': row[2], 'ap': row[3],
                                'badges': get_badges(dict(zip(headers, row[4:])))}
 
-    sql_now = '''SELECT x.name, s.`date`, `level`, ap, explorer, seer, trekker, builder, connector, `mind-controller` mind_controller, illuminator, 
+    sql_now = '''SELECT x.name, s.`date`, `level`, ap, explorer, seer, trekker, builder, connector, `mind-controller` mind_controller, illuminator,
                            recharger, liberator, pioneer, engineer, purifier, guardian, specops, missionday, hacker, translator, sojourner, recruiter
                     FROM (
                         SELECT a.name name, s.idagents id, MAX(s.date) AS date
@@ -330,7 +330,7 @@ def summary(group='all', days=7):
                               g.`url` = '{}' AND
                               s.flag != 1 AND
                               date >= ( CURDATE() - INTERVAL {} DAY )
-                        GROUP BY id ) x 
+                        GROUP BY id ) x
                     JOIN stats s ON x.id = s.idagents AND x.date = s.date
               '''.format(group_id, days)
     output = []
