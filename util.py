@@ -88,6 +88,7 @@ def mail(to, subject, text):
 #######
 
 
+import os
 from time import sleep
 import getpass
 from selenium import webdriver
@@ -97,7 +98,7 @@ from selenium.common.exceptions import InvalidElementStateException
 def get_html(scoreboard=None, time_span='current'):
     logging.info("get_html({}, {})".format(scoreboard, time_span))
 
-    driver = webdriver.PhantomJS('./phantomjs', service_args=['--cookies-file=cookies.txt'])
+    driver = webdriver.PhantomJS('./phantomjs', service_args=['--cookies-file=cookies.txt'], service_log_path=os.path.devnull)
     logging.info('driver created')
 
     try:
