@@ -73,6 +73,7 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
     output = []
     logging.info('read table: group {}, span {}'.format(groups()[group_id], time_span))
     data = list(read_table(group_id, time_span))
+    # these categories are what become the topN lists. definitions above are just for reference (still needed if a category is active)
     categories = ('ap', 'explorer', 'trekker', 'builder', 'connector',
                   'mind-controller', 'illuminator', 'recharger', 'liberator',
                   'pioneer', 'engineer', 'purifier', 'hacker', 'translator',
@@ -138,7 +139,7 @@ def new_badges(old_data, new_data):
         if old_rank != new_rank: # still detect changes in Onyx multiples
             old_rank = old_rank.split()[-1]
             try:
-                if ranks.index(old_rank) < ranks.index(new_rank): # if new_rank has a multiplier on it .index() will fail with ValueError
+                if ranks.index(old_rank) < ranks.index(new_rank): # else if new_rank has a multiplier on it .index() will fail with ValueError
                     result[category] = ranks[ranks.index(old_rank)+1:ranks.index(new_rank)+1]
             except ValueError:
                 result[category] = [new_data[category]]

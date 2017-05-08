@@ -67,7 +67,7 @@ class Stat(object):
 
         if str(self.name).startswith('@'):
             self.agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name))[0][0]
-        else: # probably good enough, but if this still blows up then make sure its a numeric id and not just a name missing its @
+        else: # probably good enough, but if this still blows up then make sure it's a numeric id and not just a name missing its @
             self.agent_id = self.name
             self.name = exec_mysql("SELECT name FROM agents WHERE idagents = '{0}';".format(self.agent_id))[0][0]
 
