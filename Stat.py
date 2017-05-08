@@ -15,7 +15,7 @@ fields = '''name, date, flag, min_ap, ap, level, explorer, seer, trekker, builde
 connector, mind_controller, illuminator, recharger, liberator, pioneer, engineer,
 purifier, guardian, specops, missionday, hacker, translator, sojourner, recruiter,
 collector, binder, country_master, neutralizer, disruptor, salvator, smuggler,
-link_master, controller, field_master'''
+link_master, controller, field_master, magnusbuilder'''
 
 Row = namedtuple('Row', fields)
 
@@ -63,6 +63,7 @@ class Stat(object):
         self.translator = row.translator
         self.sojourner = row.sojourner
         self.recruiter = row.recruiter
+        self.magnusbuilder = row.magnusbuilder
 
         if str(self.name).startswith('@'):
             self.agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name))[0][0]
@@ -105,6 +106,7 @@ class Stat(object):
         self.translator = row['translator']
         self.sojourner = row['sojourner']
         self.recruiter = row['recruiter']
+        self.magnusbuilder = row['magnusbuilder']
 
         agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name))
         if agent_id:
@@ -226,7 +228,11 @@ class Stat(object):
             reasons.append( 'neutralizer:purifier %s > %s' % (self.neutralizer, self.purifier) )
         if (self.translator/15) > self.hacker:
             reasons.append( 'hacker:translator %s < %s/15' % (self.hacker, self.translator) )
-        
+        if (self.magnusbuilder/8) > self.explorer:
+            reasons.append( 'explorer:magnusbuilder %s < %s/8' % (self.explorer, self.magnusbuilder) )
+        if self.magnusbuilder > self.builder:
+            reasons.append( 'builder:magnusbuilder %s < %s' % (self.builder, self.magnusbuilder) )
+
         # there was a missionday where they didnt require missions at all. 100 UPV would get you the badge
         # http://www.pref.iwate.jp/dbps_data/_material_/_files/000/000/031/399/morioka0621.pdf (in japanese, on page 2)
         #if self.missionday > self.specops:
@@ -271,6 +277,7 @@ class Stat(object):
                      translator='{translator}',
                      sojourner='{sojourner}',
                      recruiter='{recruiter}',
+                     magnusbuilder='{magnusbuilder}',
                      collector='{collector}',
                      binder='{binder}',
                      `country-master`='{country_master}',
@@ -304,6 +311,7 @@ class Stat(object):
                                          translator='{translator}',
                                          sojourner='{sojourner}',
                                          recruiter='{recruiter}',
+                                         magnusbuilder='{magnusbuilder}',
                                          collector='{collector}',
                                          binder='{binder}',
                                          `country-master`='{country_master}',
@@ -332,6 +340,8 @@ class Stat(object):
 # purifier >= disruptor
 # purifier >= neutralizer
 # hacker >= translator/15
+# builder >= magnusbuilder
+# explorer >= magnusbuilder/8
 ## missionday > specops
 # min_ap = liberator*125 + min(-(-max(0,(builder-liberator*8))/7)*65, -(-max(0,(builder-liberator*8))/8)*125) + connector*313 + mind_controller*1250 + liberator*500 + engineer*125 + purifier*75 + recharger/15000*10 + disruptor*187 + salvator*750
 ## requirement[level] <= ap

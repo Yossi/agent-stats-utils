@@ -57,6 +57,7 @@ CREATE TABLE `stats` (
   `translator` bigint(20) unsigned DEFAULT NULL,
   `sojourner` bigint(20) unsigned DEFAULT NULL,
   `recruiter` bigint(20) unsigned DEFAULT NULL,
+  `magnusbuilder` bigint(20) unsigned DEFAULT NULL,
   `collector` bigint(20) unsigned DEFAULT NULL,
   `binder` bigint(20) unsigned DEFAULT NULL,
   `country-master` bigint(20) unsigned DEFAULT NULL,

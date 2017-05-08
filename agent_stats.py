@@ -55,6 +55,7 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                    'translator': '_(Glyph Hack Points)_',
                    'sojourner': '_(Longest Hacking Streak)_',
                    'recruiter': '_(Agents successfully recruited)_',
+                   'magnusbuilder': '_(Unique Resonator Slots Deployed)_',
                    'collector': '_(XM Collected)_',
                    'binder': '_(Longest Link Ever Created)_',
                    'country-master': '_(Largest Control Field)_',
@@ -76,7 +77,7 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                   'mind-controller', 'illuminator', 'recharger', 'liberator',
                   'pioneer', 'engineer', 'purifier', 'hacker', 'translator',
                   'specops', 'seer', 'collector', 'neutralizer', 'disruptor',
-                  'salvator')
+                  'salvator', 'magnusbuilder')
     submitters[0] = 0
     for category in categories:
         output.append('\n*Top %s* %s' % (category.title(), definitions.get(category.lower(), '')))
@@ -268,6 +269,19 @@ def get_badges(data):
                 if multiplier > 1:
                     current = '%sx %s' % (multiplier, current)
         result[category] = current
+    
+    for category, ranks in {'magnusbuilder': [1331, 3113]}.items(): # doesn't strictly have to be a loop, but i want it to match above
+        current = 'Locked'
+        multiplier = 1
+        for rank, badge in zip(ranks, ['Builder', 'Architect']):
+            if data[category] not in ['-', None] and int(data[category]) >= rank:
+                current = badge
+            if current == 'Architect':
+                multiplier = data[category] // rank
+                if multiplier > 1:
+                    current = '%sx %s' % (multiplier, current)
+        result[category] = current
+
     return result
 
 def summary(group='all', days=7):
@@ -295,10 +309,11 @@ def summary(group='all', days=7):
                'hacker',
                'translator',
                'sojourner',
-               'recruiter')
+               'recruiter',
+               'magnusbuilder')
 
     sql_before = '''SELECT x.name, s.`date`, `level`, ap, explorer, seer, trekker, builder, connector, `mind-controller` mind_controller, illuminator,
-                           recharger, liberator, pioneer, engineer, purifier, guardian, specops, missionday, hacker, translator, sojourner, recruiter
+                           recharger, liberator, pioneer, engineer, purifier, guardian, specops, missionday, hacker, translator, sojourner, recruiter, magnusbuilder
                     FROM (
                         SELECT a.name name, s.idagents id, MAX(s.date) AS date
                         FROM agents a, stats s, membership m, groups g
@@ -320,7 +335,7 @@ def summary(group='all', days=7):
                                'badges': get_badges(dict(zip(headers, row[4:])))}
 
     sql_now = '''SELECT x.name, s.`date`, `level`, ap, explorer, seer, trekker, builder, connector, `mind-controller` mind_controller, illuminator,
-                           recharger, liberator, pioneer, engineer, purifier, guardian, specops, missionday, hacker, translator, sojourner, recruiter
+                           recharger, liberator, pioneer, engineer, purifier, guardian, specops, missionday, hacker, translator, sojourner, recruiter, magnusbuilder
                     FROM (
                         SELECT a.name name, s.idagents id, MAX(s.date) AS date
                         FROM agents a, stats s, membership m, groups g
