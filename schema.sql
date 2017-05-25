@@ -112,7 +112,8 @@ SELECT
   `stats`.`smuggler`,
   `stats`.`link-master`,
   `stats`.`controller`,
-  `stats`.`field-master`
+  `stats`.`field-master`,
+  `stats`.`magnusbuilder`
 FROM `stats`, `agents`
 WHERE `stats`.`idagents` = `agents`.`idagents` AND `agents`.`name` = `agentname`;
 END$$
