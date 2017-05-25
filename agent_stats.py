@@ -18,9 +18,9 @@ from Stat import Stat
 from util import mail, get_html
 
 from util import exec_mysql, cm
-from secrets import dbhost, db, dbuser, dbpasswd, api_key
+from secrets import dbconfig, api_key
 
-cm.set_credentials({'host': dbhost, 'db': db, 'user': dbuser, 'passwd': dbpasswd})
+cm.set_credentials(dbconfig)
 
 logging.basicConfig(level=logging.INFO,
                     format="%(asctime)s %(message)s",
