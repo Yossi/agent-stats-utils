@@ -36,6 +36,14 @@ def num2words(n):
     return str(n)
 
 def get_stats(group_id, time_span='now', number=10, submitters=[0]):
+    time_span = {'all time': 'now',
+                 'monthly': 'month',
+                 'weekly': 'week'}.get(time_span, time_span)
+    output = []
+    logging.info('read table: group {}, span {}'.format(groups()[group_id], time_span))
+
+    data = list(read_table(group_id, time_span))
+
     definitions = {'explorer': '_(New Portals Visited)_',
                    'seer': '_(Portals Discovered)_',
                    'trekker': '_(Distance Walked)_',
@@ -67,11 +75,6 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                    'controller': '_(Max Time Field Held)_',
                    'field-master': '_(Largest Field MUs × Days)_'}
 
-    time_span = {'all time': 'now',
-                 'monthly': 'month',
-                 'weekly': 'week'}.get(time_span, time_span)
-    output = []
-    logging.info('read table: group {}, span {}'.format(groups()[group_id], time_span))
     data = list(read_table(group_id, time_span))
     # these categories are what become the topN lists. definitions above are just for reference (still needed if a category is active)
     categories = ('ap', 'explorer', 'trekker', 'builder', 'connector',
