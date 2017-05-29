@@ -271,17 +271,17 @@ def get_badges(data):
                     current = '%sx %s' % (multiplier, current)
         result[category] = current
     
-    for category, ranks in {'magnusbuilder': [1331, 3113]}.items(): # doesn't strictly have to be a loop, but i want it to match above
-        current = 'Locked'
-        multiplier = 1
-        for rank, badge in zip(ranks, ['Builder', 'Architect']):
-            if data[category] not in ['-', None] and int(data[category]) >= rank:
-                current = badge
-            if current == 'Architect':
-                multiplier = data[category] // rank
-                if multiplier > 1:
-                    current = '%sx %s' % (multiplier, current)
-        result[category] = current
+    #for category, ranks in {'magnusbuilder': [1331, 3113]}.items(): # doesn't strictly have to be a loop, but i want it to match above
+    #    current = 'Locked'
+    #    multiplier = 1
+    #    for rank, badge in zip(ranks, ['Builder', 'Architect']):
+    #        if data[category] not in ['-', None] and int(data[category]) >= rank:
+    #            current = badge
+    #        if current == 'Architect':
+    #            multiplier = data[category] // rank
+    #            if multiplier > 1:
+    #               current = '%sx %s' % (multiplier, current)
+    #    result[category] = current
 
     return result
 
