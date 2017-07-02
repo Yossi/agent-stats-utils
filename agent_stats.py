@@ -76,7 +76,6 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                    'field-master': '_(Largest Field MUs × Days)_',
                    'missionday':'_(Mission Days Attended)_'}
 
-    data = list(read_table(group_id, time_span))
     # these categories are what become the topN lists. definitions above are just for reference (still needed if a category is active)
     categories = ['ap', 'explorer', 'trekker', 'builder', 'connector',
                   'mind-controller', 'illuminator', 'recharger', 'liberator',
