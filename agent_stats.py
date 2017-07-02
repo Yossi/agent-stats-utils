@@ -92,14 +92,14 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
             datum = float(line[category])
             if i > number-1 and datum != temp: # the 0s got filtered out on that inscrutable line above
                 break
-                
+
             if datum.is_integer():
                 datum_string = '{:,}'.format(int(datum))
             elif datum > 100000:
                 datum_string = '{:,}'.format(datum)
             else:
                 datum_string = '{:,g}'.format(datum)
-            
+
             output.append('{}  {}'.format(line['name'], datum_string))
             temp = datum
         if i < 0:
