@@ -73,15 +73,16 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                    'smuggler': '_(Max Time Link Maintained)_',
                    'link-master': '_(Max Link Length × Days)_',
                    'controller': '_(Max Time Field Held)_',
-                   'field-master': '_(Largest Field MUs × Days)_'}
+                   'field-master': '_(Largest Field MUs × Days)_',
+                   'missionday':'_(Mission Days Attended)_'}
 
     data = list(read_table(group_id, time_span))
     # these categories are what become the topN lists. definitions above are just for reference (still needed if a category is active)
-    categories = ('ap', 'explorer', 'trekker', 'builder', 'connector',
+    categories = ['ap', 'explorer', 'trekker', 'builder', 'connector',
                   'mind-controller', 'illuminator', 'recharger', 'liberator',
                   'pioneer', 'engineer', 'purifier', 'hacker', 'translator',
                   'specops', 'seer', 'collector', 'neutralizer', 'disruptor',
-                  'salvator', 'magnusbuilder')
+                  'salvator', 'magnusbuilder', 'missionday']
     submitters[0] = 0
     for category in categories:
         output.append('\n*Top %s* %s' % (category.title(), definitions.get(category.lower(), '')))
