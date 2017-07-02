@@ -58,7 +58,7 @@ VERY IMPORTANT!
  sign out all your other sessions.
 
 ## Features
-###snarf
+### snarf
 Scrape the data. If a new group is encountered, its gets added. If a new agent
 is encountered, they get added. If an agent joins or leaves a group, that gets 
 handled. If an agent changes their name, sucks to be them, they are treated
@@ -67,7 +67,7 @@ Some stat validation is carried out (see below) and if the sanity check fails,
 the row is flagged and not used for computing dings.
 Outputs a list of added/removed agents and flagged stats.
 
-###check_for_applicants
+### check_for_applicants
 Solves a common problem where agents apply to join a group and no one notices
 for weeks. 
 If you have a star (mod or admin) you are able to see pending agents. This 
@@ -75,22 +75,25 @@ command outputs the list of pending agents. No effort is made to avoid sending a
 name again if it was ignored. i.e. If you don't take care of a pending user one 
 way or another you will keep getting spammed about them.
 
-###summary
+### summary
 Typically not used stand alone. Gets all the badge dings that happened between
 each agent's most recent data point and their most recent data point over 7 days
 old. Searches across all groups, unless passed a specific group.
 
-###weekly/monthly/custom
+### weekly/monthly/custom
 This is the main reason all this was written. Grabs the weekly (or monthly, etc.) page
 for your group and extracts the top *N* agents for each category. Ties for *N*th
 place are all included. 
 Also includes a ding summary for the week or month (see above: summary). 
 Formats everything with G+ markup so it looks decent when you post to G+.
 
-###update_group_names
+### update_group_names
 Compares the group names from the database to the names online. If a name has 
 changed, you are offered the opportunity to update it. You will need to update 
 the names in crontab manually after you update the database names.
+
+## Custom stats
+You can invent your own stats. Look in [extra_stats.py.example](https://github.com/Yossi/agent-stats-utils/blob/master/extra_stats.py.example) to see how. Save as extra_stats.py when ready.
 
 ## Stat validation
 Often stats get screwed up. Usually because agent-stats.com botched the OCR.
