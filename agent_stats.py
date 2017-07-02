@@ -16,6 +16,10 @@ from functools import lru_cache
 
 from Stat import Stat
 from util import mail, get_html
+try:
+    from extra_stats import compute_extra_categories # see extra_stats.py.example to see what this file should look like
+except ImportError:
+    compute_extra_categories = lambda data: ({}, [], data)
 
 from util import exec_mysql, cm
 from secrets import dbconfig, api_key
@@ -43,6 +47,8 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
     logging.info('read table: group {}, span {}'.format(groups()[group_id], time_span))
 
     data = list(read_table(group_id, time_span))
+
+    extra_definitions, extra_categories, data = compute_extra_categories(data)
 
     definitions = {'explorer': '_(New Portals Visited)_',
                    'seer': '_(Portals Discovered)_',
@@ -75,17 +81,18 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                    'controller': '_(Max Time Field Held)_',
                    'field-master': '_(Largest Field MUs × Days)_',
                    'missionday':'_(Mission Days Attended)_'}
+    definitions.update(extra_definitions)
 
     # these categories are what become the topN lists. definitions above are just for reference (still needed if a category is active)
     categories = ['ap', 'explorer', 'trekker', 'builder', 'connector',
                   'mind-controller', 'illuminator', 'recharger', 'liberator',
                   'pioneer', 'engineer', 'purifier', 'hacker', 'translator',
                   'specops', 'seer', 'collector', 'neutralizer', 'disruptor',
-                  'salvator', 'magnusbuilder', 'missionday']
+                  'salvator', 'magnusbuilder', 'missionday'] + extra_categories
     submitters[0] = 0
     for category in categories:
         output.append('\n*Top %s* %s' % (category.title(), definitions.get(category.lower(), '')))
-        top_list = sorted((line for line in data if float(line[category])), key=lambda k: float(k[category]), reverse=True)
+        top_list = sorted((line for line in data if 0 < float(line[category])), key=lambda k: float(k[category]), reverse=True)
         submitters[0] = max(submitters[0], len(top_list))
         i = -1
         for i, line in enumerate(top_list):

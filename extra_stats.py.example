@@ -1,0 +1,22 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+from collections import OrderedDict
+
+def compute_extra_categories(data):
+    def safe_div(x, y): # Permission instead of forgiveness. It just doesnt seem right to do a division and catch a DivideByZero instead of just bailing out ahead of time.
+        if y == 0: return 0
+        return x / y
+
+    extra_definitions = OrderedDict([
+                                     # add your custom categories and descriptions here
+                                     ('bob the builder', '_(Resonators Deployed x Mods Deployed)_'), 
+                                     ('translator per hack', '_(Glyph Hack Points / Hacks)_')
+                                    ])
+    extra_categories = list(extra_definitions.keys())
+    for line in data:
+        # add your custom categories formulas here
+        line['bob the builder'] = line['builder'] * line['engineer']
+        line['translator per hack'] = safe_div(line['translator'], line['hacker']) # be SURE to use safe_div for ALL divisions
+
+    return extra_definitions, extra_categories, data
