@@ -86,14 +86,23 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
     submitters[0] = 0
     for category in categories:
         output.append('\n*Top %s* %s' % (category.title(), definitions.get(category.lower(), '')))
-        top_list = sorted((line for line in data if int(line[category])), key=lambda k: int(k[category]), reverse=True)
+        top_list = sorted((line for line in data if float(line[category])), key=lambda k: float(k[category]), reverse=True)
         submitters[0] = max(submitters[0], len(top_list))
         i = -1
         for i, line in enumerate(top_list):
-            if i > number-1 and int(line[category]) != temp:# or int(line[category]) == 0: # the 0s get filtered out on that inscrutable line above
+            datum = float(line[category])
+            if i > number-1 and datum != temp: # the 0s got filtered out on that inscrutable line above
                 break
-            output.append('{}  {:,}'.format(line['name'], int(line[category])))
-            temp = int(line[category])
+                
+            if datum.is_integer():
+                datum_string = '{:,}'.format(int(datum))
+            elif datum > 100000:
+                datum_string = '{:,}'.format(datum)
+            else:
+                datum_string = '{:,g}'.format(datum)
+            
+            output.append('{}  {}'.format(line['name'], datum_string))
+            temp = datum
         if i < 0:
             output.pop()
     return '\n'.join(output)
