@@ -1,4 +1,6 @@
 secrets.py
+extra_stats.py
+
 venv/
 winvenv/
 cookies.txt*
@@ -112,5 +114,3 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
-commands.txt
-rescan.py
