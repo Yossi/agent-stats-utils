@@ -13,6 +13,7 @@ import requests
 from num2words import num2words as n2w
 from bs4 import BeautifulSoup
 from functools import lru_cache
+from titlecase import titlecase
 
 from Stat import Stat
 from util import mail, get_html
@@ -38,6 +39,10 @@ def num2words(n):
     if n < 10:
         return n2w(n).title()
     return str(n)
+
+def abbreviations(word, **kwargs):
+    if word.upper() in ('MU',):
+        return word.upper()
 
 def get_stats(group_id, time_span='now', number=10, submitters=[0]):
     time_span = {'all time': 'now',
@@ -91,7 +96,7 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                   'salvator', 'magnusbuilder', 'missionday'] + extra_categories
     submitters[0] = 0
     for category in categories:
-        output.append('\n*Top %s* %s' % (category.title(), definitions.get(category.lower(), '')))
+        output.append('\n*Top %s* %s' % (titlecase(category, callback=abbreviations), definitions.get(category.lower(), '')))
         top_list = sorted((line for line in data if 0 < float(line[category])), key=lambda k: float(k[category]), reverse=True)
         submitters[0] = max(submitters[0], len(top_list))
         i = -1
