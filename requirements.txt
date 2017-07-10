@@ -1,7 +1,8 @@
-beautifulsoup4==4.5.1
-PyMySQL==0.7.9
-python-dateutil==2.5.3
-selenium==2.53.6
+beautifulsoup4==4.6.0
+PyMySQL==0.7.11
+python-dateutil==2.6.0
+selenium==3.4.3
 cached-property==1.3.0
-num2words==0.5.3
-requests==2.11.1
+num2words==0.5.4
+requests==2.18.1
+titlecase==0.10.0
