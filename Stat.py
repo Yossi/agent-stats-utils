@@ -11,7 +11,7 @@ today = datetime.date.today()
 sojourner_start = datetime.date(2015, 3, 5)
 game_start = datetime.date(2012, 11, 15)
 
-fields = '''name, date, flag, min_ap, ap, level, explorer, seer, trekker, builder,
+fields = '''name, date, flag, min_ap, ap, level, explorer, seer, recon, trekker, builder,
 connector, mind_controller, illuminator, recharger, liberator, pioneer, engineer,
 purifier, guardian, specops, missionday, hacker, translator, sojourner, recruiter,
 collector, binder, country_master, neutralizer, disruptor, salvator, smuggler,
@@ -36,6 +36,7 @@ class Stat(object):
         self.level = row.level
         self.explorer = row.explorer
         self.seer = row.seer
+        self.recon = row.recon
         self.collector = row.collector
         self.trekker = row.trekker
         self.builder = row.builder
@@ -79,6 +80,7 @@ class Stat(object):
         self.ap = row['ap']
         self.explorer = row['explorer']
         self.seer = row['seer']
+        self.recon = row['recon']
         self.collector = row['collector']
         self.trekker = row['trekker']
         self.builder = row['builder']
@@ -260,6 +262,7 @@ class Stat(object):
                      ap='{ap}',
                      explorer='{explorer}',
                      seer='{seer}',
+                     recon='{recon}',
                      trekker='{trekker}',
                      builder='{builder}',
                      connector='{connector}',
@@ -294,6 +297,7 @@ class Stat(object):
                                          ap='{ap}',
                                          explorer='{explorer}',
                                          seer='{seer}',
+                                         recon='{recon}',
                                          trekker='{trekker}',
                                          builder='{builder}',
                                          connector='{connector}',
