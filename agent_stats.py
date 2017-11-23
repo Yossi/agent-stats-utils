@@ -18,7 +18,7 @@ from titlecase import titlecase
 from Stat import Stat
 from util import mail, get_html
 try:
-    from extra_stats import compute_extra_categories # see extra_stats.py.example to see what this file should look like
+    from extra_stats import compute_extra_categories # see extra_stats.py.example for what this file should look like
 except ImportError:
     compute_extra_categories = lambda data: ({}, [], data)
 
@@ -175,7 +175,7 @@ def englishify(new_badges):
 def collate_agents():
     logging.info('collate agents')
     general_groups = dict(exec_mysql("SELECT name, idgroups FROM groups WHERE name IN ('smurfs', 'frogs', 'all');"))
-    for agent_id, name, faction in exec_mysql('select idagents, name, faction from agents;'):
+    for agent_id, name, faction in exec_mysql('SELECT idagents, name, faction FROM agents;'):
         faction = 'frogs' if faction == 'enl' else 'smurfs'
         sql = '''INSERT INTO `membership`
                  VALUES ('{}', '{}')

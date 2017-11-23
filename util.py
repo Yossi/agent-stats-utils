@@ -1,4 +1,4 @@
-import pymysql
+import pymysql # pip install pymysql
 pymysql.install_as_MySQLdb()
 import MySQLdb
 import logging
