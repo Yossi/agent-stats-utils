@@ -236,6 +236,8 @@ class Stat(object):
             reasons.append( 'explorer:magnusbuilder %s < %s/8' % (self.explorer, self.magnusbuilder) )
         if self.magnusbuilder > self.builder:
             reasons.append( 'builder:magnusbuilder %s < %s' % (self.builder, self.magnusbuilder) )
+        if self.seer > self.discoverer:
+            reasons.append( 'seer:discoverer %s > %s' % (self.seer, self.discoverer) )
 
         # there was a missionday where they didnt require missions at all. 100 UPV would get you the badge
         # http://www.pref.iwate.jp/dbps_data/_material_/_files/000/000/031/399/morioka0621.pdf (in japanese, on page 2)
@@ -339,6 +341,7 @@ class Stat(object):
 
 # date >= game_start
 # today >= date
+# discoverer >= seer
 # connector >= mind_controller/2
 # hacker+builder+engineer+connector >= explorer
 # explorer >= pioneer
