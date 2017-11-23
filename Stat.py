@@ -68,14 +68,14 @@ class Stat(object):
         self.magnusbuilder = row.magnusbuilder
 
         if str(self.name).startswith('@'):
-            self.agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name))[0][0]
+            self.agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name[:16]))[0][0]
         else: # probably good enough, but if this still blows up then make sure it's a numeric id and not just a name missing its @
             self.agent_id = self.name
             self.name = exec_mysql("SELECT name FROM agents WHERE idagents = '{0}';".format(self.agent_id))[0][0]
 
     def table_load(self, **row):
         self.date = parse(row['last_submit'] if row['last_submit'] and not row['last_submit'].startswith('0') else '1000/1/1').date()
-        self.name = row['name']
+        self.name = row['name'][:16]
         self.faction = row['faction']
         self.level = row['level']
         self.ap = row['ap']
