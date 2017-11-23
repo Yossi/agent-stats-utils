@@ -56,7 +56,8 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
     extra_definitions, extra_categories, data = compute_extra_categories(data)
 
     definitions = {'explorer': '_(New Portals Visited)_',
-                   'seer': '_(Portals Discovered)_',
+                   'discoverer': '_(Portals Discovered)_',
+                   'seer': '_(Seer Points)_',
                    'recon': '_(OPR Agreements)_',
                    'trekker': '_(Distance Walked)_',
                    'builder': '_(Resonators Deployed)_',
@@ -93,7 +94,7 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
     categories = ['ap', 'explorer', 'trekker', 'builder', 'connector',
                   'mind-controller', 'illuminator', 'recharger', 'liberator',
                   'pioneer', 'engineer', 'purifier', 'hacker', 'translator',
-                  'specops', 'seer', 'recon', 'collector', 'neutralizer', 'disruptor',
+                  'specops', 'discoverer', 'seer', 'recon', 'collector', 'neutralizer', 'disruptor',
                   'salvator', 'magnusbuilder', 'missionday'] + extra_categories
     submitters[0] = 0
     for category in categories:
@@ -262,6 +263,7 @@ def snarf(group=None):
 
 def get_badges(data):
     categories = {'explorer': [100, 1000, 2000, 10000, 30000],
+                  'discoverer': [10, 50, 200, 500, 5000],
                   'seer': [10, 50, 200, 500, 5000],
                   'recon': [100, 750, 2500, 5000, 10000],
                   'trekker': [10, 100, 300, 1000, 2500],
@@ -317,6 +319,7 @@ def summary(group='all', days=7):
         group_id = {'all': 1, 'smurfs': 2, 'frogs':3}.get(group, None)
 
     headers = ('explorer',
+               'discoverer',
                'seer',
                'recon',
                'trekker',
@@ -338,7 +341,7 @@ def summary(group='all', days=7):
                'recruiter',
                'magnusbuilder')
 
-    sql_before = '''SELECT x.name, s.`date`, `level`, ap, explorer, seer, recon, trekker, builder, connector, `mind-controller` mind_controller, illuminator,
+    sql_before = '''SELECT x.name, s.`date`, `level`, ap, explorer, discoverer, seer, recon, trekker, builder, connector, `mind-controller` mind_controller, illuminator,
                            recharger, liberator, pioneer, engineer, purifier, guardian, specops, missionday, hacker, translator, sojourner, recruiter, magnusbuilder
                     FROM (
                         SELECT a.name name, s.idagents id, MAX(s.date) AS date
@@ -360,7 +363,7 @@ def summary(group='all', days=7):
             baseline[agent] = {'date': row[1], 'level': row[2], 'ap': row[3],
                                'badges': get_badges(dict(zip(headers, row[4:])))}
 
-    sql_now = '''SELECT x.name, s.`date`, `level`, ap, explorer, seer, recon, trekker, builder, connector, `mind-controller` mind_controller, illuminator,
+    sql_now = '''SELECT x.name, s.`date`, `level`, ap, explorer, discoverer, seer, recon, trekker, builder, connector, `mind-controller` mind_controller, illuminator,
                            recharger, liberator, pioneer, engineer, purifier, guardian, specops, missionday, hacker, translator, sojourner, recruiter, magnusbuilder
                     FROM (
                         SELECT a.name name, s.idagents id, MAX(s.date) AS date

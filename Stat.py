@@ -11,7 +11,7 @@ today = datetime.date.today()
 sojourner_start = datetime.date(2015, 3, 5)
 game_start = datetime.date(2012, 11, 15)
 
-fields = '''name, date, flag, min_ap, ap, level, explorer, seer, recon, trekker, builder,
+fields = '''name, date, flag, min_ap, ap, level, explorer, discoverer, seer, recon, trekker, builder,
 connector, mind_controller, illuminator, recharger, liberator, pioneer, engineer,
 purifier, guardian, specops, missionday, hacker, translator, sojourner, recruiter,
 collector, binder, country_master, neutralizer, disruptor, salvator, smuggler,
@@ -35,6 +35,7 @@ class Stat(object):
         self.ap = row.ap
         self.level = row.level
         self.explorer = row.explorer
+        self.discoverer = row.discoverer
         self.seer = row.seer
         self.recon = row.recon
         self.collector = row.collector
@@ -79,6 +80,7 @@ class Stat(object):
         self.level = row['level']
         self.ap = row['ap']
         self.explorer = row['explorer']
+        self.discoverer = row['discoverer']
         self.seer = row['seer']
         self.recon = row['recon']
         self.collector = row['collector']
@@ -261,6 +263,7 @@ class Stat(object):
                      `level`='{level}',
                      ap='{ap}',
                      explorer='{explorer}',
+                     discoverer='{discoverer}',
                      seer='{seer}',
                      recon='{recon}',
                      trekker='{trekker}',
@@ -296,6 +299,7 @@ class Stat(object):
                  ON DUPLICATE KEY UPDATE `level`='{level}',
                                          ap='{ap}',
                                          explorer='{explorer}',
+                                         discoverer='{discoverer}',
                                          seer='{seer}',
                                          recon='{recon}',
                                          trekker='{trekker}',
