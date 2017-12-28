@@ -19,8 +19,8 @@ except NameError:
     pass
 
 logging.basicConfig(level=logging.INFO,
-                    format="%(asctime)s %(message)s",
-                    datefmt="%H:%M:%S")
+                    format='%(asctime)s %(message)s',
+                    datefmt='%H:%M:%S')
 
 # once you have your cookies and this is able to smoothly post a data point without 
 # intervention, you can change this to True and go setup cron to run the script
@@ -31,32 +31,32 @@ options.add_argument('log-level=3')
 if HEADLESS:
     options.add_argument('headless')
     options.add_argument('disable-gpu')
-driver = webdriver.Chrome(chrome_options=options)
+driver = webdriver.Chrome('./chromedriver', chrome_options=options)
 driver.implicitly_wait(5)
 
 try:
     driver.set_window_size(1024, 768)
     try:
-        cookies = pickle.load(open("cookies.pkl", "rb"))
+        cookies = pickle.load(open('cookies.pkl', 'rb'))
         driver.get('https://www.agent-stats.com')
         for cookie in cookies:
             #print(cookie)
             driver.add_cookie(cookie)
-    except FileNotFoundError:
+    except:
         pass
 
     driver.get('https://www.agent-stats.com/export.php')
     sleep(3)
     logging.info('url loaded')
     
-    if 'Sign in' in driver.find_element_by_tag_name("BODY").text:
+    if 'Sign in' in driver.find_element_by_tag_name('BODY').text:
         print('Sign in with your Google Account')
         print('If you do this wrong, shit will explode (or not work)')
         try:
             email = driver.find_element_by_xpath("//input[@type='email']")
             email.clear()
             email.send_keys(input('Email: '))
-            driver.find_element_by_id("identifierNext").click() # replace these clicks with an enter press?
+            driver.find_element_by_id('identifierNext').click() # replace these clicks with an enter press?
             sleep(1)
         except InvalidElementStateException:
             pass
@@ -64,11 +64,11 @@ try:
         password = driver.find_element_by_xpath("//input[@type='password']")
         password.clear()
         password.send_keys(getpass.getpass().strip())
-        driver.find_element_by_id("passwordNext").click()
+        driver.find_element_by_id('passwordNext').click()
 
         input('Press enter to continue. Complete the two-factor song and dance first (if applicable).')
         
-        pickle.dump(driver.get_cookies(), open("cookies.pkl","wb"))
+        pickle.dump(driver.get_cookies(), open('cookies.pkl', 'wb'))
     
     data = driver.find_elements_by_tag_name("tr")[-1].text # needs more brains than simply "the last one"
     

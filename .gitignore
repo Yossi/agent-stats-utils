@@ -3,6 +3,7 @@ extra_stats.py
 
 venv/
 winvenv/
+two_seven/
 cookies.txt*
 ghostdriver.log
 phantomjs
@@ -12,6 +13,8 @@ selenium.png
 dbcompare/
 sandbox/
 Code
+*.exe
+cookies.pkl
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -114,5 +117,3 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
-chromedriver.exe
-cookies.pkl
