@@ -114,3 +114,5 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+chromedriver.exe
+cookies.pkl

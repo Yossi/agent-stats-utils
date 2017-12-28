@@ -11,37 +11,65 @@ from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import InvalidElementStateException
 import logging
 import datetime
+import pickle
+
+try:
+    input = raw_input
+except NameError:
+    pass
 
 logging.basicConfig(level=logging.INFO,
                     format="%(asctime)s %(message)s",
                     datefmt="%H:%M:%S")
-driver = webdriver.PhantomJS('./phantomjs', service_args=['--cookies-file=cookies.txt'])
+
+# once you have your cookies and this is able to smoothly post a data point without 
+# intervention, you can change this to True and go setup cron to run the script
+HEADLESS = False #True
+
+options = webdriver.ChromeOptions()
+options.add_argument('log-level=3')
+if HEADLESS:
+    options.add_argument('headless')
+    options.add_argument('disable-gpu')
+driver = webdriver.Chrome(chrome_options=options)
+driver.implicitly_wait(5)
 
 try:
     driver.set_window_size(1024, 768)
+    try:
+        cookies = pickle.load(open("cookies.pkl", "rb"))
+        driver.get('https://www.agent-stats.com')
+        for cookie in cookies:
+            #print(cookie)
+            driver.add_cookie(cookie)
+    except FileNotFoundError:
+        pass
+
     driver.get('https://www.agent-stats.com/export.php')
+    sleep(3)
     logging.info('url loaded')
     
-    if 'Sign in with your Google Account' in driver.find_element_by_tag_name("BODY").text:
+    if 'Sign in' in driver.find_element_by_tag_name("BODY").text:
         print('Sign in with your Google Account')
         print('If you do this wrong, shit will explode (or not work)')
         try:
-            driver.find_element_by_id("Email").clear()
-            driver.find_element_by_id("Email").send_keys(input('Email: '))
-            driver.find_element_by_id("next").click()
+            email = driver.find_element_by_xpath("//input[@type='email']")
+            email.clear()
+            email.send_keys(input('Email: '))
+            driver.find_element_by_id("identifierNext").click() # replace these clicks with an enter press?
             sleep(1)
         except InvalidElementStateException:
             pass
-        driver.find_element_by_id("Passwd").clear()
-        driver.find_element_by_id("Passwd").send_keys(getpass.getpass())
-        driver.find_element_by_id("signIn").click()
 
-        if '2-Step Verification' in driver.find_element_by_tag_name("BODY").text:
-            driver.find_element_by_id("totpPin").clear()
-            driver.find_element_by_id("totpPin").send_keys(input('Enter your 2FA code: '))
-            #driver.find_element_by_id("trustDevice").click()
-            driver.find_element_by_id("submit").click()
+        password = driver.find_element_by_xpath("//input[@type='password']")
+        password.clear()
+        password.send_keys(getpass.getpass().strip())
+        driver.find_element_by_id("passwordNext").click()
 
+        input('Press enter to continue. Complete the two-factor song and dance first (if applicable).')
+        
+        pickle.dump(driver.get_cookies(), open("cookies.pkl","wb"))
+    
     data = driver.find_elements_by_tag_name("tr")[-1].text # needs more brains than simply "the last one"
     
     temp = data.split()
@@ -49,7 +77,7 @@ try:
     temp[0] = now.strftime('%Y-%m-%d')
     temp[1] = now.strftime('%H:%M:%S')
     temp[2] = str(int(temp[2])+1)
-    temp[-1] = '"statfixer"'
+    temp[-1] = '" statfixer "' # agent-stats bug cuts off first and last char
     data = ' '.join(temp)
     print(data)
     driver.get('https://www.agent-stats.com/import.php')
