@@ -4,23 +4,23 @@ Handy utilities for managing an ingress agent-stats group.
 
 ## Setting up
 "Easy" instructions for getting started on ubuntu 14.04 are now on the [wiki](https://github.com/Yossi/agent-stats-utils/wiki/Ubuntu-14.04-instructions-from-scratch).
-###Reqirements
+### Requirements
   * python3.4+
   * mysql server
 
 Clone this repo.  
-(Optional. phantomjs is only needed if you are monitoring for pending agents)  
+(Optional. phantomjs is only needed if you are planning to use custom time ranges)  
 Get phantomjs https://bitbucket.org/ariya/phantomjs/downloads the 2.0 version is
 a steaming pile of crap, get the 1.9.8 version. Throw it in the same dir as the 
-other checked out files, or change the code in util.py that looks like this
+other checked out files, or change the line in util.py that looks like this
 ```python
     driver = webdriver.PhantomJS('./phantomjs', service_args=['--cookies-file=cookies.txt'])
 ```
 to point to the path where you installed phantomjs.  
-Create database from schema.sql (This is destructive to existing tables. Do NOT 
+Create database from schema.sql (This is destructive to existing tables. DO NOT 
 run on an existing setup with data you don't want to lose.)  
 Copy secrets.py.example to secrets.py and change the settings and credentials in 
-there to real values. Get yourself an API key and put it in secrets.py .  
+there to real values. Get yourself an [API key](https://www.agent-stats.com/preferences.php) and put it in secrets.py .  
 Then create a virtualenv, activate it and install the requirements:
 ```
 virtualenv -p /usr/bin/python3 venv
@@ -37,7 +37,8 @@ You can operate on a group with the -g option (group names are case sensitive).
 If -g is left out, it will either do all groups or error out. Whatever works.
 Any command that has text output can have that output redirected to email with
 the -m option. If you are redirecting to email, you can set a custom subject
-with -s. Default subject is the command name + the group name.
+with -s. Default subject is the command name + the group name. Pass the -a option 
+to have the output attached as a .txt file as well.
 
 Sometimes you find yourself needing to change how many ranks make it into the charts.
 By default this is 10 but you can change it to whatever with the -n option.
@@ -48,7 +49,7 @@ crontab, or something similar.
 First time phantomjs is run (only needed for custom range now) it will ask you to log in to your google account.
 The script just takes what you enter and passes it to phantomjs where a google
 login page is open (headless). It also stores a cookie so you don't have to
-login every time.
+login every time. Google changes their login flow often. This stuff will probably be broken. Fix it yourself, or bother me enough so that I do.
 
 VERY IMPORTANT!
  
@@ -101,6 +102,7 @@ If any of the following conditions are not true, the stat is considered suspect:
 ```
     date >= game_start
     today >= date
+    discoverer >= seer
     connector >= mind_controller/2
     hacker+builder+engineer+connector >= explorer
     explorer >= pioneer
