@@ -155,18 +155,47 @@ def get_groups(group=None):
         
     return group_id, group_name
 
+def test(group):
+    from pprint import pprint
+    inputs = {'same': ['Bronze', 'Bronze'],
+              'one standard rank': ['Bronze', 'Silver'],
+              'multi standard ranks': ['Bronze', 'Gold'],
+              'same extended ranks': ['4x Onyx', '4x Onyx'],
+              'one extended rank': ['4x Onyx', '5x Onyx'],
+              'multi extended ranks': ['4x Onyx', '7x Onyx'],
+              'one standard to one extended': ['Onyx', '2x Onyx'],
+              'multi standard to one extended': ['Gold', '2x Onyx'],
+              'one standard to multi extended': ['Onyx', '3x Onyx'],
+              'multi standard to multi extended': ['Gold', '4x Onyx']}
+
+    old, new = [dict(zip(inputs,t)) for t in zip(*inputs.values())]
+
+    expected = {
+                'one standard rank': ['Silver'], 
+                'multi standard ranks': ['Silver', 'Gold'], 
+                'one extended rank': ['5x Onyx'],
+                'multi extended ranks': ['5x Onyx', '6x Onyx', '7x Onyx'],
+                'one standard to one extended': ['2x Onyx'], 
+                'multi standard to one extended': ['Onyx', '2x Onyx'], 
+                'one standard to multi extended': ['2x Onyx', '3x Onyx'], 
+                'multi standard to multi extended': ['Platinum', 'Onyx', '2x Onyx', '3x Onyx', '4x Onyx']
+               }
+    result = new_badges(old, new)
+    pprint(result)
+    print('passed:', result == expected)
+
 def new_badges(old_data, new_data):
     ranks = ['Locked', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Onyx']
     result = {}
     for category, old_rank in old_data.items():
         new_rank = new_data[category]
-        if old_rank != new_rank: # still detect changes in Onyx multiples
-            old_rank = old_rank.split()[-1]
-            try:
-                if ranks.index(old_rank) < ranks.index(new_rank): # else if new_rank has a multiplier on it .index() will fail with ValueError
-                    result[category] = ranks[ranks.index(old_rank)+1:ranks.index(new_rank)+1]
-            except ValueError:
-                result[category] = [new_data[category]]
+        if old_rank != new_rank:
+            print(category, old_rank, new_rank)
+            if ranks.index(old_rank.split()[-1]) < ranks.index(new_rank.split()[-1]):
+                result[category] = ranks[ranks.index(old_rank.split()[-1])+1:ranks.index(new_rank.split()[-1])+1]
+            print(old_rank.split('x ')[0])
+            if False:
+                result[category] = result.get('category', []).append()
     return result
 
 def englishify(new_badges):
@@ -312,7 +341,7 @@ def get_badges(data):
     return result
 
 def summary(group='all', days=7):
-    snarf(group)
+    #snarf(group)
     
     group_id, group_name = get_groups(group)
     if not group_id:
@@ -523,9 +552,6 @@ def get_custom_date_ranges(group):
         if span.text.startswith('Last refresh:'):
             return (datetime.datetime.strptime(span.text[42:61], '%Y-%m-%d %H:%M:%S'),
                     datetime.datetime.strptime(span.text[65:], '%Y-%m-%d %H:%M:%S'))
-
-def test(group):
-    print(get_custom_date_ranges(group))
 
 def check_for_applicants(group):
     group_id, group_name = get_groups(group)
