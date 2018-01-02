@@ -60,11 +60,12 @@ def exec_mysql(sql, retries=2):
 
 
 import smtplib
+from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from secrets import gmail_user, gmail_pwd
 
-def mail(to, subject, text):
+def mail(to, subject, text, attach=False):
     # to needs to be a list
     msg = MIMEMultipart()
 
@@ -73,6 +74,11 @@ def mail(to, subject, text):
     msg['Subject'] = subject
 
     msg.attach(MIMEText(text))
+
+    if attach:
+        part = MIMEApplication(text, Name=subject)
+        part['Content-Disposition'] = 'attachment; filename="%s.txt"' % subject
+        msg.attach(part)
 
     mailServer = smtplib.SMTP("smtp.gmail.com", 587)
     mailServer.ehlo()

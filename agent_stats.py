@@ -569,6 +569,7 @@ if __name__ == '__main__':
     parser.add_argument('-g', '--group', help='group to focus on', choices=[name for row in exec_mysql('SELECT name FROM groups;') for name in row])
     parser.add_argument('-m', '--mail', nargs='*', help='email address to get output')
     parser.add_argument('-s', '--subject', help='optional email subject')
+    parser.add_argument('-a', '--attach', action='store_true', help='also attach email body at a txt file to the email')
 
     args = parser.parse_args()
 
@@ -591,6 +592,6 @@ if __name__ == '__main__':
             elif result:
                 if not args.group: args.group=''
                 subject = args.action+' '+args.group if not args.subject else args.subject
-                mail(args.mail, subject, result)
+                mail(args.mail, subject, result, args.attach)
                 logging.info('email sent')
         logging.info('Done')
