@@ -70,7 +70,7 @@ def mail(to, subject, text, attach=False):
     msg = MIMEMultipart()
 
     msg['From'] = gmail_user
-    msg['To'] = ", ".join(to)
+    msg['To'] = ", ".join(to) if len(to[0])-1 else to
     msg['Subject'] = subject
 
     msg.attach(MIMEText(text))
