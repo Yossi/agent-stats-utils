@@ -525,7 +525,7 @@ def get_custom_date_ranges(group):
                     datetime.datetime.strptime(span.text[65:], '%Y-%m-%d %H:%M:%S'))
 
 def test(group):
-    print(get_custom_date_ranges(group))
+    pass
 
 def check_for_applicants(group):
     group_id, group_name = get_groups(group)

@@ -60,6 +60,7 @@ def exec_mysql(sql, retries=2):
 
 
 import smtplib
+from ftfy import fix_text
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -76,7 +77,7 @@ def mail(to, subject, text, attach=False):
     msg.attach(MIMEText(text))
 
     if attach:
-        part = MIMEApplication(text, Name=subject)
+        part = MIMEApplication(fix_text(text), Name=subject)
         part['Content-Disposition'] = 'attachment; filename="%s.txt"' % subject
         msg.attach(part)
 
