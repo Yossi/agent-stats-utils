@@ -217,28 +217,21 @@ def test(group):
 def new_badges(old_data, new_data):
     ranks = ['Locked', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Onyx']
 
-    def is_int(x):
-        try:
-            int(x)
-            return True
-        except ValueError:
-            return False
-
     result = OrderedDict()
     for category, old_rank in old_data.items():
         new_rank = new_data[category]
         #result[category] = None # only for testing. Do not send Nones down the pike
         if old_rank != new_rank:
             old, new = old_rank.split('x ')[0], new_rank.split('x ')[0]
-            if not is_int(old):
-                if not is_int(new):
+            if not old.isdecimal():
+                if not new.isdecimal():
                     if ranks.index(old) < ranks.index(new):
                         result[category] = ranks[ranks.index(old)+1:ranks.index(new)+1]
                 else:
                     result[category] = ranks[ranks.index(old)+1:]
 
-            if is_int(new):
-                if is_int(old):
+            if new.isdecimal():
+                if old.isdecimal():
                     if int(old) < int(new):
                         result[category] = ['%sx Onyx' % x for x in range(int(old)+1, int(new)+1)]
                 else:
