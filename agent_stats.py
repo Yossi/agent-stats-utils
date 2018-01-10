@@ -155,18 +155,94 @@ def get_groups(group=None):
         
     return group_id, group_name
 
+def test(group):
+    from colorama import init, Fore, Back, Style # pip install colorama
+    init() # colorama
+    from pprint import pprint
+    
+    def red(s):
+        return Style.BRIGHT + Back.RED + str(s) + Style.RESET_ALL
+    def yellow(s):
+        return Back.YELLOW + Fore.BLACK + str(s) + Style.RESET_ALL
+    def green(s):
+        return Style.BRIGHT + Back.GREEN + str(s) + Style.RESET_ALL
+    
+
+    inputs = OrderedDict([
+              ('same', ['Bronze', 'Bronze']),
+              ('one standard rank', ['Bronze', 'Silver']),
+              ('multi standard ranks', ['Bronze', 'Gold']),
+              ('same extended ranks', ['4x Onyx', '4x Onyx']),
+              ('one extended rank', ['4x Onyx', '5x Onyx']),
+              ('multi extended ranks', ['4x Onyx', '7x Onyx']),
+              ('one standard to one extended', ['Onyx', '2x Onyx']),
+              ('multi standard to one extended', ['Gold', '2x Onyx']),
+              ('one standard to multi extended', ['Onyx', '3x Onyx']),
+              ('multi standard to multi extended', ['Gold', '4x Onyx']),
+              ('locked same', ['Locked', 'Locked']),
+              ('locked one standard rank', ['Locked', 'Bronze']),
+              ('locked multi standard ranks', ['Locked', 'Gold']),
+              ('locked multi standard to one extended', ['Locked', '2x Onyx']),
+              ('backwards standard', ['Onyx', 'Locked']),
+              ('backwards extended', ['5x Onyx', '2x Onyx']),
+              ('backwards extended to standard', ['10x Onyx', 'Bronze']),
+              ])
+
+    old, new = [OrderedDict(zip(inputs,t)) for t in zip(*inputs.values())]
+
+    expected = {
+                'same': None,
+                'one standard rank': ['Silver'],
+                'multi standard ranks': ['Silver', 'Gold'],
+                'same extended ranks': None,
+                'one extended rank': ['5x Onyx'],
+                'multi extended ranks': ['5x Onyx', '6x Onyx', '7x Onyx'],
+                'one standard to one extended': ['2x Onyx'], 
+                'multi standard to one extended': ['Platinum', 'Onyx', '2x Onyx'], 
+                'one standard to multi extended': ['2x Onyx', '3x Onyx'], 
+                'multi standard to multi extended': ['Platinum', 'Onyx', '2x Onyx', '3x Onyx', '4x Onyx'],
+                'locked same': None,
+                'locked one standard rank': ['Bronze'],
+                'locked multi standard ranks': ['Bronze', 'Silver', 'Gold'],
+                'locked multi standard to one extended': ['Bronze', 'Silver', 'Gold', 'Platinum', 'Onyx', '2x Onyx'],
+                'backwards standard': None,
+                'backwards extended': None,
+                'backwards extended to standard': None
+               }
+
+    result = new_badges(old, new)
+    pprint(result)
+    print('passed:', result == expected)
+
 def new_badges(old_data, new_data):
     ranks = ['Locked', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Onyx']
-    result = {}
+
+    def is_int(x):
+        try:
+            int(x)
+            return True
+        except ValueError:
+            return False
+
+    result = OrderedDict()
     for category, old_rank in old_data.items():
         new_rank = new_data[category]
-        if old_rank != new_rank: # still detect changes in Onyx multiples
-            old_rank = old_rank.split()[-1]
-            try:
-                if ranks.index(old_rank) < ranks.index(new_rank): # else if new_rank has a multiplier on it .index() will fail with ValueError
-                    result[category] = ranks[ranks.index(old_rank)+1:ranks.index(new_rank)+1]
-            except ValueError:
-                result[category] = [new_data[category]]
+        #result[category] = None # only for testing. Do not send Nones down the pike
+        if old_rank != new_rank:
+            old, new = old_rank.split('x ')[0], new_rank.split('x ')[0]
+            if not is_int(old):
+                if not is_int(new):
+                    if ranks.index(old) < ranks.index(new):
+                        result[category] = ranks[ranks.index(old)+1:ranks.index(new)+1]
+                else:
+                    result[category] = ranks[ranks.index(old)+1:]
+
+            if is_int(new):
+                if is_int(old):
+                    if int(old) < int(new):
+                        result[category] = ['%sx Onyx' % x for x in range(int(old)+1, int(new)+1)]
+                else:
+                    result[category].extend( ['%sx Onyx' % x for x in range(2, int(new)+1)] )
     return result
 
 def englishify(new_badges):
@@ -524,8 +600,6 @@ def get_custom_date_ranges(group):
             return (datetime.datetime.strptime(span.text[42:61], '%Y-%m-%d %H:%M:%S'),
                     datetime.datetime.strptime(span.text[65:], '%Y-%m-%d %H:%M:%S'))
 
-def test(group):
-    pass
 
 def check_for_applicants(group):
     group_id, group_name = get_groups(group)
