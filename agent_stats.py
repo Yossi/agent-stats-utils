@@ -182,71 +182,68 @@ def test(group):
               ('locked same', ['Locked', 'Locked']),
               ('locked one standard rank', ['Locked', 'Bronze']),
               ('locked multi standard ranks', ['Locked', 'Gold']),
-              ('locked multi standard to one extended', ['Locked', '2x Onyx'])
+              ('locked multi standard to one extended', ['Locked', '2x Onyx']),
+              ('backwards standard', ['Onyx', 'Locked']),
+              ('backwards extended', ['5x Onyx', '2x Onyx']),
+              ('backwards extended to standard', ['10x Onyx', 'Bronze']),
               ])
 
     old, new = [OrderedDict(zip(inputs,t)) for t in zip(*inputs.values())]
 
     expected = {
-                'same': [],
+                'same': None,
                 'one standard rank': ['Silver'],
                 'multi standard ranks': ['Silver', 'Gold'],
-                'same extended ranks': [],
+                'same extended ranks': None,
                 'one extended rank': ['5x Onyx'],
                 'multi extended ranks': ['5x Onyx', '6x Onyx', '7x Onyx'],
                 'one standard to one extended': ['2x Onyx'], 
                 'multi standard to one extended': ['Platinum', 'Onyx', '2x Onyx'], 
                 'one standard to multi extended': ['2x Onyx', '3x Onyx'], 
                 'multi standard to multi extended': ['Platinum', 'Onyx', '2x Onyx', '3x Onyx', '4x Onyx'],
-                'locked same': [],
+                'locked same': None,
                 'locked one standard rank': ['Bronze'],
                 'locked multi standard ranks': ['Bronze', 'Silver', 'Gold'],
-                'locked multi standard to one extended': ['Bronze', 'Silver', 'Gold', 'Platinum', 'Onyx', '2x Onyx']
+                'locked multi standard to one extended': ['Bronze', 'Silver', 'Gold', 'Platinum', 'Onyx', '2x Onyx'],
+                'backwards standard': None,
+                'backwards extended': None,
+                'backwards extended to standard': None
                }
 
-
-
-    def new_badges(old_data, new_data): # this belongs on the top level, not inside test()
-        ranks = ['Locked', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Onyx']
-
-        def is_int(x):
-            try:
-                int(x)
-                return True
-            except ValueError:
-                return False
-
-        result = OrderedDict()
-        for category, old_rank in old_data.items():
-            new_rank = new_data[category]
-            print( 'Old: %s, New: %s, Rank: %s' % (yellow(old_rank), yellow(new_rank), category) )
-            if old_rank != new_rank:
-                old, new = old_rank.split('x ')[0], new_rank.split('x ')[0]
-                print( old, '\t', new )
-                #print( ranks_get(old), '\t', ranks_get(new) )
-
-                if not is_int(old):
-                    if not is_int(new):
-                        result[category] = ranks[ranks.index(old)+1:ranks.index(new)+1]
-                    else:
-                        result[category] = ranks[ranks.index(old)+1:]
-
-                if is_int(new):
-                    if is_int(old):
-                        result[category] = ['%sx Onyx' % x for x in range(int(old)+1, int(new)+1)]
-                    else:
-                        result[category].extend( ['%sx Onyx' % x for x in range(2, int(new)+1)] )
-
-            color = green if result.get(category, []) == expected[category] else red
-            print(color(expected[category]), color(result.get(category, [])), '\n')
-        return result
-
-
-
     result = new_badges(old, new)
+    pprint(result)
     print('passed:', result == expected)
 
+def new_badges(old_data, new_data):
+    ranks = ['Locked', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Onyx']
 
+    def is_int(x):
+        try:
+            int(x)
+            return True
+        except ValueError:
+            return False
+
+    result = OrderedDict()
+    for category, old_rank in old_data.items():
+        new_rank = new_data[category]
+        #result[category] = None # only for testing. Do not send Nones down the pike
+        if old_rank != new_rank:
+            old, new = old_rank.split('x ')[0], new_rank.split('x ')[0]
+            if not is_int(old):
+                if not is_int(new):
+                    if ranks.index(old) < ranks.index(new):
+                        result[category] = ranks[ranks.index(old)+1:ranks.index(new)+1]
+                else:
+                    result[category] = ranks[ranks.index(old)+1:]
+
+            if is_int(new):
+                if is_int(old):
+                    if int(old) < int(new):
+                        result[category] = ['%sx Onyx' % x for x in range(int(old)+1, int(new)+1)]
+                else:
+                    result[category].extend( ['%sx Onyx' % x for x in range(2, int(new)+1)] )
+    return result
 
 def englishify(new_badges):
     data = [badge.upper()+' ' + ", ".join(ranks[:-2] + [" and ".join(ranks[-2:])]) for badge, ranks in new_badges.items()]
