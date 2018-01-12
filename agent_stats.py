@@ -130,7 +130,7 @@ def read_table(group_id, time_span):
     count = 0
     API_url = 'https://api.agent-stats.com/groups/{}/{}'
     r = s.get(API_url.format(group_id, time_span), stream=True)
-    r.raise_for_status() # debug
+    r.raise_for_status()
     for agent, data in r.json().items():
         data['name'] = '@'+agent
         count += 1
@@ -139,8 +139,8 @@ def read_table(group_id, time_span):
 
 @lru_cache(maxsize=None)
 def groups():
-    r = s.get('https://api.agent-stats.com/groups')
-    r.raise_for_status() # debug
+    r = s.get('https://api.agent-stats.com/groups', stream=True)
+    r.raise_for_status()
     return dict([(g['groupid'], g['groupname']) for g in r.json() if '.' in g['groupid']])
 
 def get_groups(group=None):
@@ -155,7 +155,8 @@ def get_groups(group=None):
         
     return group_id, group_name
 
-def test(group):
+def test_new_badges(group):
+    # leftover test function that will need to be moved elsewhere later, but for now it stays so i can test the inevitable bugs introduced last time
     from colorama import init, Fore, Back, Style # pip install colorama
     init() # colorama
     from pprint import pprint
@@ -593,11 +594,13 @@ def get_custom_date_ranges(group):
             return (datetime.datetime.strptime(span.text[42:61], '%Y-%m-%d %H:%M:%S'),
                     datetime.datetime.strptime(span.text[65:], '%Y-%m-%d %H:%M:%S'))
 
+def test(group):
+    pass
 
 def check_for_applicants(group):
     group_id, group_name = get_groups(group)
     r = s.get('https://api.agent-stats.com/groups/{}/pending'.format(group_id), stream=True)
-    r.raise_for_status() # debug
+    r.raise_for_status()
     message = []
     if r.json():
         message.append('Agent(s) awaiting validation to the {} group:'.format(group))
