@@ -96,42 +96,51 @@ def mail(to, subject, text, attach=False):
 
 
 import os
+import pickle
 from time import sleep
 import getpass
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import InvalidElementStateException
 
+HEADLESS = True
+
 def get_html(scoreboard=None, time_span='current'):
     logging.info("get_html({}, {})".format(scoreboard, time_span))
+    global HEADLESS
+    options = webdriver.ChromeOptions()
+    options.add_argument('log-level=3')
+    if HEADLESS:
+        options.add_argument('headless')
+        options.add_argument('disable-gpu')
+    driver = webdriver.Chrome('./chromedriver', chrome_options=options)
+    driver.implicitly_wait(5)
 
-    driver = webdriver.PhantomJS('./phantomjs', service_args=['--cookies-file=cookies.txt'], service_log_path=os.path.devnull)
     logging.info('driver created')
 
     try:
         driver.set_window_size(1024, 768)
+        try:
+            cookies = pickle.load(open('cookies.pkl', 'rb'))
+            driver.get('https://www.agent-stats.com')
+            for cookie in cookies:
+                #print(cookie)
+                driver.add_cookie(cookie)
+        except:
+            pass
+
         driver.get('https://www.agent-stats.com/groups.php')
+        sleep(3)
         logging.info('url loaded')
 
-        if 'Sign in with your Google Account' in driver.find_element_by_tag_name("BODY").text:
-            print('Sign in with your Google Account')
-            print('If you do this wrong, shit will explode (or not work)')
-            try:
-                driver.find_element_by_id("Email").clear()
-                driver.find_element_by_id("Email").send_keys(input('Email: '))
-                driver.find_element_by_id("next").click()
-                sleep(1)
-            except InvalidElementStateException:
-                pass
-            driver.find_element_by_id("Passwd").clear()
-            driver.find_element_by_id("Passwd").send_keys(getpass.getpass())
-            driver.find_element_by_id("signIn").click()
-
-            if '2-Step Verification' in driver.find_element_by_tag_name("BODY").text:
-                driver.find_element_by_id("totpPin").clear()
-                driver.find_element_by_id("totpPin").send_keys(input('Enter your 2FA code: '))
-                #driver.find_element_by_id("trustDevice").click()
-                driver.find_element_by_id("submit").click()
+        if 'Sign in' in driver.find_element_by_tag_name('BODY').text:
+            if HEADLESS:
+                logging.info('cookie no good. trying again with a window')
+                HEADLESS = False
+                return get_html(scoreboard, time_span)
+            else:
+                input('Press enter after you login... ')
+                pickle.dump(driver.get_cookies(), open('cookies.pkl', 'wb'))
 
         if scoreboard:
             from agent_stats import get_groups # recursive import. be very careful
