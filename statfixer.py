@@ -5,13 +5,11 @@
 # of next week's stat pull. Adds 1 ap because otherwise agent-stats won't take it.
 
 from time import sleep
-import getpass
 from selenium import webdriver
-from selenium.webdriver.support.ui import Select
-from selenium.common.exceptions import InvalidElementStateException
 import logging
 import datetime
 import pickle
+import os
 
 try:
     input = raw_input
@@ -24,7 +22,7 @@ logging.basicConfig(level=logging.INFO,
 
 # once you have your cookies and this is able to smoothly post a data point without 
 # intervention, you can change this to True and go setup cron to run the script
-HEADLESS = False #True
+HEADLESS = True if os.path.isfile('cookies.pkl') else False
 
 options = webdriver.ChromeOptions()
 options.add_argument('log-level=3')
@@ -50,24 +48,10 @@ try:
     logging.info('url loaded')
     
     if 'Sign in' in driver.find_element_by_tag_name('BODY').text:
-        print('Sign in with your Google Account')
-        print('If you do this wrong, shit will explode (or not work)')
-        try:
-            email = driver.find_element_by_xpath("//input[@type='email']")
-            email.clear()
-            email.send_keys(input('Email: '))
-            driver.find_element_by_id('identifierNext').click() # replace these clicks with an enter press?
-            sleep(1)
-        except InvalidElementStateException:
-            pass
-
-        password = driver.find_element_by_xpath("//input[@type='password']")
-        password.clear()
-        password.send_keys(getpass.getpass().strip())
-        driver.find_element_by_id('passwordNext').click()
-
-        input('Press enter to continue. Complete the two-factor song and dance first (if applicable).')
-        
+        if HEADLESS:
+            # not really how to raise exceptions, but this line crashes and that's the point here
+            raise 'your cookie is broken. delete it and try again'
+        input('Press enter after you login... ')
         pickle.dump(driver.get_cookies(), open('cookies.pkl', 'wb'))
     
     data = driver.find_elements_by_tag_name("tr")[-1].text # needs more brains than simply "the last one"
@@ -79,15 +63,15 @@ try:
     temp[2] = str(int(temp[2])+1)
     temp[-1] = '" statfixer "' # agent-stats bug cuts off first and last char
     data = ' '.join(temp)
-    print(data)
+    logging.info(data)
     driver.get('https://www.agent-stats.com/import.php')
     textarea = driver.find_element_by_tag_name('textarea')
     textarea.click()
     textarea.send_keys(data)
     driver.find_element_by_xpath('/html/body/div[2]/div[3]/div/form/input').click()
 
-    driver.save_screenshot('selenium.png')
-    logging.info('screenshot saved')
+    #driver.save_screenshot('selenium.png')
+    #logging.info('screenshot saved')
 
 finally:
     driver.quit()
