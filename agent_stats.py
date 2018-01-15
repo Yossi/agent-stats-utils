@@ -152,7 +152,7 @@ def get_groups(group=None):
     else:
         group_id = exec_mysql('SELECT url FROM groups WHERE `name` = "{}"'.format(group))[0][0]
         group_name = group
-        
+
     return group_id, group_name
 
 def test_new_badges(group):
@@ -160,14 +160,14 @@ def test_new_badges(group):
     from colorama import init, Fore, Back, Style # pip install colorama
     init() # colorama
     from pprint import pprint
-    
+
     def red(s):
         return Style.BRIGHT + Back.RED + str(s) + Style.RESET_ALL
     def yellow(s):
         return Back.YELLOW + Fore.BLACK + str(s) + Style.RESET_ALL
     def green(s):
         return Style.BRIGHT + Back.GREEN + str(s) + Style.RESET_ALL
-    
+
 
     inputs = OrderedDict([
               ('same', ['Bronze', 'Bronze']),
@@ -198,9 +198,9 @@ def test_new_badges(group):
                 'same extended ranks': None,
                 'one extended rank': ['5x Onyx'],
                 'multi extended ranks': ['5x Onyx', '6x Onyx', '7x Onyx'],
-                'one standard to one extended': ['2x Onyx'], 
-                'multi standard to one extended': ['Platinum', 'Onyx', '2x Onyx'], 
-                'one standard to multi extended': ['2x Onyx', '3x Onyx'], 
+                'one standard to one extended': ['2x Onyx'],
+                'multi standard to one extended': ['Platinum', 'Onyx', '2x Onyx'],
+                'one standard to multi extended': ['2x Onyx', '3x Onyx'],
                 'multi standard to multi extended': ['Platinum', 'Onyx', '2x Onyx', '3x Onyx', '4x Onyx'],
                 'locked same': None,
                 'locked one standard rank': ['Bronze'],
@@ -296,7 +296,7 @@ def snarf(group=None):
                      VALUES ('{}', '{}')
                      ON DUPLICATE KEY UPDATE idagents=idagents;'''.format(stat.agent_id, idgroups)
             exec_mysql(sql)
-            
+
             if stat.faction != exec_mysql('SELECT faction FROM agents WHERE `name` = "{}";'.format(stat.name))[0][0]:
                 logging.info('Agent flipped: {} -> {}'.format(stat.name, stat.faction.upper()))
                 flipped.append('{} -> {}'.format(stat.name, stat.faction))
@@ -366,7 +366,7 @@ def get_badges(data):
                 if multiplier > 1:
                     current = '%sx %s' % (multiplier, current)
         result[category] = current
-    
+
     #for category, ranks in {'magnusbuilder': [1331, 3113]}.items(): # doesn't strictly have to be a loop, but i want it to match above
     #    current = 'Locked'
     #    multiplier = 1
@@ -383,7 +383,7 @@ def get_badges(data):
 
 def summary(group='all', days=7):
     snarf(group)
-    
+
     group_id, group_name = get_groups(group)
     if not group_id:
         group_id = {'all': 1, 'smurfs': 2, 'frogs':3}.get(group, None)
@@ -489,13 +489,13 @@ def summary(group='all', days=7):
         output.append(footnote)
     return '\n'.join(output)
 
-weekly_template = '''Great work agents!! If you would like to be included in future top {} lists please 
-join our agent-stats group https://www.agent-stats.com/groups.php?group={} . 
-Don’t know what agent-stats is? See here: https://www.agent-stats.com/manual.php . 
-To have your stats show up you need to upload your stats at least right after 
-you see this (right now) and then again right before you see this next week (just upload 
-your stats late Sunday night / early Monday morning when you are done for the night). 
-It’s also a good idea to upload your stats every night.'''
+weekly_template = '''Great work agents!! If you would like to be included in future top {} lists please
+ join our agent-stats group https://www.agent-stats.com/groups.php?group={} .
+ Don’t know what agent-stats is? See here: https://www.agent-stats.com/manual.php .
+ To have your stats show up you need to upload your stats at least right after
+ you see this (right now) and then again right before you see this next week (just upload
+ your stats late Sunday night / early Monday morning when you are done for the night).
+ It’s also a good idea to upload your stats every night.'''
 def weekly_roundup(group):
     group_id, group_name = get_groups(group)
     if not group_id: return 'please specify group'
@@ -520,13 +520,13 @@ def weekly_roundup(group):
     output.append('_Job started on {} and ran for {}_'.format(start, end-start))
     return '\n'.join(output)
 
-monthly_template = '''Great work agents!! If you would like to be included in future top {} lists please 
-join our agent-stats group https://www.agent-stats.com/groups.php?group={} . 
-Don’t know what agent-stats is? See here: https://www.agent-stats.com/manual.php . 
-To have your stats show up you need to upload your stats at least right after 
-you see this (right now) and then again right before you see this next month (just upload 
-your stats late on the night / early morning before the 1st of the month when you are done for the night). 
-It’s also a good idea to upload your stats every night.'''
+monthly_template = '''Great work agents!! If you would like to be included in future top {} lists please
+ join our agent-stats group https://www.agent-stats.com/groups.php?group={} .
+ Don’t know what agent-stats is? See here: https://www.agent-stats.com/manual.php .
+ To have your stats show up you need to upload your stats at least right after
+ you see this (right now) and then again right before you see this next month (just upload
+ your stats late on the night / early morning before the 1st of the month when you are done for the night).
+ It’s also a good idea to upload your stats every night.'''
 def monthly_roundup(group):
     group_id, group_name = get_groups(group)
     if not group_id: return 'please specify group'
@@ -552,10 +552,10 @@ def monthly_roundup(group):
     output.append('_Job started on {} and ran for {}_'.format(start, end-start))
     return '\n'.join(output)
 
-custom_template = '''Great work agents!! If you would like to be included in future top {} lists please 
-join our agent-stats group https://www.agent-stats.com/groups.php?group={} . 
-Don’t know what agent-stats is? See here: https://www.agent-stats.com/manual.php . 
-For your stats show up on this list you need to have uploaded your stats at least twice between {} and {}'''
+custom_template = '''Great work agents!! If you would like to be included in future top {} lists please
+ join our agent-stats group https://www.agent-stats.com/groups.php?group={} .
+ Don’t know what agent-stats is? See here: https://www.agent-stats.com/manual.php .
+ For your stats show up on this list you need to have uploaded your stats at least twice between {} and {}'''
 def custom_roundup(group):
     group_id, group_name = get_groups(group)
     if not group_id: return 'please specify group'
