@@ -478,10 +478,10 @@ def summary(group='all', days=7):
                     note = '¹' # chcp 65001
                     footnote = '¹Start date more than 2 %s ago' % ('weeks' if days == 7 else 'months',)
 
-                if today - date_old > datetime.timedelta(days=365): # close enough. no one cares about leap years
-                    template = '*{}* earned {} sometime between {old.month}/{old.day}/{old.year}{} and {new.month}/{new.day}/{new.year}'
-                else:
+                if today.year == date_old.year:
                     template = '*{}* earned {} sometime between {old.month}/{old.day}{} and {new.month}/{new.day}'
+                else:
+                    template = '*{}* earned {} sometime between {old.month}/{old.day}/{old.year}{} and {new.month}/{new.day}/{new.year}'
 
                 output.append(template.format(agent, earnings, note, old=date_old, new=date_new))
     output = sorted(output, key=lambda s: s.lower())
