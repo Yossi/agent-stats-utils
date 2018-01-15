@@ -8,15 +8,7 @@ Handy utilities for managing an ingress agent-stats group.
   * python3.4+
   * mysql server
 
-Clone this repo.  
-(Optional. phantomjs is only needed if you are planning to use custom time ranges)  
-Get phantomjs https://bitbucket.org/ariya/phantomjs/downloads the 2.0 version is
-a steaming pile of crap, get the 1.9.8 version. Throw it in the same dir as the 
-other checked out files, or change the line in util.py that looks like this
-```python
-    driver = webdriver.PhantomJS('./phantomjs', service_args=['--cookies-file=cookies.txt'])
-```
-to point to the path where you installed phantomjs.  
+Clone this repo.   
 Create database from schema.sql (This is destructive to existing tables. DO NOT 
 run on an existing setup with data you don't want to lose.)  
 Copy secrets.py.example to secrets.py and change the settings and credentials in 
@@ -45,18 +37,6 @@ By default this is 10 but you can change it to whatever with the -n option.
 
 Once you get a feel for what this script does, you may want to set it up to run with
 crontab, or something similar.
-
-First time phantomjs is run (only needed for custom range now) it will ask you to log in to your google account.
-The script just takes what you enter and passes it to phantomjs where a google
-login page is open (headless). It also stores a cookie so you don't have to
-login every time. Google changes their login flow often. This stuff will probably be broken. Fix it yourself, or bother me enough so that I do.
-
-VERY IMPORTANT!
- 
- GUARD THE cookies.txt FILE WELL. IT GRANTS ACCESS TO YOUR ACCOUNT TO WHOEVER HAS IT! 
- 
- If you suspect your cookie file has leaked, you need to hop into gmail and force
- sign out all your other sessions.
 
 ## Features
 ### snarf
@@ -112,6 +92,8 @@ If any of the following conditions are not true, the stat is considered suspect:
     purifier >= disruptor
     purifier >= neutralizer
     hacker >= translator/15
+    builder >= magnusbuilder
+    explorer >= magnusbuilder/8
 ```
 Also, minimum level is calculated based on knowable badges and ap.
 In addition, minimum AP is calculated by the following formula 
