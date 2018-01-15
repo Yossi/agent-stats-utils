@@ -60,7 +60,7 @@ def exec_mysql(sql, retries=2):
 
 
 import smtplib
-from ftfy import fix_text
+from ftfy import fix_text # pip install ftfy
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -94,11 +94,10 @@ def mail(to, subject, text, attach=False):
 
 #######
 
-
+"""
 import os
 import pickle
 from time import sleep
-import getpass
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import InvalidElementStateException
@@ -156,3 +155,4 @@ def get_html(scoreboard=None, time_span='current'):
 
     logging.info('html acquired')
     return html
+"""

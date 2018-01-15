@@ -9,14 +9,13 @@ import sys
 from time import sleep
 from collections import OrderedDict, namedtuple
 
-import requests
-from num2words import num2words as n2w
-from bs4 import BeautifulSoup
+import requests # pip install requests
+from num2words import num2words as n2w # pip install num2words
 from functools import lru_cache
-from titlecase import titlecase
+from titlecase import titlecase # pip install titlecase
 
 from Stat import Stat
-from util import mail, get_html
+from util import mail
 try:
     from extra_stats import compute_extra_categories # see extra_stats.py.example for what this file should look like
 except ImportError:

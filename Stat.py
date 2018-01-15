@@ -2,9 +2,9 @@ from util import exec_mysql
 import datetime
 import logging
 from itertools import chain
-from dateutil.parser import parse
+from dateutil.parser import parse # pip install python-dateutil
 from collections import namedtuple
-from cached_property import cached_property
+from cached_property import cached_property # pip install cached-property
 
 
 today = datetime.date.today()
