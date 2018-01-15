@@ -59,7 +59,7 @@ way or another you will keep getting spammed about them.
 ### summary
 Typically not used stand alone. Gets all the badge dings that happened between
 each agent's most recent data point and their most recent data point over 7 days
-old. Searches across all groups, unless passed a specific group.
+old. Searches across groups, if passed "all", "smurfs" or "frogs".
 
 ### weekly/monthly/custom
 This is the main reason all this was written. Grabs the weekly (or monthly, etc.) page
