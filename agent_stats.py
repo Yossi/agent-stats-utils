@@ -464,7 +464,7 @@ def summary(group='all', days=7):
             changes = OrderedDict()
             if badges_old != badges_new:
                 changes.update(new_badges(badges_old, badges_new))
-            if ap_40m_old != ap_40m_new:
+            if ap_40m_old < ap_40m_new:
                 changes['ap'] = ['{} MILLION'.format((l+1)*40) for l in range(ap_40m_old, ap_40m_new)]
             if level_old < level_new:
                 changes['level'] = [str(l+1) for l in range(level_old, level_new)]
