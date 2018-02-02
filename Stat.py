@@ -13,7 +13,7 @@ game_start = datetime.date(2012, 11, 15)
 
 fields = '''name, date, flag, min_ap, ap, level, explorer, discoverer, seer, recon, trekker, builder,
 connector, mind_controller, illuminator, recharger, liberator, pioneer, engineer,
-purifier, guardian, specops, missionday, hacker, translator, sojourner, recruiter,
+purifier, guardian, specops, missionday, nl_1331_meetups, hacker, translator, sojourner, recruiter,
 collector, binder, country_master, neutralizer, disruptor, salvator, smuggler,
 link_master, controller, field_master, magnusbuilder'''
 
@@ -61,6 +61,7 @@ class Stat(object):
         self.field_master = row.field_master
         self.specops = row.specops
         self.missionday = row.missionday
+        self.nl_1331_meetups = row.nl_1331_meetups
         self.hacker = row.hacker
         self.translator = row.translator
         self.sojourner = row.sojourner
@@ -106,6 +107,7 @@ class Stat(object):
         self.field_master = row['field-master']
         self.specops = row['specops']
         self.missionday = row['missionday']
+        self.nl_1331_meetups = row['nl-1331-meetups']
         self.hacker = row['hacker']
         self.translator = row['translator']
         self.sojourner = row['sojourner']
@@ -281,6 +283,7 @@ class Stat(object):
                      guardian='{guardian}',
                      specops='{specops}',
                      missionday='{missionday}',
+                     nl-1331-meetups='{nl_1331_meetups}',
                      hacker='{hacker}',
                      translator='{translator}',
                      sojourner='{sojourner}',
@@ -317,6 +320,7 @@ class Stat(object):
                                          guardian='{guardian}',
                                          specops='{specops}',
                                          missionday='{missionday}',
+                                         nl-1331-meetups='{nl_1331_meetups}',
                                          hacker='{hacker}',
                                          translator='{translator}',
                                          sojourner='{sojourner}',

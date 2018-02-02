@@ -1,2 +1,3 @@
 ALTER TABLE `agent_stats`.`stats` 
-ADD COLUMN `discoverer` BIGINT(20) UNSIGNED NULL DEFAULT NULL COMMENT '' AFTER `recon`;
+ADD COLUMN `nl-1331-meetups` BIGINT(20) UNSIGNED NULL COMMENT '' AFTER `discoverer`;
+

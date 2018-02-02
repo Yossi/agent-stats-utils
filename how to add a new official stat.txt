@@ -1,14 +1,14 @@
-add a column in stats
+add a column in stats table
 fix the stored procedure name FindAgentByName
 in Stat.py:
-update string fields
+update string: fields (change - to _)
        db_load()
        table_load()
        save() x2
 in agent_stats.py:
 update definitions
        categories list (if aplicable)
-       categories dict
-       headers dict
+       categories dict (in get_badges())
+       headers dict (in summary()) use _ here
        sql_before
-       Sql_now
+       sql_now
