@@ -1,6 +1,7 @@
 secrets.py
 extra_stats.py
 
+profile/
 venv/
 winvenv/
 two_seven/
