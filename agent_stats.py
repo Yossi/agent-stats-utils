@@ -413,8 +413,10 @@ def summary(group='all', days=7):
                'recruiter',
                'magnusbuilder')
 
-    sql_before = '''SELECT x.name, s.`date`, `level`, ap, explorer, discoverer, seer, recon, trekker, builder, connector, `mind-controller` mind_controller, illuminator,
-                           recharger, liberator, pioneer, engineer, purifier, guardian, specops, missionday, `nl-1331-meetups` nl-1331-meetups, hacker, translator, sojourner, recruiter, magnusbuilder
+    sql_before = '''SELECT x.name, s.`date`, `level`, ap, explorer, discoverer, seer, recon, trekker, builder, connector,
+                           `mind-controller` mind_controller, illuminator, recharger, liberator, pioneer, engineer, purifier,
+                           guardian, specops, missionday, `nl-1331-meetups` nl-1331-meetups, hacker, translator, sojourner,
+                           recruiter, magnusbuilder
                     FROM (
                         SELECT a.name name, s.idagents id, MAX(s.date) AS date
                         FROM agents a, stats s, membership m, groups g
@@ -435,8 +437,10 @@ def summary(group='all', days=7):
             baseline[agent] = {'date': row[1], 'level': row[2], 'ap': row[3],
                                'badges': get_badges(dict(zip(headers, row[4:])))}
 
-    sql_now = '''SELECT x.name, s.`date`, `level`, ap, explorer, discoverer, seer, recon, trekker, builder, connector, `mind-controller` mind_controller, illuminator,
-                           recharger, liberator, pioneer, engineer, purifier, guardian, specops, missionday, `nl-1331-meetups` nl-1331-meetups, hacker, translator, sojourner, recruiter, magnusbuilder
+    sql_now = '''SELECT x.name, s.`date`, `level`, ap, explorer, discoverer, seer, recon, trekker, builder, connector,
+                        `mind-controller` mind_controller, illuminator, recharger, liberator, pioneer, engineer, purifier,
+                        guardian, specops, missionday, `nl-1331-meetups` nl-1331-meetups, hacker, translator, sojourner,
+                        recruiter, magnusbuilder
                     FROM (
                         SELECT a.name name, s.idagents id, MAX(s.date) AS date
                         FROM agents a, stats s, membership m, groups g
