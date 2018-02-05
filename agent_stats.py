@@ -349,7 +349,7 @@ def get_badges(data):
                   'guardian': [3, 10, 20, 90, 150],
                   'specops': [5, 25, 100, 200, 500],
                   'missionday': [1, 3, 6, 10, 20],
-                  'nl-1331-meetups': [1, 5, 10, 25, 50],
+                  'nl_1331_meetups': [1, 5, 10, 25, 50],
                   'hacker': [2000, 10000, 30000, 100000, 200000],
                   'translator': [200, 2000, 6000, 20000, 50000],
                   'sojourner': [15, 30, 60, 180, 360],
@@ -415,7 +415,7 @@ def summary(group='all', days=7):
 
     sql_before = '''SELECT x.name, s.`date`, `level`, ap, explorer, discoverer, seer, recon, trekker, builder, connector,
                            `mind-controller` mind_controller, illuminator, recharger, liberator, pioneer, engineer, purifier,
-                           guardian, specops, missionday, `nl-1331-meetups` nl-1331-meetups, hacker, translator, sojourner,
+                           guardian, specops, missionday, `nl-1331-meetups` nl_1331_meetups, hacker, translator, sojourner,
                            recruiter, magnusbuilder
                     FROM (
                         SELECT a.name name, s.idagents id, MAX(s.date) AS date
@@ -439,7 +439,7 @@ def summary(group='all', days=7):
 
     sql_now = '''SELECT x.name, s.`date`, `level`, ap, explorer, discoverer, seer, recon, trekker, builder, connector,
                         `mind-controller` mind_controller, illuminator, recharger, liberator, pioneer, engineer, purifier,
-                        guardian, specops, missionday, `nl-1331-meetups` nl-1331-meetups, hacker, translator, sojourner,
+                        guardian, specops, missionday, `nl-1331-meetups` nl_1331_meetups, hacker, translator, sojourner,
                         recruiter, magnusbuilder
                     FROM (
                         SELECT a.name name, s.idagents id, MAX(s.date) AS date
