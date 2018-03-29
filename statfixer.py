@@ -10,6 +10,10 @@ import logging
 import datetime
 import pickle
 import os
+import requests
+import platform
+from zipfile import ZipFile
+from io import BytesIO
 
 try:
     input = raw_input
@@ -30,10 +34,29 @@ options.add_argument("user-data-dir=profile/")
 if HEADLESS:
     options.add_argument('headless')
     options.add_argument('disable-gpu')
-driver = webdriver.Chrome('./chromedriver', chrome_options=options)
-driver.implicitly_wait(5)
 
 try:
+    driver = webdriver.Chrome('./chromedriver', chrome_options=options)
+    current_version = driver.capabilities['chrome']['chromedriverVersion']
+    latest_version = requests.get('https://chromedriver.storage.googleapis.com/LATEST_RELEASE').text.strip()
+    if not current_version.startswith(latest_version):
+        driver.quit() # need to release the file lock
+        logging.info('chromedriver out of date. attempting to update')
+        arch = {'Linux': 'linux64', 'Darwin': 'mac64', 'Windows': 'win32'}[platform.system()] # these are the only options available
+        logging.info('%s detected', arch)
+        url = 'https://chromedriver.storage.googleapis.com/{}/chromedriver_{}.zip'.format(latest_version, arch)
+        logging.info('downloading...')
+        zip_file = ZipFile(BytesIO(requests.get(url).content))
+        for name in zip_file.namelist():
+            if name.startswith('chromedriver'):
+                logging.info('unzipping...')
+                with open(name, 'wb') as out:
+                    out.write(zip_file.read(name))
+                logging.info('ready')
+                break
+        driver = webdriver.Chrome('./chromedriver', chrome_options=options) # reopen with fresh new chromedriver
+
+    driver.implicitly_wait(5)
     driver.set_window_size(1024, 768)
     driver.get('https://www.agent-stats.com/export.php')
     sleep(3)
