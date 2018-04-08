@@ -68,7 +68,6 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                    'pioneer': '_(New Portals Captured)_',
                    'engineer': '_(Mods Deployed)_',
                    'purifier': '_(Resonators Destroyed)_',
-                   'guardian': '_(Max Time Portal Held)_',
                    'specops': '_(New Missions Completed)_',
                    'missionday': '_(Mission Day(s) Attended)_',
                    'nl-1331-meetups': '_(NL-1331 Meetup(s) Attended)_',
@@ -346,7 +345,6 @@ def get_badges(data):
                   'pioneer': [20, 200, 1000, 5000, 20000],
                   'engineer': [150, 1500, 5000, 20000, 50000],
                   'purifier': [2000, 10000, 30000, 100000, 300000],
-                  'guardian': [3, 10, 20, 90, 150],
                   'specops': [5, 25, 100, 200, 500],
                   'missionday': [1, 3, 6, 10, 20],
                   'nl_1331_meetups': [1, 5, 10, 25, 50],
@@ -403,7 +401,6 @@ def summary(group='all', days=7):
                'pioneer',
                'engineer',
                'purifier',
-               'guardian',
                'specops',
                'missionday',
                'nl_1331_meetups',
@@ -415,7 +412,7 @@ def summary(group='all', days=7):
 
     sql_before = '''SELECT x.name, s.`date`, `level`, ap, explorer, discoverer, seer, recon, trekker, builder, connector,
                            `mind-controller` mind_controller, illuminator, recharger, liberator, pioneer, engineer, purifier,
-                           guardian, specops, missionday, `nl-1331-meetups` nl_1331_meetups, hacker, translator, sojourner,
+                           specops, missionday, `nl-1331-meetups` nl_1331_meetups, hacker, translator, sojourner,
                            recruiter, magnusbuilder
                     FROM (
                         SELECT a.name name, s.idagents id, MAX(s.date) AS date
@@ -439,7 +436,7 @@ def summary(group='all', days=7):
 
     sql_now = '''SELECT x.name, s.`date`, `level`, ap, explorer, discoverer, seer, recon, trekker, builder, connector,
                         `mind-controller` mind_controller, illuminator, recharger, liberator, pioneer, engineer, purifier,
-                        guardian, specops, missionday, `nl-1331-meetups` nl_1331_meetups, hacker, translator, sojourner,
+                        specops, missionday, `nl-1331-meetups` nl_1331_meetups, hacker, translator, sojourner,
                         recruiter, magnusbuilder
                     FROM (
                         SELECT a.name name, s.idagents id, MAX(s.date) AS date
