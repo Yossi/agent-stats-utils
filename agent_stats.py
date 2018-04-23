@@ -36,7 +36,7 @@ s.headers.update({'AS-Key': api_key})
 
 def num2words(n):
     if n < 10:
-        return n2w(n).title()
+        return n2w(n, lang='en').title()
     return str(n)
 
 def abbreviations(word, **kwargs):

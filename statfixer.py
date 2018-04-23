@@ -24,9 +24,12 @@ logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     datefmt='%H:%M:%S')
 
-# once you have your profile and this is able to smoothly post a data point without 
-# intervention, you can change this to True and go setup cron to run the script
-HEADLESS = False
+try:
+    # once you have your profile and this is able to smoothly post a data point without 
+    # intervention, you can change this to True in secrets.py and go setup cron to run the script
+    from secrets import HEADLESS
+except:
+    HEADLESS = False
 
 options = webdriver.ChromeOptions()
 options.add_argument('log-level=3')
