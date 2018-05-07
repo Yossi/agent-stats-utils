@@ -103,7 +103,7 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
         i = -1
         for i, line in enumerate(top_list):
             datum = float(line[category])
-            if i > number-1 and datum != temp: # the 0s got filtered out on that inscrutable line above
+            if i > number-1 and datum != prev_datum: # the 0s got filtered out on that inscrutable line above
                 break
 
             if datum.is_integer():
@@ -112,7 +112,7 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                 datum_string = '{:,g}'.format(datum)
 
             output.append('{}  {}'.format(line['name'], datum_string))
-            temp = datum
+            prev_datum = datum
         if i < 0:
             output.pop()
     return '\n'.join(output)

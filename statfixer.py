@@ -52,7 +52,7 @@ try:
         zip_file = ZipFile(BytesIO(requests.get(url).content))
         for name in zip_file.namelist():
             if name.startswith('chromedriver'):
-                logging.info('unzipping...')
+                logging.info('unpacking...')
                 with open(name, 'wb') as out:
                     out.write(zip_file.read(name))
                 logging.info('ready')
