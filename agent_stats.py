@@ -106,7 +106,7 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
             if i > number-1 and datum != prev_datum: # the 0s got filtered out on that inscrutable line above
                 break
 
-            if datum.is_integer():
+            if datum >= 1000000:
                 datum_string = '{:,}'.format(int(datum))
             else:
                 datum_string = '{:,g}'.format(datum)
