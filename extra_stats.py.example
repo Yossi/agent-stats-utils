@@ -4,7 +4,7 @@
 from collections import OrderedDict
 
 def compute_extra_categories(data):
-    def safe_div(x, y): # Permission instead of forgiveness. It just doesnt seem right to do a division and catch a DivideByZero instead of just bailing out ahead of time.
+    def safe_div(x, y): # Permission instead of forgiveness. It just doesnt seem right to do a division and catch a DivideByZero instead of simply bailing out ahead of time.
         if y == 0: return 0
         return x / y
 
