@@ -119,3 +119,4 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 test.py
+templates/custom_template.txt

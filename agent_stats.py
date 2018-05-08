@@ -13,6 +13,7 @@ import requests # pip install requests
 from num2words import num2words as n2w # pip install num2words
 from functools import lru_cache
 from titlecase import titlecase # pip install titlecase
+from jinja2 import Environment, FileSystemLoader
 
 from Stat import Stat
 from util import mail
@@ -47,7 +48,7 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
     time_span = {'all time': 'now',
                  'monthly': 'month',
                  'weekly': 'week'}.get(time_span, time_span)
-    output = []
+    output = {}
     logging.info('read table: group {}, span {}'.format(groups()[group_id], time_span))
 
     data = list(read_table(group_id, time_span))
@@ -97,7 +98,7 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                   'salvator', 'magnusbuilder', 'missionday', 'nl-1331-meetups'] + extra_categories
     submitters[0] = 0
     for category in categories:
-        output.append('\n*Top %s* %s' % (titlecase(category, callback=abbreviations), definitions.get(category.lower(), '')))
+        output[category] = ['*Top %s* %s' % (titlecase(category, callback=abbreviations), definitions.get(category.lower(), ''))]
         top_list = sorted((line for line in data if 0 < float(line[category])), key=lambda k: float(k[category]), reverse=True)
         submitters[0] = max(submitters[0], len(top_list))
         i = -1
@@ -111,11 +112,11 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
             else:
                 datum_string = '{:,g}'.format(datum)
 
-            output.append('{}  {}'.format(line['name'], datum_string))
+            output[category].append('{}  {}'.format(line['name'], datum_string))
             prev_datum = datum
         if i < 0:
-            output.pop()
-    return '\n'.join(output)
+            del output[category]
+    return output
 
 def cleanup_data(data):
     last_submit = data['last_submit']
@@ -492,106 +493,117 @@ def summary(group='all', days=7):
         output.append(footnote)
     return '\n'.join(output)
 
-weekly_template = '''Great work agents!! If you would like to be included in future top {} lists please
- join our agent-stats group https://www.agent-stats.com/groups.php?group={} .
- Don’t know what agent-stats is? See here: https://www.agent-stats.com/manual.php .
- To have your stats show up you need to upload your stats at least right after
- you see this (right now) and then again right before you see this next week (just upload
- your stats late Sunday night / early Monday morning when you are done for the night).
- It’s also a good idea to upload your stats every night.'''
 def weekly_roundup(group):
     group_id, group_name = get_groups(group)
     if not group_id: return 'please specify group'
-    output = []
-    submitters = [0]
+
     logging.info('starting weekly roundup')
     start = datetime.datetime.now()
-    output.append(group_name)
-    logging.info('getting weekly top lists')
-    charts = get_stats(group_id, 'weekly', args.number, submitters)
-    output.append('*Top %s (of %s reporting) for the week of %s*' % (num2words(min(args.number, submitters[0])), num2words(submitters[0]), (start - datetime.timedelta(days=7)).date().strftime("%m/%d")))
-    output.append(charts)
-    output.append('')
-    output.append('Recent badge dings:')
-    output.append('')
-    logging.info('getting badge dings')
-    output.append(summary(group_id, 7))
-    output.append('')
-    output.append(weekly_template.format(num2words(args.number).lower(), group_id).replace('\n', ''))
-    end = datetime.datetime.now()
-    output.append('')
-    output.append('_Job started on {} and ran for {}_'.format(start, end-start))
-    return '\n'.join(output)
 
-monthly_template = '''Great work agents!! If you would like to be included in future top {} lists please
- join our agent-stats group https://www.agent-stats.com/groups.php?group={} .
- Don’t know what agent-stats is? See here: https://www.agent-stats.com/manual.php .
- To have your stats show up you need to upload your stats at least right after
- you see this (right now) and then again right before you see this next month (just upload
- your stats late on the night / early morning before the 1st of the month when you are done for the night).
- It’s also a good idea to upload your stats every night.'''
+    output_dict = {}
+    submitters = [0] # this list gets modified inside get_stats()
+
+    output_dict['week'] = (start - datetime.timedelta(days=7)).date().strftime("%m/%d")
+
+    logging.info('getting weekly top lists')
+    output_dict['chart'] = get_stats(group_id, 'weekly', args.number, submitters)
+
+    logging.info('getting badge dings')
+    output_dict['dings'] = summary(group_id, 7)
+
+    output_dict['start'] = start
+    output_dict['group_id'] = group_id
+    output_dict['name'] = group_name
+
+    output_dict['n'] = num2words(args.number).lower()
+    output_dict['number'] = num2words(min(args.number, submitters[0]))
+    output_dict['submitters'] = num2words(submitters[0])
+
+    end = datetime.datetime.now()
+    output_dict['duration'] = end-start
+
+    env = Environment(loader = FileSystemLoader('templates', followlinks=True))
+    template = env.get_or_select_template([group_id+'.txt', 'custom_template.txt', 'template.txt'])
+    return template.render(**output_dict)
+
 def monthly_roundup(group):
     group_id, group_name = get_groups(group)
     if not group_id: return 'please specify group'
-    output = []
-    submitters = [0]
+
     logging.info('starting monthly roundup')
     start = datetime.datetime.now()
-    output.append(group_name)
-    logging.info('getting monthly top lists')
-    charts = get_stats(group_id, 'monthly', args.number, submitters)
-    month = (start - datetime.timedelta(days=start.day)).date()
-    output.append('*Top %s (of %s reporting) for the month of %s*' % (num2words(min(args.number, submitters[0])), num2words(submitters[0]), month.strftime("%B")))
-    output.append(charts)
-    output.append('')
-    output.append('Recent badge dings:')
-    output.append('')
-    logging.info('getting badge dings')
-    output.append(summary(group_id, month.day))
-    output.append('')
-    output.append(monthly_template.format(num2words(args.number).lower(), group_id).replace('\n', ''))
-    end = datetime.datetime.now()
-    output.append('')
-    output.append('_Job started on {} and ran for {}_'.format(start, end-start))
-    return '\n'.join(output)
 
-custom_template = '''Great work agents!! If you would like to be included in future top {} lists please
- join our agent-stats group https://www.agent-stats.com/groups.php?group={} .
- Don’t know what agent-stats is? See here: https://www.agent-stats.com/manual.php .
- For your stats show up on this list you need to have uploaded your stats at least twice between {} and {}'''
+    output_dict = {}
+    submitters = [0] # this list gets modified inside get_stats()
+
+    month = (start - datetime.timedelta(days=start.day)).date()
+    output_dict['month'] = month.strftime("%B")
+    
+    logging.info('getting monthly top lists')
+    output_dict['chart'] = get_stats(group_id, 'monthly', args.number, submitters)
+
+    logging.info('getting badge dings')
+    output_dict['dings'] = summary(group_id, month.day)
+    
+    output_dict['start'] = start
+    output_dict['group_id'] = group_id
+    output_dict['name'] = group_name
+    
+    output_dict['n'] = num2words(args.number).lower()
+    output_dict['number'] = num2words(min(args.number, submitters[0]))
+    output_dict['submitters'] = num2words(submitters[0])
+    
+    end = datetime.datetime.now()
+    output_dict['duration'] = end-start
+    
+    env = Environment(loader = FileSystemLoader('templates', followlinks=True))
+    template = env.get_or_select_template([group_id+'.txt', 'custom_template.txt', 'template.txt'])
+    return template.render(**output_dict)
+
 def custom_roundup(group):
     group_id, group_name = get_groups(group)
     if not group_id: return 'please specify group'
-    output = []
-    submitters = [0]
+
     logging.info('starting custom roundup')
     start = datetime.datetime.now()
-    output.append(group_name)
+
+    output_dict = {}
+    submitters = [0] # this list gets modified inside get_stats()
+
     r = s.get('https://api.agent-stats.com/groups/{}/info'.format(group_id), stream=True)
     r.raise_for_status()
     startDate = datetime.datetime.strptime(r.json()['startDate'], '%Y-%m-%d %H:%M:%S')
     endDate = datetime.datetime.strptime(r.json()['endDate'], '%Y-%m-%d %H:%M:%S')
+    output_dict['startDate'] = startDate
+    output_dict['endDate'] = endDate
+
     lastRefresh = datetime.datetime.strptime(r.json()['lastRefresh'], '%Y-%m-%d %H:%M:%S')
     if lastRefresh < endDate:
         logging.info('setting off a refresh. waiting 10 seconds to make sure it finishes')
         r = s.post('https://api.agent-stats.com/groups/{}/refresh'.format(group_id))
         r.raise_for_status()
         sleep(10)
+
     logging.info('getting custom top lists')
-    charts = get_stats(group_id, 'custom', args.number, submitters)
-    output.append('*Top %s (of %s reporting) for the span from %s to %s*' % (num2words(min(args.number, submitters[0])), num2words(submitters[0]), startDate, endDate))
-    output.append(charts)
-    output.append('')
-    output.append('Recent badge dings:')
-    output.append('')
+    output_dict['chart'] = get_stats(group_id, 'monthly', args.number, submitters)
+
     logging.info('getting badge dings')
-    output.append(summary(group_id, (endDate - startDate).days))
-    output.append('')
-    output.append(custom_template.format(num2words(args.number).lower(), group_id, startDate, endDate).replace('\n', ''))
+    output_dict['dings'] = summary(group_id, (endDate - startDate).days)
+    
+    output_dict['start'] = start
+    output_dict['group_id'] = group_id
+    output_dict['name'] = group_name
+    
+    output_dict['n'] = num2words(args.number).lower()
+    output_dict['number'] = num2words(min(args.number, submitters[0]))
+    output_dict['submitters'] = num2words(submitters[0])
+    
     end = datetime.datetime.now()
-    output.append('')
-    output.append('_Job started on {} and ran for {}_'.format(start, end-start))
-    return '\n'.join(output)
+    output_dict['duration'] = end-start
+    
+    env = Environment(loader = FileSystemLoader('templates', followlinks=True))
+    template = env.get_or_select_template([group_id+'.txt', 'custom_template.txt', 'template.txt'])
+    return template.render(**output_dict)
 
 def test(group):
     pass

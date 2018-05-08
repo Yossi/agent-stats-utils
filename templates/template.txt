@@ -1,0 +1,64 @@
+{# default #}
+
+{% macro high_scores(values) -%}
+{% if values -%}
+{% for name in values -%}
+{{ name }}
+{% endfor %}
+{% endif -%}
+{% endmacro -%}
+
+{{ name }}
+*Top {{ number }} (of {{ submitters }} reporting) for the {{''-}}
+{% if week -%}
+    week of {{ week }}*
+{%- elif month -%}
+    month of {{ month }}*
+{%- else -%}
+    span from {{ startDate }} to {{ endDate }}*
+{%- endif %}
+{# #}
+{{ high_scores(chart.ap) -}}
+{{ high_scores(chart.explorer) -}}
+{{ high_scores(chart.trekker) -}}
+{{ high_scores(chart.builder) -}}
+{{ high_scores(chart.connector) -}}
+{{ high_scores(chart['mind-controller']) -}}
+{{ high_scores(chart.illuminator) -}}
+{{ high_scores(chart.recharger) -}}
+{{ high_scores(chart.liberator) -}}
+{{ high_scores(chart.pioneer) -}}
+{{ high_scores(chart.engineer) -}}
+{{ high_scores(chart.purifier) -}}
+{{ high_scores(chart.hacker) -}}
+{{ high_scores(chart.translator) -}}
+{{ high_scores(chart.specops) -}}
+{{ high_scores(chart.discoverer) -}}
+{{ high_scores(chart.seer) -}}
+{{ high_scores(chart.recon) -}}
+{{ high_scores(chart.collector) -}}
+{{ high_scores(chart.neutralizer) -}}
+{{ high_scores(chart.disruptor) -}}
+{{ high_scores(chart.salvator) -}}
+{{ high_scores(chart.magnusbuilder) -}}
+{{ high_scores(chart.missionday) -}}
+{{ high_scores(chart['nl-1331-meetups']) -}}
+
+Recent badge dings:
+
+{{ dings }}
+
+Great work agents!! If you would like to be included in future top {{ n }} high_scoress please join our agent-stats group https://www.agent-stats.com/groups.php?group={{ group_id }} . Don't know what agent-stats is? See here: https://www.agent-stats.com/manual.php . {{''-}}
+{% if startDate -%}
+For your stats show up on this list you need to have uploaded your stats at least twice between {{ startDate }} and {{ endDate }}.
+{% else -%}
+To have your stats show up you need to upload your stats at least right after you see this (right now) and then again right before you see this next {{''-}}
+{% if week -%}
+week (just upload your stats late Sunday night / early Monday morning when you are done for the night).
+{%- else %}
+month (just upload your stats late on the night / early morning before the 1st of the month when you are done for the night).
+{%- endif %}
+{{-''}} It’s also a good idea to upload your stats every night.
+{%- endif %}
+
+_Job started on {{start}} and ran for {{duration}}_
