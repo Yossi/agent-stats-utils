@@ -13,7 +13,7 @@ import requests # pip install requests
 from num2words import num2words as n2w # pip install num2words
 from functools import lru_cache
 from titlecase import titlecase # pip install titlecase
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader # pip install Jinja2
 
 from Stat import Stat
 from util import mail
