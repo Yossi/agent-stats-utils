@@ -74,7 +74,15 @@ changed, you are offered the opportunity to update it. You will need to update
 the names in crontab manually after you update the database names.
 
 ## Custom stats
-You can invent your own stats. Look in [extra_stats.py.example](https://github.com/Yossi/agent-stats-utils/blob/master/extra_stats.py.example) to see how. Save as extra_stats.py when ready.
+You can invent your own stats. Look in [extra_stats.py.example](https://github.com/Yossi/agent-stats-utils/blob/master/extra_stats.py.example) to see how. Save as extra_stats.py when ready. Then copy templates/template.txt to templates/custom_template.txt and add your new stats in there too.
+
+## Templates
+By default, the template at templates/template.txt is used. If you would like to customize your output you can copy this file to templates/custom_template.txt and all your groups will use it. Good for when you add custom stats you invented, or when you want to translate into some language other than english.
+Additionally, you can set a custom template for just one group by naming the file {group_id}.txt .
+
+group_id is the id present in the link to the group (and other places if you know how to find it).
+
+In summary, the search order is group_id+.txt, custom_template.txt, template.txt .
 
 ## Stat validation
 Often stats get screwed up. Usually because agent-stats.com botched the OCR.
