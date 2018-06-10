@@ -92,4 +92,5 @@ try:
     #logging.info('screenshot saved')
 
 finally:
-    driver.quit()
+    if driver:
+        driver.quit()
