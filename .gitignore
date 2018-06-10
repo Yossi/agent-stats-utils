@@ -16,6 +16,9 @@ sandbox/
 Code
 *.exe
 cookies.pkl
+test.py
+templates/custom_template.txt
+.vscode/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -118,5 +121,3 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
-test.py
-templates/custom_template.txt
