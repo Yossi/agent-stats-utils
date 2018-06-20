@@ -240,8 +240,21 @@ def new_badges(old_data, new_data):
     return result
 
 def englishify(new_badges):
-    data = [badge.upper()+' ' + ", ".join(ranks[:-2] + [" and ".join(ranks[-2:])]) for badge, ranks in new_badges.items()]
-    return ", ".join(data[:-2] + [" and ".join(data[-2:])])
+    data = []
+    for badge, ranks in new_badges.items():
+        onyx_ranks = []
+        onyx_index = next((i for i, rank in enumerate(ranks) if 'Onyx' in rank), 'not found')
+        if onyx_index != 'not found':
+            ranks, onyx_ranks = ranks[:onyx_index], ranks[onyx_index:]  # split off all onyx variants
+        if len(onyx_ranks) > 2:
+            onyx_ranks = [onyx_ranks[0] + ' through ' + onyx_ranks[-1]] # shorten to single string
+        ranks.extend(onyx_ranks)                                        # stick the onyx badges back on
+        data.append(badge.upper() + ' ' + ', '.join(ranks[:-2] + [' and '.join(ranks[-2:])]))
+
+    return ', '.join(data[:-2] + [' and '.join(data[-2:])])
+
+def test(group):
+    pass
 
 def collate_agents():
     logging.info('collate agents')
@@ -604,9 +617,6 @@ def custom_roundup(group):
     env = Environment(loader = FileSystemLoader('templates', followlinks=True))
     template = env.get_or_select_template([group_id+'.txt', 'custom_template.txt', 'template.txt'])
     return template.render(**output_dict)
-
-def test(group):
-    pass
 
 def check_for_applicants(group):
     group_id, group_name = get_groups(group)
