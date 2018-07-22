@@ -1,5 +1,6 @@
-add a column in stats table
-fix the stored procedure name FindAgentByName
+in .sql
+	add a column in stats table
+	fix the stored procedure name FindAgentByName
 in Stat.py:
 update string: fields (change - to _)
        db_load()
