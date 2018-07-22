@@ -72,7 +72,7 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                    'specops': '_(New Missions Completed)_',
                    'missionday': '_(Mission Days Attended)_',
                    'nl-1331-meetups': '_(NL-1331 Meetup(s) Attended)_',
-                   'cassandra-neutralizer': '_(Unique Portals Neutralized)_'
+                   'cassandra-neutralizer': '_(Unique Portals Neutralized)_',
                    'hacker': '_(Hacks)_',
                    'translator': '_(Glyph Hack Points)_',
                    'sojourner': '_(Longest Hacking Streak)_',
@@ -381,10 +381,10 @@ def get_badges(data):
                     current = '%sx %s' % (multiplier, current)
         result[category] = current
 
-    for category, ranks in {'cassandra-neutralizer': [100, 300, 1000]}.items(): # doesn't strictly have to be a loop, but i want it to match above
+    for category, ranks in {'cassandra_neutralizer': [100, 300, 1000]}.items(): # doesn't strictly have to be a loop, but i want it to match above
         current = 'Locked'
         multiplier = 1
-        for rank, badge in zip(ranks, ['Bronze', 'Silver', 'Gold]):
+        for rank, badge in zip(ranks, ['Bronze', 'Silver', 'Gold']):
             if data[category] not in ['-', None] and int(data[category]) >= rank:
                 current = badge
             if current == 'Gold': # highest rank
