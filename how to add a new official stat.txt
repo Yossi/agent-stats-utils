@@ -13,3 +13,4 @@ update definitions
        headers dict (in summary()) use _ here
        sql_before
        sql_now
+add new stat to template(s)
