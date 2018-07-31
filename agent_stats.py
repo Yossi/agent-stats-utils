@@ -224,20 +224,20 @@ def new_badges(old_data, new_data):
         new_rank = new_data[category]
         #result[category] = None # only for testing. Do not send Nones down the pike
         if old_rank != new_rank:
-            old, new = old_rank.split('x ')[0], new_rank.split('x ')[0]
-            if not old.isdecimal():
-                if not new.isdecimal():
-                    if ranks.index(old) < ranks.index(new):
-                        result[category] = ranks[ranks.index(old)+1:ranks.index(new)+1]
+            old, new = old_rank.split('x '), new_rank.split('x ')
+            if not old[0].isdecimal():
+                if not new[0].isdecimal():
+                    if ranks.index(old[0]) < ranks.index(new[0]):
+                        result[category] = ranks[ranks.index(old[0])+1:ranks.index(new[0])+1]
                 else:
-                    result[category] = ranks[ranks.index(old)+1:]
+                    result[category] = ranks[ranks.index(old[0])+1:ranks.index(new[1])+1]
 
-            if new.isdecimal():
-                if old.isdecimal():
-                    if int(old) < int(new):
-                        result[category] = ['%sx Onyx' % x for x in range(int(old)+1, int(new)+1)]
+            if new[0].isdecimal():
+                if old[0].isdecimal():
+                    if int(old[0]) < int(new[0]):
+                        result[category] = ['%sx %s' % (x, new[1]) for x in range(int(old[0])+1, int(new[0])+1)]
                 else:
-                    result[category].extend( ['%sx Onyx' % x for x in range(2, int(new)+1)] )
+                    result[category].extend( ['%sx %s' % (x, new[1]) for x in range(2, int(new[0])+1)] )
     return result
 
 def englishify(new_badges):
