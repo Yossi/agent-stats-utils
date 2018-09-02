@@ -592,7 +592,10 @@ def custom_roundup(group):
     output_dict['startDate'] = startDate
     output_dict['endDate'] = endDate
 
-    lastRefresh = datetime.datetime.strptime(r.json()['lastRefresh'], '%Y-%m-%d %H:%M:%S')
+    try:
+        lastRefresh = datetime.datetime.strptime(r.json()['lastRefresh'], '%Y-%m-%d %H:%M:%S')
+    except ValueError:
+        lastRefresh = datetime.datetime.min
     if lastRefresh < endDate:
         logging.info('setting off a refresh. waiting 10 seconds to make sure it finishes')
         r = s.post('https://api.agent-stats.com/groups/{}/refresh'.format(group_id))
