@@ -11,7 +11,7 @@ Code
 *.exe
 test.py
 templates/custom_template.txt
-chromedrver*
+chromedriver*
 .vscode/
 
 # Byte-compiled / optimized / DLL files
