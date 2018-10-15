@@ -60,18 +60,21 @@ def exec_mysql(sql, retries=2):
 
 
 import smtplib
+import platform
 from ftfy import fix_text # pip install ftfy
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from secrets import gmail_user, gmail_pwd
 
-def mail(to, subject, text, attach=False):
+def mail(to, subject, text, attach=False, host=False):
     # to needs to be a list
     msg = MIMEMultipart()
 
     msg['From'] = gmail_user
     msg['To'] = ", ".join(to) if len(to[0])-1 else to
+    if host:
+        subject = platform.node() + ' ' + subject
     msg['Subject'] = subject
 
     msg.attach(MIMEText(text))

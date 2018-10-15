@@ -677,7 +677,7 @@ if __name__ == '__main__':
         else:
             if not args.group: args.group=''
             subject = args.action+' '+args.group if not args.subject else args.subject
-            mail([args.mail[0]], subject, str(sys.exc_info()[0]))
+            mail([args.mail[0]], subject, str(sys.exc_info()[0]), host=True)
             logging.info('CRASHED and email sent')
     else:
         if result:
