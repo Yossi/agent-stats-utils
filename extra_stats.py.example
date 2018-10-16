@@ -10,8 +10,8 @@ def compute_extra_categories(data):
 
     extra_definitions = OrderedDict([
                                      # add your custom categories and descriptions here
-                                     ('bob the builder', '_(Resonators Deployed x Mods Deployed)_'), 
-                                     ('translator per hack', '_(Glyph Hack Points / Hacks)_')
+                                     ('bob the builder', '(Resonators Deployed x Mods Deployed)'), 
+                                     ('translator per hack', '(Glyph Hack Points / Hacks)')
                                     ])
     extra_categories = list(extra_definitions.keys())
     for line in data:

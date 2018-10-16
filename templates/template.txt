@@ -2,7 +2,8 @@
 
 {% macro high_scores(values) -%}
 {% if values -%}
-{% for name in values -%}
+*{{ values.title.category }}* {{ '_'~values.title.description~'_' if values.title.description }}
+{% for name in values.scores -%}
 {{ name }}
 {% endfor %}
 {% endif -%}
@@ -44,9 +45,13 @@
 {{ high_scores(chart.missionday) -}}
 {{ high_scores(chart['nl-1331-meetups']) -}}
 
+{%- if dings -%}
 Recent badge dings:
-
-{{ dings }}
+{% for ding in dings.data %}
+*{{ ding.name }}* {{ ding.earned -}}
+{% endfor %}
+{{ dings.footnote -}}
+{% endif %}
 
 Great work agents!! If you would like to be included in future top {{ n }} lists please join our agent-stats group https://www.agent-stats.com/groups.php?group={{ group_id }} . Don't know what agent-stats is? See here: https://www.agent-stats.com/manual.php . {{''-}}
 {% if startDate -%}

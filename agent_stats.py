@@ -13,7 +13,7 @@ import requests # pip install requests
 from num2words import num2words as n2w # pip install num2words
 from functools import lru_cache
 from titlecase import titlecase # pip install titlecase
-from jinja2 import Environment, FileSystemLoader # pip install Jinja2
+from jinja2 import Environment, FileSystemLoader, BaseLoader # pip install Jinja2
 
 from Stat import Stat
 from util import mail
@@ -55,40 +55,40 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
 
     extra_definitions, extra_categories, data = compute_extra_categories(data)
 
-    definitions = {'explorer': '_(New Portals Visited)_',
-                   'discoverer': '_(Portals Discovered)_',
-                   'seer': '_(Seer Points)_',
-                   'recon': '_(OPR Agreements)_',
-                   'trekker': '_(Distance Walked)_',
-                   'builder': '_(Resonators Deployed)_',
-                   'connector': '_(Links Created)_',
-                   'mind-controller': '_(Control Fields Created)_',
-                   'illuminator': '_(Mind Units Captured)_',
-                   'recharger': '_(XM Recharged)_',
-                   'liberator': '_(Portals Captured)_',
-                   'pioneer': '_(New Portals Captured)_',
-                   'engineer': '_(Mods Deployed)_',
-                   'purifier': '_(Resonators Destroyed)_',
-                   'specops': '_(New Missions Completed)_',
-                   'missionday': '_(Mission Days Attended)_',
-                   'nl-1331-meetups': '_(NL-1331 Meetup(s) Attended)_',
-                   'cassandra-neutralizer': '_(Unique Portals Neutralized)_',
-                   'hacker': '_(Hacks)_',
-                   'translator': '_(Glyph Hack Points)_',
-                   'sojourner': '_(Longest Hacking Streak)_',
-                   'recruiter': '_(Agents successfully recruited)_',
-                   'magnusbuilder': '_(Unique Resonator Slots Deployed)_',
-                   'collector': '_(XM Collected)_',
-                   'binder': '_(Longest Link Ever Created)_',
-                   'country-master': '_(Largest Control Field)_',
-                   'neutralizer': '_(Portals Neutralized)_',
-                   'disruptor': '_(Enemy Links Destroyed)_',
-                   'salvator': '_(Enemy Control Fields Destroyed)_',
-                   'smuggler': '_(Max Time Link Maintained)_',
-                   'link-master': '_(Max Link Length × Days)_',
-                   'controller': '_(Max Time Field Held)_',
-                   'field-master': '_(Largest Field MUs × Days)_',
-                   'missionday':'_(Mission Days Attended)_'}
+    definitions = {'explorer': '(New Portals Visited)',
+                   'discoverer': '(Portals Discovered)',
+                   'seer': '(Seer Points)',
+                   'recon': '(OPR Agreements)',
+                   'trekker': '(Distance Walked)',
+                   'builder': '(Resonators Deployed)',
+                   'connector': '(Links Created)',
+                   'mind-controller': '(Control Fields Created)',
+                   'illuminator': '(Mind Units Captured)',
+                   'recharger': '(XM Recharged)',
+                   'liberator': '(Portals Captured)',
+                   'pioneer': '(New Portals Captured)',
+                   'engineer': '(Mods Deployed)',
+                   'purifier': '(Resonators Destroyed)',
+                   'specops': '(New Missions Completed)',
+                   'missionday': '(Mission Days Attended)',
+                   'nl-1331-meetups': '(NL-1331 Meetup(s) Attended)',
+                   'cassandra-neutralizer': '(Unique Portals Neutralized)',
+                   'hacker': '(Hacks)',
+                   'translator': '(Glyph Hack Points)',
+                   'sojourner': '(Longest Hacking Streak)',
+                   'recruiter': '(Agents successfully recruited)',
+                   'magnusbuilder': '(Unique Resonator Slots Deployed)',
+                   'collector': '(XM Collected)',
+                   'binder': '(Longest Link Ever Created)',
+                   'country-master': '(Largest Control Field)',
+                   'neutralizer': '(Portals Neutralized)',
+                   'disruptor': '(Enemy Links Destroyed)',
+                   'salvator': '(Enemy Control Fields Destroyed)',
+                   'smuggler': '(Max Time Link Maintained)',
+                   'link-master': '(Max Link Length × Days)',
+                   'controller': '(Max Time Field Held)',
+                   'field-master': '(Largest Field MUs × Days)',
+                   'missionday':'(Mission Days Attended)'}
     definitions.update(extra_definitions)
 
     # these categories are what become the topN lists. definitions above are just for reference (still needed if a category is active)
@@ -99,7 +99,7 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                   'missionday', 'nl-1331-meetups', 'cassandra-neutralizer'] + extra_categories
     submitters[0] = 0
     for category in categories:
-        output[category] = ['*Top %s* %s' % (titlecase(category, callback=abbreviations), definitions.get(category.lower(), ''))]
+        output[category] = {'scores': [], 'title': {'category': 'Top ' + titlecase(category, callback=abbreviations), 'description': definitions.get(category.lower(), '')}}
         top_list = sorted((line for line in data if 0 < float(line[category])), key=lambda k: float(k[category]), reverse=True)
         submitters[0] = max(submitters[0], len(top_list))
         i = -1
@@ -113,7 +113,7 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
             else:
                 datum_string = '{:,g}'.format(datum)
 
-            output[category].append('{}  {}'.format(line['name'], datum_string))
+            output[category]['scores'].append('{}  {}'.format(line['name'], datum_string))
             prev_datum = datum
         if i < 0:
             del output[category]
@@ -368,7 +368,7 @@ def get_badges(data):
                   'sojourner': [15, 30, 60, 180, 360],
                   'recruiter': [2, 10, 25, 50, 100]}
 
-    result = {}
+    result = {} # TODO: change these 2 dicts to OrderedDicts
     for category, ranks in categories.items():
         current = 'Locked'
         multiplier = 1
@@ -466,7 +466,7 @@ def summary(group='all', days=7):
                         GROUP BY id ) x
                     JOIN stats s ON x.id = s.idagents AND x.date = s.date
               '''.format(group_id, days)
-    output = []
+    output = {'data': []}
     footnote = ''
     for row in exec_mysql(sql_now):
         agent = row[0]
@@ -498,15 +498,15 @@ def summary(group='all', days=7):
                     footnote = '¹Start date more than 2 %s ago' % ('weeks' if days == 7 else 'months',)
 
                 if today.year == date_old.year:
-                    template = '*{}* earned {} sometime between {old.month}/{old.day}{} and {new.month}/{new.day}'
+                    template = 'earned {} sometime between {old.month}/{old.day}{} and {new.month}/{new.day}'
                 else:
-                    template = '*{}* earned {} sometime between {old.month}/{old.day}/{old.year}{} and {new.month}/{new.day}/{new.year}'
+                    template = 'earned {} sometime between {old.month}/{old.day}/{old.year}{} and {new.month}/{new.day}/{new.year}'
 
-                output.append(template.format(agent, earnings, note, old=date_old, new=date_new))
-    output = sorted(output, key=lambda s: s.lower())
+                output['data'].append({'name': agent, 'earned': template.format(earnings, note, old=date_old, new=date_new)})
+    output['data'] = sorted(output['data'], key=lambda s: s['name'].lower())
     if footnote:
-        output.append(footnote)
-    return '\n'.join(output)
+        output['footnote'] = footnote
+    return output
 
 def weekly_roundup(group):
     group_id, group_name = get_groups(group)
@@ -537,9 +537,7 @@ def weekly_roundup(group):
     end = datetime.datetime.now()
     output_dict['duration'] = end-start
 
-    env = Environment(loader = FileSystemLoader('templates', followlinks=True))
-    template = env.get_or_select_template([group_id+'.txt', 'custom_template.txt', 'template.txt'])
-    return template.render(**output_dict)
+    return render(output_dict)
 
 def monthly_roundup(group):
     group_id, group_name = get_groups(group)
@@ -571,9 +569,7 @@ def monthly_roundup(group):
     end = datetime.datetime.now()
     output_dict['duration'] = end-start
     
-    env = Environment(loader = FileSystemLoader('templates', followlinks=True))
-    template = env.get_or_select_template([group_id+'.txt', 'custom_template.txt', 'template.txt'])
-    return template.render(**output_dict)
+    return render(output_dict)
 
 def custom_roundup(group):
     group_id, group_name = get_groups(group)
@@ -618,9 +614,16 @@ def custom_roundup(group):
     
     end = datetime.datetime.now()
     output_dict['duration'] = end-start
-    
+
+    return render(output_dict)
+
+def render(output_dict):
     env = Environment(loader = FileSystemLoader('templates', followlinks=True))
-    template = env.get_or_select_template([group_id+'.txt', 'custom_template.txt', 'template.txt'])
+    ext = '.' + args.extention
+    if ext == '.debug':
+        template = Environment(loader=BaseLoader()).from_string('{{output_dict|pprint}}')
+        return template.render(output_dict=output_dict)
+    template = env.get_or_select_template([output_dict['group_id']+ext, 'custom_template'+ext, 'template'+ext])
     return template.render(**output_dict)
 
 def check_for_applicants(group):
@@ -666,6 +669,7 @@ if __name__ == '__main__':
     parser.add_argument('-m', '--mail', nargs='*', help='email address to get output')
     parser.add_argument('-s', '--subject', help='optional email subject')
     parser.add_argument('-a', '--attach', action='store_true', help='also attach email body at a txt file to the email')
+    parser.add_argument('-e', '--extention', default='txt', help='extention of template you want to use')
 
     args = parser.parse_args()
 
