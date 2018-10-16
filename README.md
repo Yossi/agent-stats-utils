@@ -35,6 +35,8 @@ to have the output attached as a .txt file as well.
 Sometimes you find yourself needing to change how many ranks make it into the charts.
 By default this is 10 but you can change it to whatever with the -n option.
 
+An -e option also exists. See Templates.
+
 Once you get a feel for what this script does, you may want to set it up to run with
 crontab, or something similar.
 
@@ -66,7 +68,8 @@ This is the main reason all this was written. Grabs the weekly (or monthly, etc.
 for your group and extracts the top *N* agents for each category. Ties for *N*th
 place are all included. 
 Also includes a ding summary for the week or month (see above: summary). 
-Formats everything with G+ markup so it looks decent when you post to G+.
+By default, formats everything with G+ markup so it looks decent when you post to G+.
+Templates for other output formats can be created. See Templates.
 
 ### update_group_names
 Compares the group names from the database to the names online. If a name has 
@@ -83,6 +86,9 @@ Additionally, you can set a custom template for just one group by naming the fil
 group_id is the id present in the link to the group (and other places if you know how to find it).
 
 In summary, the search order is group_id+.txt, custom_template.txt, template.txt .
+
+The included template with .txt extention is for G+ formatting. You can create your own templates with different extentions as long as you follow the naming convention laid out above. To have the script use those templates you must pass the extention to -e. For example say you want to use custom_template.html (template.html is included in the repo as an example), you would pass -e html .
+There is a special case for -e debug . This will show all the data that gets passed to the templates as a dictionary. Intended to be used as an aid to creating new templates from scratch.
 
 ## Stat validation
 Often stats get screwed up. Usually because agent-stats.com botched the OCR.
