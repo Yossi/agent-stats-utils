@@ -669,7 +669,7 @@ if __name__ == '__main__':
     parser.add_argument('-m', '--mail', nargs='*', help='email address to get output')
     parser.add_argument('-s', '--subject', help='optional email subject')
     parser.add_argument('-a', '--attach', action='store_true', help='also attach email body at a txt file to the email')
-    parser.add_argument('-e', '--extention', default='txt', help='extention of template you want to use')
+    parser.add_argument('-e', '--extension', default='txt', help='extension of template you want to use')
 
     args = parser.parse_args()
 

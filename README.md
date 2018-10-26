@@ -87,7 +87,7 @@ group_id is the id present in the link to the group (and other places if you kno
 
 In summary, the search order is group_id+.txt, custom_template.txt, template.txt .
 
-The included template with .txt extention is for G+ formatting. You can create your own templates with different extentions as long as you follow the naming convention laid out above. To have the script use those templates you must pass the extention to -e. For example say you want to use custom_template.html (template.html is included in the repo as an example), you would pass -e html .
+The included template with .txt extension is for G+ formatting. You can create your own templates with different extensions as long as you follow the naming convention laid out above. To have the script use those templates you must pass the extension to -e. For example say you want to use custom_template.html (template.html is included in the repo as an example), you would pass -e html .
 There is a special case for -e debug . This will show all the data that gets passed to the templates as a dictionary. Intended to be used as an aid to creating new templates from scratch.
 
 ## Stat validation
