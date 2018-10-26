@@ -11,6 +11,7 @@ Code
 *.exe
 test.py
 templates/custom_template.txt
+templates/custom_template.html
 chromedriver*
 .vscode/
 
