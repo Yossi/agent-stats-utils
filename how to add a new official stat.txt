@@ -7,10 +7,12 @@ update string: fields (change - to _)
        table_load()
        save() x2
 in agent_stats.py:
-update definitions
+       update definitions
        categories list (if aplicable)
        categories dict (in get_badges())
-       headers dict (in summary()) use _ here
+       headers tuple (in summary()) use _ here
        sql_before
        sql_now
 add new stat to template(s)
+
+update database columns

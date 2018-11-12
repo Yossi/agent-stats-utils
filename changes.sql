@@ -1,3 +1,5 @@
 ALTER TABLE `agent_stats`.`stats` 
-ADD COLUMN `cassandra-neutralizer` BIGINT(20) UNSIGNED NULL DEFAULT NULL COMMENT '' AFTER `nl-1331-meetups`;
+ADD COLUMN `lifetime_ap` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `cassandra-neutralizer`,
+ADD COLUMN `recursions` BIGINT(20) UNSIGNED NULL AFTER `lifetime_ap`;
+
 

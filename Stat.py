@@ -11,9 +11,10 @@ today = datetime.date.today()
 sojourner_start = datetime.date(2015, 3, 5)
 game_start = datetime.date(2012, 11, 15)
 
-fields = '''name, date, flag, min_ap, ap, level, explorer, discoverer, seer, recon, trekker, builder,
-connector, mind_controller, illuminator, recharger, liberator, pioneer, engineer,
-purifier, guardian, specops, missionday, nl_1331_meetups, cassandra_neutralizer, hacker, translator, sojourner, recruiter,
+fields = '''name, date, flag, min_ap, lifetime_ap, recursions, ap, level, explorer, 
+discoverer, seer, recon, trekker, builder, connector, mind_controller, illuminator, 
+recharger, liberator, pioneer, engineer, purifier, guardian, specops, missionday, 
+nl_1331_meetups, cassandra_neutralizer, hacker, translator, sojourner, recruiter,
 collector, binder, country_master, neutralizer, disruptor, salvator, smuggler,
 link_master, controller, field_master, magnusbuilder'''
 
@@ -33,6 +34,8 @@ class Stat(object):
         #self.flag = row.flag
         #self.min_ap = row.min_ap
         self.ap = row.ap
+        self.lifetime_ap = row.lifetime_ap
+        self.recursions = row.recursions
         self.level = row.level
         self.explorer = row.explorer
         self.discoverer = row.discoverer
@@ -80,6 +83,8 @@ class Stat(object):
         self.name = row['name'][:16]
         self.faction = row['faction']
         self.level = row['level']
+        self.lifetime_ap = row['lifetime_ap']
+        self.recursions = row['recursions']
         self.ap = row['ap']
         self.explorer = row['explorer']
         self.discoverer = row['discoverer']
@@ -210,6 +215,8 @@ class Stat(object):
         # this seems to be a more common bug, and until there is some action agents can take to fix it, it wont be flagged
         #if self.min_level > self.level + 1: # +1 is for special case where agents just dinged and scanner hasn't caught up yet. better to let some slip through than to flag an exited agent's ding 
         #    reasons.append( 'reported level %s < %s' % (self.level, self.min_level) )
+        if self.ap > self.lifetime_ap:
+            reasons.append( 'ap:lifetime_ap %s > %s' % (self.ap, self.lifetime_ap) )
         if self.guardian > max_guardian:
             reasons.append( 'guardian %s > %s' % (self.guardian, max_guardian) )
         if self.sojourner > max(0, max_sojourner):
@@ -249,14 +256,14 @@ class Stat(object):
         #    reasons.append( 'missionday:specops %s > %s' % (self.missionday, self.specops) )
 
         # this catches faction flippers unfortunately
-        #if self.min_ap > self.ap:
-        #    reasons.append( 'ap:min_ap %s < %s' % (self.ap, self.min_ap) )
+        #if self.min_ap > self.lifetime_ap:
+        #    reasons.append( 'lifetime_ap:min_ap %s < %s' % (self.lifetime_ap, self.min_ap) )
 
-        #if self.apdiff > self.ap-self.min_ap:
-        #    reasons.append( 'apdiff %s > %s' % (self.apdiff, self.ap-self.min_ap) )
+        #if self.apdiff > self.lifetime_ap-self.min_ap:
+        #    reasons.append( 'apdiff %s > %s' % (self.apdiff, self.lifetime_ap-self.min_ap) )
 
         if not reasons:
-            exec_mysql("UPDATE agents SET apdiff={0} WHERE `name`='{1}';".format(self.ap-self.min_ap, self.name))
+            exec_mysql("UPDATE agents SET apdiff={0} WHERE `name`='{1}';".format(self.lifetime_ap-self.min_ap, self.name))
 
         return reasons
 
@@ -268,6 +275,8 @@ class Stat(object):
                      `date`='{date}',
                      `level`='{level}',
                      ap='{ap}',
+                     lifetime_ap='{lifetime_ap}',
+                     recursions='{recursions}',
                      explorer='{explorer}',
                      discoverer='{discoverer}',
                      seer='{seer}',
@@ -306,6 +315,8 @@ class Stat(object):
                      `min-ap`='{min_ap}'
                  ON DUPLICATE KEY UPDATE `level`='{level}',
                                          ap='{ap}',
+                                         lifetime_ap='{lifetime_ap}',
+                                         recursions='{recursions}',
                                          explorer='{explorer}',
                                          discoverer='{discoverer}',
                                          seer='{seer}',
@@ -347,6 +358,7 @@ class Stat(object):
     def __repr__(self):
         return '<Stat: {} {}>'.format(self.name, self.date)
 
+# lifetime_ap >= ap
 # date >= game_start
 # today >= date
 # discoverer >= seer

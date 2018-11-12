@@ -38,6 +38,8 @@ CREATE TABLE `stats` (
   `date` date NOT NULL,
   `level` bigint(20) unsigned DEFAULT NULL,
   `ap` bigint(20) unsigned DEFAULT NULL,
+  `lifetime_ap` bigint(20) unsigned DEFAULT NULL,
+  `recursions` bigint(20) unsigned DEFAULT NULL,
   `explorer` bigint(20) unsigned DEFAULT NULL,
   `discoverer` bigint(20) unsigned DEFAULT NULL,
   `seer` bigint(20) unsigned DEFAULT NULL,
@@ -82,10 +84,12 @@ DELIMITER $$
 CREATE PROCEDURE `FindAgentByName`(IN `agentname` varchar(16))
 BEGIN
 SELECT
-  `agents`.`name`, 
-  `stats`.`date`, 
-  `stats`.`flag`, 
-  `stats`.`min-ap`, 
+  `agents`.`name`,
+  `stats`.`date`,
+  `stats`.`flag`,
+  `stats`.`min-ap`,
+  `stats`.`lifetime_ap`,
+  `stats`.`recursions`,
   `stats`.`ap`,
   `stats`.`level`,
   `stats`.`explorer`,

@@ -55,7 +55,8 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
 
     extra_definitions, extra_categories, data = compute_extra_categories(data)
 
-    definitions = {'explorer': '(New Portals Visited)',
+    definitions = {'recursions': '(Recursions)',
+                   'explorer': '(New Portals Visited)',
                    'discoverer': '(Portals Discovered)',
                    'seer': '(Seer Points)',
                    'recon': '(OPR Agreements)',
@@ -96,7 +97,7 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                   'illuminator', 'recharger', 'liberator', 'pioneer', 'engineer',
                   'purifier', 'hacker', 'translator', 'specops', 'discoverer', 'seer',
                   'recon', 'collector', 'neutralizer', 'disruptor', 'salvator', 'magnusbuilder',
-                  'missionday', 'nl-1331-meetups', 'cassandra-neutralizer'] + extra_categories
+                  'missionday', 'nl-1331-meetups', 'cassandra-neutralizer', 'recursions'] + extra_categories
     submitters[0] = 0
     for category in categories:
         output[category] = {'scores': [], 'title': {'category': 'Top ' + titlecase(category, callback=abbreviations), 'description': definitions.get(category.lower(), '')}}
@@ -366,7 +367,8 @@ def get_badges(data):
                   'hacker': [2000, 10000, 30000, 100000, 200000],
                   'translator': [200, 2000, 6000, 20000, 50000],
                   'sojourner': [15, 30, 60, 180, 360],
-                  'recruiter': [2, 10, 25, 50, 100]}
+                  'recruiter': [2, 10, 25, 50, 100],
+                  'recursions': [1, 1000001, 1000002, 1000003, 1000004]}
 
     result = {} # TODO: change these 2 dicts to OrderedDicts
     for category, ranks in categories.items():
@@ -424,12 +426,13 @@ def summary(group='all', days=7):
                'translator',
                'sojourner',
                'recruiter',
-               'magnusbuilder')
+               'magnusbuilder',
+               'recursions')
 
     sql_before = '''SELECT x.name, s.`date`, `level`, ap, explorer, discoverer, seer, recon, trekker, builder, connector, 
                            `mind-controller` mind_controller, illuminator, recharger, liberator, pioneer, engineer, purifier,
                            specops, missionday, `nl-1331-meetups` nl_1331_meetups, `cassandra-neutralizer` cassandra_neutralizer, hacker, translator, sojourner,
-                           recruiter, magnusbuilder
+                           recruiter, magnusbuilder, recursions
                     FROM (
                         SELECT a.name name, s.idagents id, MAX(s.date) AS date
                         FROM agents a, stats s, membership m, groups g
@@ -453,7 +456,7 @@ def summary(group='all', days=7):
     sql_now = '''SELECT x.name, s.`date`, `level`, ap, explorer, discoverer, seer, recon, trekker, builder, connector,
                         `mind-controller` mind_controller, illuminator, recharger, liberator, pioneer, engineer, purifier,
                         specops, missionday, `nl-1331-meetups` nl_1331_meetups, `cassandra-neutralizer` cassandra_neutralizer, hacker, translator, sojourner,
-                        recruiter, magnusbuilder
+                        recruiter, magnusbuilder, recursions
                     FROM (
                         SELECT a.name name, s.idagents id, MAX(s.date) AS date
                         FROM agents a, stats s, membership m, groups g
