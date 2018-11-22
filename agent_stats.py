@@ -55,7 +55,9 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
 
     extra_definitions, extra_categories, data = compute_extra_categories(data)
 
-    definitions = {'recursions': '(Recursions)',
+    # these definitions are just for reference. if a category is to be active in a template it needs to be in this dictionary first
+    definitions = {'ap': '',
+                   'recursions': '',
                    'explorer': '(New Portals Visited)',
                    'discoverer': '(Portals Discovered)',
                    'seer': '(Seer Points)',
@@ -92,12 +94,7 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                    'missionday':'(Mission Days Attended)'}
     definitions.update(extra_definitions)
 
-    # these categories are what become the topN lists. definitions above are just for reference (still needed if a category is active)
-    categories = ['ap', 'explorer', 'trekker', 'builder', 'connector', 'mind-controller',
-                  'illuminator', 'recharger', 'liberator', 'pioneer', 'engineer',
-                  'purifier', 'hacker', 'translator', 'specops', 'discoverer', 'seer',
-                  'recon', 'collector', 'neutralizer', 'disruptor', 'salvator', 'magnusbuilder',
-                  'missionday', 'nl-1331-meetups', 'cassandra-neutralizer', 'recursions'] + extra_categories
+    categories = list(definitions.keys()) + extra_categories
     submitters[0] = 0
     for category in categories:
         output[category] = {'scores': [], 'title': {'category': 'Top ' + titlecase(category, callback=abbreviations), 'description': definitions.get(category.lower(), '')}}
@@ -368,7 +365,7 @@ def get_badges(data):
                   'translator': [200, 2000, 6000, 20000, 50000],
                   'sojourner': [15, 30, 60, 180, 360],
                   'recruiter': [2, 10, 25, 50, 100],
-                  'recursions': [1, 1000001, 1000002, 1000003, 1000004]}
+                  'recursions': [1, 1000001, 1000002, 1000003, 1000004]} # TODO: update this if it ever becomes a tiered badge
 
     result = {} # TODO: change these 2 dicts to OrderedDicts
     for category, ranks in categories.items():

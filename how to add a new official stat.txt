@@ -8,7 +8,6 @@ update string: fields (change - to _)
        save() x2
 in agent_stats.py:
        update definitions
-       categories list (if aplicable)
        categories dict (in get_badges())
        headers tuple (in summary()) use _ here
        sql_before
