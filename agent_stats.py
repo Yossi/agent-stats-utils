@@ -41,7 +41,7 @@ def num2words(n):
     return str(n)
 
 def abbreviations(word, **kwargs):
-    if word.upper() in ('MU', 'NL'):
+    if word.upper() in ('AP', 'MU', 'NL'):
         return word.upper()
 
 def get_stats(group_id, time_span='now', number=10, submitters=[0]):
@@ -57,6 +57,7 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
 
     # these definitions are just for reference. if a category is to be active in a template it needs to be in this dictionary first
     definitions = {'ap': '',
+                   'lifetime_ap': '(Total AP Across Recursions)',
                    'recursions': '',
                    'explorer': '(New Portals Visited)',
                    'discoverer': '(Portals Discovered)',
@@ -97,7 +98,7 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
     categories = list(definitions.keys()) + extra_categories
     submitters[0] = 0
     for category in categories:
-        output[category] = {'scores': [], 'title': {'category': 'Top ' + titlecase(category, callback=abbreviations), 'description': definitions.get(category.lower(), '')}}
+        output[category] = {'scores': [], 'title': {'category': 'Top ' + titlecase(category.replace('_', ' '), callback=abbreviations), 'description': definitions.get(category.lower(), '')}}
         top_list = sorted((line for line in data if 0 < float(line[category])), key=lambda k: float(k[category]), reverse=True)
         submitters[0] = max(submitters[0], len(top_list))
         i = -1
