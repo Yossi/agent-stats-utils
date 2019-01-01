@@ -600,7 +600,7 @@ def custom_roundup(group):
         sleep(10)
 
     logging.info('getting custom top lists')
-    output_dict['chart'] = get_stats(group_id, 'monthly', args.number, submitters)
+    output_dict['chart'] = get_stats(group_id, 'custom', args.number, submitters)
 
     logging.info('getting badge dings')
     output_dict['dings'] = summary(group_id, (endDate - startDate).days)
