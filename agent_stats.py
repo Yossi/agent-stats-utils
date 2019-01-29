@@ -100,7 +100,8 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
     for category in categories:
         output[category] = {'scores': [], 'title': {'category': 'Top ' + titlecase(category.replace('_', ' '), callback=abbreviations), 'description': definitions.get(category.lower(), '')}}
         top_list = sorted((line for line in data if 0 < float(line[category])), key=lambda k: float(k[category]), reverse=True)
-        submitters[0] = max(submitters[0], len(top_list))
+        if category not in ('lifetime_ap', 'cassandra-neutralizer'):
+            submitters[0] = max(submitters[0], len(top_list))
         i = -1
         for i, line in enumerate(top_list):
             datum = float(line[category])
