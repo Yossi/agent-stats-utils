@@ -634,7 +634,7 @@ def check_for_applicants(group):
     r.raise_for_status()
     message = []
     if r.json():
-        message.append('Agent(s) awaiting validation to the {} group:'.format(group))
+        message.append('Agent(s) awaiting validation to the {} group:'.format(group_name))
         for agent in r.json():
             message.append('    @{username}'.format(**dict(agent)))
 
