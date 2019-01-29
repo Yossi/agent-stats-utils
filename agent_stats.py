@@ -260,7 +260,7 @@ def test(group):
 def collate_agents():
     logging.info('collate agents')
     general_groups = dict(exec_mysql("SELECT name, idgroups FROM groups WHERE name IN ('smurfs', 'frogs', 'all');"))
-    for agent_id, name, faction in exec_mysql('SELECT idagents, name, faction FROM agents;'):
+    for agent_id, faction in exec_mysql('SELECT idagents, faction FROM agents;'):
         faction = 'frogs' if faction == 'enl' else 'smurfs'
         sql = '''INSERT INTO `membership`
                  VALUES ('{}', '{}')
