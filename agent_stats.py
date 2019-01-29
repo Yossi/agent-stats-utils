@@ -91,8 +91,7 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                    'smuggler': '(Max Time Link Maintained)',
                    'link-master': '(Max Link Length × Days)',
                    'controller': '(Max Time Field Held)',
-                   'field-master': '(Largest Field MUs × Days)',
-                   'missionday':'(Mission Days Attended)'}
+                   'field-master': '(Largest Field MUs × Days)'}
     definitions.update(extra_definitions)
 
     categories = list(definitions.keys()) + extra_categories
