@@ -13,10 +13,10 @@ def compute_extra_categories(data):
                                      ('bob the builder', '(Resonators Deployed x Mods Deployed)'), 
                                      ('translator per hack', '(Glyph Hack Points / Hacks)')
                                     ])
-    extra_categories = list(extra_definitions.keys())
+
     for line in data:
         # add your custom categories formulas here
         line['bob the builder'] = line['builder'] * line['engineer']
         line['translator per hack'] = safe_div(line['translator'], line['hacker']) # be SURE to use safe_div for ALL divisions
 
-    return extra_definitions, extra_categories, data
+    return extra_definitions, data

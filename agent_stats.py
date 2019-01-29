@@ -53,7 +53,8 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
 
     data = list(read_table(group_id, time_span))
 
-    extra_definitions, extra_categories, data = compute_extra_categories(data)
+    _ = compute_extra_categories(data)
+    extra_definitions, data = _[0], _[-1] # this happened because some people might still have extra_categories in their extra_stats.py
 
     # these definitions are just for reference. if a category is to be active in a template it needs to be in this dictionary first
     definitions = {'ap': '',
@@ -94,7 +95,7 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                    'field-master': '(Largest Field MUs × Days)'}
     definitions.update(extra_definitions)
 
-    categories = list(definitions.keys()) + extra_categories
+    categories = list(definitions.keys())
     submitters[0] = 0
     for category in categories:
         output[category] = {'scores': [], 'title': {'category': 'Top ' + titlecase(category.replace('_', ' '), callback=abbreviations), 'description': definitions.get(category.lower(), '')}}
