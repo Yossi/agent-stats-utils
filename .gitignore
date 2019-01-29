@@ -14,6 +14,8 @@ templates/custom_template.txt
 templates/custom_template.html
 chromedriver*
 .vscode/
+ubuntu9/
+ubuntu8/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
