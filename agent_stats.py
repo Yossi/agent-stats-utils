@@ -104,7 +104,7 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
         i = -1
         for i, line in enumerate(top_list):
             datum = float(line[category])
-            if i > number-1 and datum != prev_datum: # the 0s got filtered out on that inscrutable line above
+            if i > number-1 and datum != prev_datum: # the 0s got filtered out on that inscrutable line above (top_list = ...)
                 break
 
             if datum >= 1000000:
