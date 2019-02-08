@@ -658,14 +658,16 @@ def check_categories(*args):
     discovered_stats = new.keys() - old.keys()
     removed_stats = old.keys() - new.keys()
 
+    message = []
     if discovered_stats:
-        print(f'added: {discovered_stats}')
+        message.append(f'added: {discovered_stats}')
     if removed_stats:
-        print(f'removed: {removed_stats}')
+        message.append(f'removed: {removed_stats}')
 
     with open('known_stats.json', 'w') as fpw:
         json.dump(new, fpw, sort_keys=True, indent=4)
  
+    return '\n'.join(message)
 
 def update_group_names(group):
     db = dict(exec_mysql('SELECT url, `name` FROM groups WHERE url IS NOT NULL;'))
