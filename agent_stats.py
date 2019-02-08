@@ -6,24 +6,24 @@ import datetime
 import logging
 import re
 import sys
-from time import sleep
 from collections import OrderedDict, namedtuple
-
-import requests # pip install requests
-from num2words import num2words as n2w # pip install num2words
 from functools import lru_cache
-from titlecase import titlecase # pip install titlecase
-from jinja2 import Environment, FileSystemLoader, BaseLoader # pip install Jinja2
+from secrets import api_key, dbconfig
+from time import sleep
+
+import requests  # pip install requests
+from jinja2 import (BaseLoader, Environment, FileSystemLoader) # pip install Jinja2
+from num2words import num2words as n2w  # pip install num2words
+from titlecase import titlecase  # pip install titlecase
 
 from Stat import Stat
-from util import mail
+from util import cm, exec_mysql, mail
+
 try:
     from extra_stats import compute_extra_categories # see extra_stats.py.example for what this file should look like
 except ImportError:
     compute_extra_categories = lambda data: ({}, [], data)
 
-from util import exec_mysql, cm
-from secrets import dbconfig, api_key
 
 cm.set_credentials(dbconfig)
 
