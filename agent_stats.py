@@ -3,6 +3,7 @@
 
 import argparse
 import datetime
+import json
 import logging
 import re
 import sys
@@ -641,6 +642,31 @@ def check_for_applicants(group):
         message.append('\nGo to https://www.agent-stats.com/groups.php?group={} and click on the [View admin panel] button to take care of it.'.format(group_id))
     return '\n'.join(message)
 
+def check_categories(*args):
+    try:
+        with open('known_stats.json', 'r') as fpr:
+            old = json.load(fpr)
+    except FileNotFoundError:
+        with open('known_stats.json', 'w') as fpw:
+            old = {}
+            json.dump(old, fpw, sort_keys=True, indent=4)
+
+    r = s.get('https://api.agent-stats.com/medals', stream=True)
+    r.raise_for_status()
+    new = r.json()
+
+    discovered_stats = new.keys() - old.keys()
+    removed_stats = old.keys() - new.keys()
+
+    if discovered_stats:
+        print(f'added: {discovered_stats}')
+    if removed_stats:
+        print(f'removed: {removed_stats}')
+
+    with open('known_stats.json', 'w') as fpw:
+        json.dump(new, fpw, sort_keys=True, indent=4)
+ 
+
 def update_group_names(group):
     db = dict(exec_mysql('SELECT url, `name` FROM groups WHERE url IS NOT NULL;'))
     web = dict(groups())
@@ -662,6 +688,7 @@ if __name__ == '__main__':
                            ('custom', custom_roundup),
                            ('check_for_applicants', check_for_applicants),
                            ('update_group_names', update_group_names),
+                           ('check_categories', check_categories),
                            ('test', test)])
 
     parser = argparse.ArgumentParser(description='Tools for agent-stats admins')

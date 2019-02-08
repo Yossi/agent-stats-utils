@@ -1,6 +1,6 @@
 secrets.py
 extra_stats.py
-
+known_stats.json
 profile/
 venv/
 winvenv/
