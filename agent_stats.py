@@ -50,7 +50,7 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                  'monthly': 'month',
                  'weekly': 'week'}.get(time_span, time_span)
     output = {}
-    logging.info('read table: group {}, span {}'.format(groups()[group_id], time_span))
+    logging.info(f'read table: group {groups()[group_id]}, span {time_span}')
 
     data = list(read_table(group_id, time_span))
 
@@ -110,11 +110,11 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                 break
 
             if datum >= 1000000:
-                datum_string = '{:,}'.format(int(datum))
+                datum_string = f'{int(datum):,}'
             else:
-                datum_string = '{:,g}'.format(datum)
+                datum_string = f'{datum:,g}'
 
-            output[category]['scores'].append('{}  {}'.format(line['name'], datum_string))
+            output[category]['scores'].append(f'{line["name"]}  {datum_string}')
             prev_datum = datum
         if i < 0:
             del output[category]
@@ -130,14 +130,14 @@ def cleanup_data(data):
 
 def read_table(group_id, time_span):
     count = 0
-    API_url = 'https://api.agent-stats.com/groups/{}/{}'
-    r = s.get(API_url.format(group_id, time_span), stream=True)
+    API_url = f'https://api.agent-stats.com/groups/{group_id}/{time_span}'
+    r = s.get(API_url, stream=True)
     r.raise_for_status()
     for agent, data in r.json().items():
         data['name'] = '@'+agent
         count += 1
         yield cleanup_data(data)
-    logging.info('%s rows' % count)
+    logging.info(f'{count} rows')
 
 @lru_cache(maxsize=None)
 def groups():
@@ -152,7 +152,7 @@ def get_groups(group=None):
         group_id = group
         group_name = groups()[group]
     else:
-        group_id = exec_mysql('SELECT url FROM groups WHERE `name` = "{}"'.format(group))[0][0]
+        group_id = exec_mysql(f'SELECT url FROM groups WHERE `name` = "{group}"')[0][0]
         group_name = group
 
     return group_id, group_name
@@ -236,9 +236,9 @@ def new_badges(old_data, new_data):
             if new[0].isdecimal():
                 if old[0].isdecimal():
                     if int(old[0]) < int(new[0]):
-                        result[category] = ['%sx %s' % (x, new[1]) for x in range(int(old[0])+1, int(new[0])+1)]
+                        result[category] = [f'{x}x {new[1]}' for x in range(int(old[0])+1, int(new[0])+1)]
                 else:
-                    result[category].extend( ['%sx %s' % (x, new[1]) for x in range(2, int(new[0])+1)] )
+                    result[category].extend( [f'{x}x {new[1]}' for x in range(2, int(new[0])+1)] )
     return result
 
 def englishify(new_badges):
@@ -263,14 +263,14 @@ def collate_agents():
     general_groups = dict(exec_mysql("SELECT name, idgroups FROM groups WHERE name IN ('smurfs', 'frogs', 'all');"))
     for agent_id, faction in exec_mysql('SELECT idagents, faction FROM agents;'):
         faction = 'frogs' if faction == 'enl' else 'smurfs'
-        sql = '''INSERT INTO `membership`
-                 VALUES ('{}', '{}')
-                 ON DUPLICATE KEY UPDATE idagents=idagents;'''.format(agent_id, general_groups['all'])
+        sql = f'''INSERT INTO `membership`
+                  VALUES ('{agent_id}', '{general_groups['all']}')
+                  ON DUPLICATE KEY UPDATE idagents=idagents;'''
         exec_mysql(sql)
 
-        sql = '''INSERT INTO `membership`
-                 VALUES ('{}', '{}')
-                 ON DUPLICATE KEY UPDATE idagents=idagents;'''.format(agent_id, general_groups[faction])
+        sql = f'''INSERT INTO `membership`
+                  VALUES ('{agent_id}', '{general_groups[faction]}')
+                  ON DUPLICATE KEY UPDATE idagents=idagents;'''
         exec_mysql(sql)
 
 def snarf(group=None):
@@ -280,20 +280,20 @@ def snarf(group=None):
         results = ''
         for group_id, group_name in groups().items():
             logging.info('snarfing '+group_name)
-            idgroups = exec_mysql("SELECT idgroups FROM groups WHERE url = '{}';".format(group_id))
+            idgroups = exec_mysql(f"SELECT idgroups FROM groups WHERE url = '{group_id}';")
             if not idgroups:
-                sql = '''INSERT INTO `groups`
-                         SET `name`='{}', url='{}';'''.format(group_name, group_id)
+                sql = f'''INSERT INTO `groups`
+                          SET `name`='{group_name}', url='{group_id}';'''
                 exec_mysql(sql)
             results += snarf(group_id) # getting all recursive and shiz
         collate_agents()
         return results
     else:
         added, removed, flagged, flipped = [], [], [], []
-        idgroups = exec_mysql("SELECT idgroups FROM groups WHERE url = '{}';".format(group_id))[0][0]
-        remaining_roster = [item for sublist in exec_mysql("SELECT idagents FROM membership WHERE idgroups = {};".format(idgroups)) for item in sublist] # get the class attendance sheet
+        idgroups = exec_mysql(f"SELECT idgroups FROM groups WHERE url = '{group_id}';")[0][0]
+        remaining_roster = [item for sublist in exec_mysql(f"SELECT idagents FROM membership WHERE idgroups = {idgroups};") for item in sublist] # get the class attendance sheet
 
-        logging.info('read table: group {}, span now'.format(group_name))
+        logging.info(f'read table: group {group_name}, span now')
         for data in read_table(group_id, 'now'):
             stat = Stat()
             stat.table_load(**data)
@@ -304,24 +304,24 @@ def snarf(group=None):
             try:
                 remaining_roster.remove(stat.agent_id) # take attendance
             except ValueError:
-                logging.info('Agent added: {} {}'.format(stat.faction.upper(), stat.name)) # new kid
+                logging.info(f'Agent added: {stat.faction.upper()} {stat.name}') # new kid
                 added.append(stat.faction.upper() + ' ' + stat.name)
 
-            sql = '''INSERT INTO `membership`
-                     VALUES ('{}', '{}')
-                     ON DUPLICATE KEY UPDATE idagents=idagents;'''.format(stat.agent_id, idgroups)
+            sql = f'''INSERT INTO `membership`
+                      VALUES ('{stat.agent_id}', '{idgroups}')
+                      ON DUPLICATE KEY UPDATE idagents=idagents;'''
             exec_mysql(sql)
 
-            if stat.faction != exec_mysql('SELECT faction FROM agents WHERE `name` = "{}";'.format(stat.name))[0][0]:
-                logging.info('Agent flipped: {} -> {}'.format(stat.name, stat.faction.upper()))
-                flipped.append('{} -> {}'.format(stat.name, stat.faction))
-                exec_mysql('UPDATE agents SET faction="{}" WHERE `name`="{}";'.format(stat.faction, stat.name))
+            if stat.faction != exec_mysql(f'SELECT faction FROM agents WHERE `name` = "{stat.name}";')[0][0]:
+                logging.info(f'Agent flipped: {stat.name} -> {stat.faction.upper()}')
+                flipped.append(f'{stat.name} -> {stat.faction}')
+                exec_mysql(f'UPDATE agents SET faction="{stat.faction}" WHERE `name`="{stat.name}";')
 
         if remaining_roster:
             remaining_roster = str(tuple(remaining_roster)).replace(',)',')') # absentees
-            removed = sum(exec_mysql("SELECT name FROM agents WHERE idagents in {};".format(remaining_roster)), ())
-            logging.info('Agent(s) removed: %s' % str(removed))
-            exec_mysql("DELETE FROM membership WHERE idagents in {} and idgroups = {};".format(remaining_roster, idgroups))
+            removed = sum(exec_mysql(f"SELECT name FROM agents WHERE idagents in {remaining_roster};"), ())
+            logging.info(f'Agent(s) removed: {removed}')
+            exec_mysql(f"DELETE FROM membership WHERE idagents in {remaining_roster} and idgroups = {idgroups};")
 
         output = []
         if added or removed or flagged or flipped:
@@ -380,7 +380,7 @@ def get_badges(data):
             if current == 'Onyx':
                 multiplier = data[category] // rank
                 if multiplier > 1:
-                    current = '%sx %s' % (multiplier, current)
+                    current = f'{multiplier}x {current}'
         result[category] = current
 
     for category, ranks in {'cassandra_neutralizer': [100, 300, 1000]}.items(): # doesn't strictly have to be a loop, but i want it to match above
@@ -392,7 +392,7 @@ def get_badges(data):
             if current == 'Gold': # highest rank
                 multiplier = data[category] // rank
                 if multiplier > 1:
-                   current = '%sx %s' % (multiplier, current)
+                   current = f'{multiplier}x {current}'
         result[category] = current
 
     return result
@@ -429,22 +429,21 @@ def summary(group='all', days=7):
                'magnusbuilder',
                'recursions')
 
-    sql_before = '''SELECT x.name, s.`date`, `level`, ap, explorer, discoverer, seer, recon, trekker, builder, connector, 
-                           `mind-controller` mind_controller, illuminator, recharger, liberator, pioneer, engineer, purifier,
-                           specops, missionday, `nl-1331-meetups` nl_1331_meetups, `cassandra-neutralizer` cassandra_neutralizer, hacker, translator, sojourner,
-                           recruiter, magnusbuilder, recursions
-                    FROM (
-                        SELECT a.name name, s.idagents id, MAX(s.date) AS date
-                        FROM agents a, stats s, membership m, groups g
-                        WHERE a.idagents = s.idagents AND
-                              s.idagents = m.idagents AND
-                              m.idgroups = g.idgroups AND
-                              g.`url` = '{}' AND
-                              s.flag != 1 AND
-                              date < ( CURDATE() - INTERVAL {} DAY )
-                        GROUP BY id ) x
-                    JOIN stats s ON x.id = s.idagents AND x.date = s.date
-                 '''.format(group_id, days)
+    sql_before = f'''SELECT x.name, s.`date`, `level`, ap, explorer, discoverer, seer, recon, trekker, builder, connector, 
+                            `mind-controller` mind_controller, illuminator, recharger, liberator, pioneer, engineer, purifier,
+                            specops, missionday, `nl-1331-meetups` nl_1331_meetups, `cassandra-neutralizer` cassandra_neutralizer, hacker, translator, sojourner,
+                            recruiter, magnusbuilder, recursions
+                     FROM (
+                         SELECT a.name name, s.idagents id, MAX(s.date) AS date
+                         FROM agents a, stats s, membership m, groups g
+                         WHERE a.idagents = s.idagents AND
+                               s.idagents = m.idagents AND
+                               m.idgroups = g.idgroups AND
+                               g.`url` = '{group_id}' AND
+                               s.flag != 1 AND
+                               date < ( CURDATE() - INTERVAL {days} DAY )
+                         GROUP BY id ) x
+                     JOIN stats s ON x.id = s.idagents AND x.date = s.date'''
 
     baseline = {}
     for row in exec_mysql(sql_before):
@@ -453,22 +452,21 @@ def summary(group='all', days=7):
             baseline[agent] = {'date': row[1], 'level': row[2], 'ap': row[3],
                                'badges': get_badges(dict(zip(headers, row[4:])))}
 
-    sql_now = '''SELECT x.name, s.`date`, `level`, ap, explorer, discoverer, seer, recon, trekker, builder, connector,
-                        `mind-controller` mind_controller, illuminator, recharger, liberator, pioneer, engineer, purifier,
-                        specops, missionday, `nl-1331-meetups` nl_1331_meetups, `cassandra-neutralizer` cassandra_neutralizer, hacker, translator, sojourner,
-                        recruiter, magnusbuilder, recursions
-                    FROM (
-                        SELECT a.name name, s.idagents id, MAX(s.date) AS date
-                        FROM agents a, stats s, membership m, groups g
-                        WHERE a.idagents = s.idagents AND
-                              s.idagents = m.idagents AND
-                              m.idgroups = g.idgroups AND
-                              g.`url` = '{}' AND
-                              s.flag != 1 AND
-                              date >= ( CURDATE() - INTERVAL {} DAY )
-                        GROUP BY id ) x
-                    JOIN stats s ON x.id = s.idagents AND x.date = s.date
-              '''.format(group_id, days)
+    sql_now = f'''SELECT x.name, s.`date`, `level`, ap, explorer, discoverer, seer, recon, trekker, builder, connector,
+                         `mind-controller` mind_controller, illuminator, recharger, liberator, pioneer, engineer, purifier,
+                         specops, missionday, `nl-1331-meetups` nl_1331_meetups, `cassandra-neutralizer` cassandra_neutralizer, hacker, translator, sojourner,
+                         recruiter, magnusbuilder, recursions
+                     FROM (
+                         SELECT a.name name, s.idagents id, MAX(s.date) AS date
+                         FROM agents a, stats s, membership m, groups g
+                         WHERE a.idagents = s.idagents AND
+                               s.idagents = m.idagents AND
+                               m.idgroups = g.idgroups AND
+                               g.`url` = '{group_id}' AND
+                               s.flag != 1 AND
+                               date >= ( CURDATE() - INTERVAL {days} DAY )
+                         GROUP BY id ) x
+                     JOIN stats s ON x.id = s.idagents AND x.date = s.date'''
     output = {'data': []}
     footnote = ''
     for row in exec_mysql(sql_now):
@@ -488,7 +486,7 @@ def summary(group='all', days=7):
             if badges_old != badges_new:
                 changes.update(new_badges(badges_old, badges_new))
             if ap_40m_old < ap_40m_new:
-                changes['ap'] = ['{} MILLION'.format((l+1)*40) for l in range(ap_40m_old, ap_40m_new)]
+                changes['ap'] = [f'{(l+1)*40} MILLION' for l in range(ap_40m_old, ap_40m_new)]
             if level_old < level_new:
                 changes['level'] = [str(l+1) for l in range(level_old, level_new)]
             if changes:
@@ -498,15 +496,14 @@ def summary(group='all', days=7):
                 note = ''
                 if date_old < stale:
                     note = '¹' # chcp 65001
-                    footnote = '¹Start date more than 2 %s ago' % ('weeks' if days == 7 else 'months',)
+                    footnote = f"¹Start date more than 2 {('weeks' if days == 7 else 'months')} ago"
 
                 if today.year == date_old.year:
-                    template = 'earned {} sometime between {old.month}/{old.day}{} and {new.month}/{new.day}'
+                    template = f'earned {earnings} sometime between {date_old.month}/{date_old.day}{note} and {date_new.month}/{date_new.day}'
                 else:
-                    template = 'earned {} sometime between {old.month}/{old.day}/{old.year}{} and {new.month}/{new.day}/{new.year}'
+                    template = f'earned {earnings} sometime between {date_old.month}/{date_old.day}/{date_old.year}{note} and {date_new.month}/{date_new.day}/{date_new.year}'
 
-                output['data'].append({'name': agent, 'earned': template.format(earnings, note, old=date_old, new=date_new)})
-    output['data'] = sorted(output['data'], key=lambda s: s['name'].lower())
+                output['data'].append({'name': agent, 'earned': template})
     if footnote:
         output['footnote'] = footnote
     return output
@@ -584,7 +581,7 @@ def custom_roundup(group):
     output_dict = {}
     submitters = [0] # this list gets modified inside get_stats()
 
-    r = s.get('https://api.agent-stats.com/groups/{}/info'.format(group_id), stream=True)
+    r = s.get(f'https://api.agent-stats.com/groups/{group_id}/info', stream=True)
     r.raise_for_status()
     startDate = datetime.datetime.strptime(r.json()['startDate'], '%Y-%m-%d %H:%M:%S')
     endDate = datetime.datetime.strptime(r.json()['endDate'], '%Y-%m-%d %H:%M:%S')
@@ -597,7 +594,7 @@ def custom_roundup(group):
         lastRefresh = datetime.datetime.min
     if lastRefresh < endDate:
         logging.info('setting off a refresh. waiting 10 seconds to make sure it finishes')
-        r = s.post('https://api.agent-stats.com/groups/{}/refresh'.format(group_id))
+        r = s.post(f'https://api.agent-stats.com/groups/{group_id}/refresh')
         r.raise_for_status()
         sleep(10)
 
@@ -631,15 +628,15 @@ def render(output_dict):
 
 def check_for_applicants(group):
     group_id, group_name = get_groups(group)
-    r = s.get('https://api.agent-stats.com/groups/{}/pending'.format(group_id), stream=True)
+    r = s.get(f'https://api.agent-stats.com/groups/{group_id}/pending', stream=True)
     r.raise_for_status()
     message = []
     if r.json():
-        message.append('Agent(s) awaiting validation to the {} group:'.format(group_name))
+        message.append(f'Agent(s) awaiting validation to the {group_name} group:')
         for agent in r.json():
-            message.append('    @{username}'.format(**dict(agent)))
+            message.append(f'    @{agent["username"]}')
 
-        message.append('\nGo to https://www.agent-stats.com/groups.php?group={} and click on the [View admin panel] button to take care of it.'.format(group_id))
+        message.append(f'\nGo to https://www.agent-stats.com/groups.php?group={group_id} and click on the [View admin panel] button to take care of it.')
     return '\n'.join(message)
 
 def check_categories(*args):
@@ -676,9 +673,9 @@ def update_group_names(group):
     for gid in web:
         if web[gid] != db[gid]:
             allgood = False
-            print('{} was named "{}" is now "{}"'.format(gid, db[gid], web[gid]))
+            print(f'{gid} was named "{db[gid]}" is now "{web[gid]}"')
             if input('Update the database? (y/N) ').lower().startswith('y'):
-                exec_mysql('UPDATE groups SET `name`="{}" WHERE url="{}" AND `name`="{}"; '.format(web[gid], gid, db[gid]))
+                exec_mysql(f'UPDATE groups SET `name`="{web[gid]}" WHERE url="{gid}" AND `name`="{db[gid]}";')
     if allgood:
         print('\nAll group names match\n')
 
