@@ -699,7 +699,7 @@ if __name__ == '__main__':
     parser.add_argument('-g', '--group', help='group to focus on', choices=[name for row in exec_mysql('SELECT name FROM groups;') for name in row])
     parser.add_argument('-m', '--mail', nargs='*', help='email address to get output')
     parser.add_argument('-s', '--subject', help='optional email subject')
-    parser.add_argument('-a', '--attach', action='store_true', help='also attach email body at a txt file to the email')
+    parser.add_argument('-a', '--attach', action='store_true', help='also attach email body as a txt file to the email')
     parser.add_argument('-e', '--extension', default='txt', help='extension of template you want to use')
 
     args = parser.parse_args()
@@ -713,7 +713,7 @@ if __name__ == '__main__':
             if not args.group: args.group=''
             subject = args.action+' '+args.group if not args.subject else args.subject
             mail([args.mail[0]], subject, str(sys.exc_info()[0]), host=True)
-            logging.info('CRASHED and email sent')
+            logging.error('CRASHED and email sent')
     else:
         if result:
             result = result.strip()
