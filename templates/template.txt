@@ -46,7 +46,7 @@
 {{ high_scores(chart['nl-1331-meetups']) -}}
 {{ high_scores(chart.recursions) -}}
 
-{%- if dings -%}
+{%- if dings.data -%}
 Recent badge dings:
 {% for ding in dings.data %}
 *{{ ding.name }}* {{ ding.earned -}}
