@@ -150,10 +150,9 @@ def get_groups(group=None):
         group_id, group_name = None, None
     elif re.fullmatch(r'([0-9a-f]{14}\.[\d]{8})', group):
         group_id = group
-        group_name = groups()[group]
     else:
         group_id = exec_mysql(f'SELECT url FROM groups WHERE `name` = "{group}"')[0][0]
-        group_name = group
+    group_name = groups()[group_id]
 
     return group_id, group_name
 
