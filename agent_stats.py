@@ -146,13 +146,17 @@ def groups():
     return dict([(g['groupid'], g['groupname']) for g in r.json() if '.' in g['groupid']])
 
 def get_groups(group=None):
-    if group in ('smurfs', 'frogs', 'all', None):
-        group_id, group_name = None, None
-    elif re.fullmatch(r'([0-9a-f]{14}\.[\d]{8})', group):
+    group_id, group_name = None, None
+    if group not in ('smurfs', 'frogs', 'all', None):
         group_id = group
-    else:
-        group_id = exec_mysql(f'SELECT url FROM groups WHERE `name` = "{group}"')[0][0]
-    group_name = groups()[group_id]
+        if not re.fullmatch(r'([0-9a-f]{14}\.[\d]{8})', group_id):
+            group_id = exec_mysql(f'SELECT url FROM groups WHERE `name` = "{group}"')[0][0]
+
+        try:
+            group_name = groups()[group_id]
+        except KeyError:
+            logging.error(f'You are not a member of {group} anymore')
+            group_id = None
 
     return group_id, group_name
 
@@ -509,7 +513,7 @@ def summary(group='all', days=7):
 
 def weekly_roundup(group):
     group_id, group_name = get_groups(group)
-    if not group_id: return 'please specify group'
+    if not group_id: return 'please specify a group'
 
     logging.info('starting weekly roundup')
     start = datetime.datetime.now()
@@ -540,7 +544,7 @@ def weekly_roundup(group):
 
 def monthly_roundup(group):
     group_id, group_name = get_groups(group)
-    if not group_id: return 'please specify group'
+    if not group_id: return 'please specify a group'
 
     logging.info('starting monthly roundup')
     start = datetime.datetime.now()
@@ -572,7 +576,7 @@ def monthly_roundup(group):
 
 def custom_roundup(group):
     group_id, group_name = get_groups(group)
-    if not group_id: return 'please specify group'
+    if not group_id: return 'please specify a group'
 
     logging.info('starting custom roundup')
     start = datetime.datetime.now()
