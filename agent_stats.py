@@ -629,6 +629,12 @@ def render(output_dict):
     template = env.get_or_select_template([output_dict['group_id']+ext, 'custom_template'+ext, 'template'+ext])
     return template.render(**output_dict)
 
+def validate_group(group):
+    groups = [name for row in exec_mysql('SELECT name, url FROM groups;') for name in row]
+    if group in groups:
+        return group
+    logging.info(f'Valid groups are {groups[::2]}')
+
 def check_for_applicants(group):
     group_id, group_name = get_groups(group)
     r = s.get(f'https://api.agent-stats.com/groups/{group_id}/pending', stream=True)
@@ -696,7 +702,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Tools for agent-stats admins')
     parser.add_argument('action', help='task to perform', choices=actions)
     parser.add_argument('-n', '--number', default=10, type=int, help='number of ranks to show')
-    parser.add_argument('-g', '--group', help='group to focus on', choices=[name for row in exec_mysql('SELECT name FROM groups;') for name in row])
+    parser.add_argument('-g', '--group', help='group to focus on')
     parser.add_argument('-m', '--mail', nargs='*', help='email address to get output')
     parser.add_argument('-s', '--subject', help='optional email subject')
     parser.add_argument('-a', '--attach', action='store_true', help='also attach email body as a txt file to the email')
@@ -705,7 +711,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     try:
-        result = actions.get(args.action)(args.group)
+        result = actions.get(args.action)(validate_group(args.group))
     except:
         if not args.mail:
             raise
