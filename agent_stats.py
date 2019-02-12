@@ -631,6 +631,7 @@ def render(output_dict):
 
 def validate_group(group):
     groups = [name for row in exec_mysql('SELECT name, url FROM groups;') for name in row]
+    groups.append(None)
     if group in groups:
         return group
     logging.info(f'Valid groups are {groups[::2]}')
