@@ -308,7 +308,7 @@ class Stat(object):
                      disruptor='{disruptor}',
                      salvator='{salvator}',
                      smuggler='{smuggler}',
-                    `link-master`='{link_master}',
+                     `link-master`='{link_master}',
                      controller='{controller}',
                      `field-master`='{field_master}',
                      flag={flag},
