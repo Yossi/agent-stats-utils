@@ -1,3 +1,5 @@
+use new_stat_helper.py
+
 in .sql
 	add a column in stats table
 	fix the stored procedure name FindAgentByName
@@ -14,4 +16,4 @@ in agent_stats.py:
        sql_now
 add new stat to template(s)
 
-update database columns
+update database columns manually and save the changes in changes.sql
