@@ -16,7 +16,8 @@ discoverer, seer, recon, trekker, builder, connector, mind_controller, illuminat
 recharger, liberator, pioneer, engineer, purifier, guardian, specops, missionday, 
 nl_1331_meetups, cassandra_neutralizer, hacker, translator, sojourner, recruiter,
 collector, binder, country_master, neutralizer, disruptor, salvator, smuggler,
-link_master, controller, field_master, magnusbuilder'''
+link_master, controller, field_master, magnusbuilder, prime_challenge, stealth_ops,
+opr_live, ocf, intel_ops, ifs'''
 
 Row = namedtuple('Row', fields)
 
@@ -71,6 +72,12 @@ class Stat(object):
         self.sojourner = row.sojourner
         self.recruiter = row.recruiter
         self.magnusbuilder = row.magnusbuilder
+        self.prime_challenge = row.prime_challenge
+        self.stealth_ops = row.stealth_ops
+        self.opr_live = row.opr_live
+        self.ocf = row.ocf
+        self.intel_ops = row.intel_ops
+        self.ifs = row.ifs
 
         if str(self.name).startswith('@'):
             self.agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name[:16]))[0][0]
@@ -120,6 +127,12 @@ class Stat(object):
         self.sojourner = row['sojourner']
         self.recruiter = row['recruiter']
         self.magnusbuilder = row['magnusbuilder']
+        self.prime_challenge = row['prime_challenge']
+        self.stealth_ops = row['stealth_ops']
+        self.opr_live = row['opr_live']
+        self.ocf = row['ocf']
+        self.intel_ops = row['intel_ops']
+        self.ifs = row['ifs']
 
         agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name))
         if agent_id:
@@ -311,6 +324,12 @@ class Stat(object):
                      `link-master`='{link_master}',
                      controller='{controller}',
                      `field-master`='{field_master}',
+                     prime_challenge='{prime_challenge}',
+                     stealth_ops='{stealth_ops}',
+                     opr_live='{opr_live}',
+                     ocf='{ocf}',
+                     intel_ops='{intel_ops}',
+                     ifs='{ifs}',
                      flag={flag},
                      `min-ap`='{min_ap}'
                  ON DUPLICATE KEY UPDATE `level`='{level}',
@@ -351,6 +370,12 @@ class Stat(object):
                                         `link-master`='{link_master}',
                                          controller='{controller}',
                                          `field-master`='{field_master}',
+                                         prime_challenge='{prime_challenge}',
+                                         stealth_ops='{stealth_ops}',
+                                         opr_live='{opr_live}',
+                                         ocf='{ocf}',
+                                         intel_ops='{intel_ops}',
+                                         ifs='{ifs}',
                                          flag={flag},
                                          `min-ap`='{min_ap}';'''.format(**self.__dict__)
         self.changed = exec_mysql(sql)

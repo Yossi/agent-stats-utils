@@ -74,6 +74,12 @@ CREATE TABLE `stats` (
   `link-master` bigint(20) unsigned DEFAULT NULL,
   `controller` bigint(20) unsigned DEFAULT NULL,
   `field-master` bigint(20) unsigned DEFAULT NULL,
+  `prime_challenge` bigint(20) unsigned DEFAULT NULL,
+  `stealth_ops` bigint(20) unsigned DEFAULT NULL,
+  `opr_live` bigint(20) unsigned DEFAULT NULL,
+  `ocf` bigint(20) unsigned DEFAULT NULL,
+  `intel_ops` bigint(20) unsigned DEFAULT NULL,
+  `ifs` bigint(20) unsigned DEFAULT NULL,
   `flag` int(1) unsigned DEFAULT NULL,
   `min-ap` bigint(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`idagents`,`date`),
@@ -125,7 +131,13 @@ SELECT
   `stats`.`link-master`,
   `stats`.`controller`,
   `stats`.`field-master`,
-  `stats`.`magnusbuilder`
+  `stats`.`magnusbuilder`,
+  `stats`.`prime_challenge`,
+  `stats`.`stealth_ops`,
+  `stats`.`opr_live`,
+  `stats`.`ocf`,
+  `stats`.`intel_ops`,
+  `stats`.`ifs`
 FROM `stats`, `agents`
 WHERE `stats`.`idagents` = `agents`.`idagents` AND `agents`.`name` = `agentname`;
 END$$

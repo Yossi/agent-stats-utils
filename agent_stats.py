@@ -93,7 +93,13 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                    'smuggler': '(Max Time Link Maintained)',
                    'link-master': '(Max Link Length × Days)',
                    'controller': '(Max Time Field Held)',
-                   'field-master': '(Largest Field MUs × Days)'}
+                   'field-master': '(Largest Field MUs × Days)',
+                   'prime_challenge': '(Prime Challenges)',
+                   'stealth_ops': '(Stealth Ops Missions)',
+                   'opr_live': '(OPR Live Events)',
+                   'ocf': '(Clear Field Events)',
+                   'intel_ops': '(Intel Ops Missions)',
+                   'ifs': '(First Saturday Events)'}
     definitions.update(extra_definitions)
 
     categories = list(definitions.keys())
@@ -371,7 +377,13 @@ def get_badges(data):
                   'translator': [200, 2000, 6000, 20000, 50000],
                   'sojourner': [15, 30, 60, 180, 360],
                   'recruiter': [2, 10, 25, 50, 100],
-                  'recursions': [1, 1000001, 1000002, 1000003, 1000004]} # TODO: update this if it ever becomes a tiered badge
+                  'recursions': [1, 1000001, 1000002, 1000003, 1000004], # TODO: update this if it ever becomes a tiered badge
+                  'prime_challenge': [1, 2, 3, 4, 1000001], # this too
+                  'stealth_ops': [1, 3, 6, 10, 20],
+                  'opr_live': [1, 3, 6, 10, 20],
+                  'ocf': [1, 3, 6, 10, 20],
+                  'intel_ops': [1, 3, 6, 10, 20],
+                  'ifs': [1, 6, 12, 24, 36]}
 
     result = {} # TODO: change these 2 dicts to OrderedDicts
     for category, ranks in categories.items():
@@ -430,12 +442,19 @@ def summary(group='all', days=7):
                'sojourner',
                'recruiter',
                'magnusbuilder',
-               'recursions')
+               'recursions',
+               'prime_challenge',
+               'stealth_ops',
+               'opr_live',
+               'ocf',
+               'intel_ops',
+               'ifs')
 
     sql_before = f'''SELECT x.name, s.`date`, `level`, ap, explorer, discoverer, seer, recon, trekker, builder, connector, 
                             `mind-controller` mind_controller, illuminator, recharger, liberator, pioneer, engineer, purifier,
-                            specops, missionday, `nl-1331-meetups` nl_1331_meetups, `cassandra-neutralizer` cassandra_neutralizer, hacker, translator, sojourner,
-                            recruiter, magnusbuilder, recursions
+                            specops, missionday, `nl-1331-meetups` nl_1331_meetups, `cassandra-neutralizer` cassandra_neutralizer,
+                            hacker, translator, sojourner, recruiter, magnusbuilder, recursions, prime_challenge, stealth_ops,
+                            opr_live, ocf, intel_ops, ifs
                      FROM (
                          SELECT a.name name, s.idagents id, MAX(s.date) AS date
                          FROM agents a, stats s, membership m, groups g
@@ -457,8 +476,9 @@ def summary(group='all', days=7):
 
     sql_now = f'''SELECT x.name, s.`date`, `level`, ap, explorer, discoverer, seer, recon, trekker, builder, connector,
                          `mind-controller` mind_controller, illuminator, recharger, liberator, pioneer, engineer, purifier,
-                         specops, missionday, `nl-1331-meetups` nl_1331_meetups, `cassandra-neutralizer` cassandra_neutralizer, hacker, translator, sojourner,
-                         recruiter, magnusbuilder, recursions
+                         specops, missionday, `nl-1331-meetups` nl_1331_meetups, `cassandra-neutralizer` cassandra_neutralizer,
+                         hacker, translator, sojourner, recruiter, magnusbuilder, recursions, prime_challenge, stealth_ops,
+                         opr_live, ocf, intel_ops, ifs
                      FROM (
                          SELECT a.name name, s.idagents id, MAX(s.date) AS date
                          FROM agents a, stats s, membership m, groups g

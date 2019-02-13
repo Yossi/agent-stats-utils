@@ -45,6 +45,12 @@
 {{ high_scores(chart.missionday) -}}
 {{ high_scores(chart['nl-1331-meetups']) -}}
 {{ high_scores(chart.recursions) -}}
+{{ high_scores(chart.prime_challenge) -}}
+{{ high_scores(chart.stealth_ops) -}}
+{{ high_scores(chart.opr_live) -}}
+{{ high_scores(chart.ocf) -}}
+{{ high_scores(chart.intel_ops) -}}
+{{ high_scores(chart.ifs) -}}
 
 {%- if dings.data -%}
 Recent badge dings:
