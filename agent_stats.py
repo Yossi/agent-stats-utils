@@ -258,7 +258,7 @@ def englishify(new_badges):
 
     return ', '.join(data[:-2] + [' and '.join(data[-2:])])
 
-def test(group):
+def debug(group):
     pass
 
 def collate_agents():
@@ -698,7 +698,7 @@ if __name__ == '__main__':
                            ('check_for_applicants', check_for_applicants),
                            ('update_group_names', update_group_names),
                            ('check_categories', check_categories),
-                           ('test', test)])
+                           ('debug', debug)])
 
     parser = argparse.ArgumentParser(description='Tools for agent-stats admins')
     parser.add_argument('action', help='task to perform', choices=actions)
