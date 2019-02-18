@@ -146,10 +146,11 @@ def read_table(group_id, time_span):
     logging.info(f'{count} rows')
 
 @lru_cache(maxsize=None)
-def groups():
+def groups(min_rank='user'):
     r = s.get('https://api.agent-stats.com/groups', stream=True)
     r.raise_for_status()
-    return dict([(g['groupid'], g['groupname']) for g in r.json() if '.' in g['groupid']])
+    ranks = ('admin', 'mod', 'user')
+    return dict([(g['groupid'], g['groupname']) for g in r.json() if '.' in g['groupid'] and g['rank'] in ranks[:1+ranks.index(min_rank)]])
 
 def get_groups(group=None):
     group_id, group_name = None, None
