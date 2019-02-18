@@ -288,7 +288,6 @@ def snarf(group=None):
     if not group_id:
         results = ''
         for group_id, group_name in groups().items():
-            logging.info('snarfing '+group_name)
             idgroups = exec_mysql(f"SELECT idgroups FROM groups WHERE url = '{group_id}';")
             if not idgroups:
                 sql = f'''INSERT INTO `groups`
@@ -298,6 +297,7 @@ def snarf(group=None):
         collate_agents()
         return results
     else:
+        logging.info(f'snarfing {group_name}')
         added, removed, flagged, flipped = [], [], [], []
         idgroups = exec_mysql(f"SELECT idgroups FROM groups WHERE url = '{group_id}';")[0][0]
         remaining_roster = [item for sublist in exec_mysql(f"SELECT idagents FROM membership WHERE idgroups = {idgroups};") for item in sublist] # get the class attendance sheet
