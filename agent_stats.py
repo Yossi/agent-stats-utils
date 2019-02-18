@@ -659,16 +659,23 @@ def validate_group(group):
 
 def check_for_applicants(group):
     group_id, group_name = get_groups(group)
-    r = s.get(f'https://api.agent-stats.com/groups/{group_id}/pending', stream=True)
-    r.raise_for_status()
-    message = []
-    if r.json():
-        message.append(f'Agent(s) awaiting validation to the {group_name} group:')
-        for agent in r.json():
-            message.append(f'    @{agent["username"]}')
 
-        message.append(f'\nGo to https://www.agent-stats.com/groups.php?group={group_id} and click on the [View admin panel] button to take care of it.')
-    return '\n'.join(message)
+    if not group_id:
+        results = ''
+        for group_id, group_name in groups('mod').items():
+            results += check_for_applicants(group_id) # recursive
+        return results
+    else:
+        r = s.get(f'https://api.agent-stats.com/groups/{group_id}/pending', stream=True)
+        r.raise_for_status()
+        message = []
+        if r.json():
+            message.append(f'Agent(s) awaiting validation to the {group_name} group:')
+            for agent in r.json():
+                message.append(f'    @{agent["username"]}')
+
+            message.append(f'\nGo to https://www.agent-stats.com/groups.php?group={group_id} and click on the [View admin panel] button to take care of it.')
+        return '\n'.join(message)
 
 def check_categories(*args):
     try:
