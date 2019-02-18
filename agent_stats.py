@@ -13,6 +13,7 @@ from secrets import api_key, dbconfig
 from time import sleep
 
 import requests  # pip install requests
+from requests.adapters import HTTPAdapter
 from jinja2 import (BaseLoader, Environment, FileSystemLoader) # pip install Jinja2
 from num2words import num2words as n2w  # pip install num2words
 from titlecase import titlecase  # pip install titlecase
@@ -34,6 +35,7 @@ logging.basicConfig(level=logging.INFO,
 logging.getLogger("requests").setLevel(logging.WARNING)
 
 s = requests.Session()
+s.mount('https://', HTTPAdapter(max_retries=3))
 s.headers.update({'AS-Key': api_key})
 
 def num2words(n):
