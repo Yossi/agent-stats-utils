@@ -416,7 +416,7 @@ def get_badges(data):
 def summary(group='all', days=7):
     snarf(group)
 
-    group_id, group_name = get_groups(group)
+    group_id = get_groups(group)[0]
     if not group_id:
         group_id = {'all': 1, 'smurfs': 2, 'frogs':3}.get(group, None)
 
