@@ -492,7 +492,9 @@ def summary(group='all', days=7):
                                s.flag != 1 AND
                                date >= ( CURDATE() - INTERVAL {days} DAY )
                          GROUP BY id ) x
-                     JOIN stats s ON x.id = s.idagents AND x.date = s.date'''
+                     JOIN stats s ON x.id = s.idagents AND x.date = s.date
+                     ORDER BY x.name'''
+
     output = {'data': []}
     footnote = ''
     for row in exec_mysql(sql_now):
