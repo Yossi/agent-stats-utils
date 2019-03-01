@@ -44,7 +44,7 @@ def num2words(n):
     return str(n)
 
 def abbreviations(word, **kwargs):
-    if word.upper() in ('AP', 'MU', 'NL'):
+    if word.upper() in ('AP', 'MU', 'NL', 'OPR', 'IFS', 'OCF'):
         return word.upper()
 
 def get_stats(group_id, time_span='now', number=10, submitters=[0]):
