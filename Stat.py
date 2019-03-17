@@ -88,7 +88,7 @@ class Stat(object):
     def table_load(self, **row):
         self.date = parse(row['last_submit'] if row['last_submit'] and not row['last_submit'].startswith('0') else '1000/1/1').date()
         self.name = row['name'][:16]
-        self.faction = row['faction']
+        self.faction = row['faction'] if row['faction'] else 'UNK'
         self.level = row['level']
         self.lifetime_ap = row['lifetime_ap']
         self.recursions = row['recursions']
