@@ -755,7 +755,7 @@ if __name__ == '__main__':
             logging.error('CRASHED and email sent')
     else:
         if result:
-            result = result.strip()
+            #result = result.strip()
 
             if not args.mail:
                 print(result) # chcp 65001
