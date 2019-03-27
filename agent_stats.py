@@ -761,7 +761,7 @@ if __name__ == '__main__':
                 print(result) # chcp 65001
             elif result:
                 if not args.group: args.group=''
-                subject = args.action+' '+args.group if not args.subject else args.subject
+                subject = args.action+' '+args.group+' '+args.extension if not args.subject else args.subject
                 mail(args.mail, subject, result, args.attach)
                 logging.info('email sent')
         logging.info('Done')
