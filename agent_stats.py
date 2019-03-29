@@ -289,16 +289,16 @@ def snarf(group=None):
     group_id, group_name = get_groups(group)
 
     if not group_id:
-        results = ''
+        results = []
         for group_id, group_name in groups().items():
             idgroups = exec_mysql(f"SELECT idgroups FROM groups WHERE url = '{group_id}';")
             if not idgroups:
                 sql = f'''INSERT INTO `groups`
                           SET `name`='{group_name}', url='{group_id}';'''
                 exec_mysql(sql)
-            results += snarf(group_id) # getting all recursive and shiz
+            results.append(snarf(group_id)) # getting all recursive and shiz
         collate_agents()
-        return results
+        return '\n'.join(filter(None, results))
     else:
         logging.info(f'snarfing {group_name}')
         added, removed, flagged, flipped = [], [], [], []
@@ -356,7 +356,7 @@ def snarf(group=None):
                     output.append('    {} {}'.format(*flagged_agent))
                     output.append('      '+'\n      '.join(flagged_agent[2]))
 
-        return '\n'.join(output) + '\n'
+        return '\n'.join(output)
 
 def get_badges(data):
     categories = {'explorer': [100, 1000, 2000, 10000, 30000],
@@ -755,11 +755,9 @@ if __name__ == '__main__':
             logging.error('CRASHED and email sent')
     else:
         if result:
-            #result = result.strip()
-
             if not args.mail:
                 print(result) # chcp 65001
-            elif result:
+            else:
                 if not args.group: args.group=''
                 subject = args.action+' '+args.group+' '+args.extension if not args.subject else args.subject
                 mail(args.mail, subject, result, args.attach)
