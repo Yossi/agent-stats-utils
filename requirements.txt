@@ -1,8 +1,8 @@
-requests==2.20.0
-num2words==0.5.7
+requests==2.21.0
+num2words==0.5.9
 titlecase==0.12.0
-PyMySQL==0.9.2
-ftfy==5.5.0
-python-dateutil==2.7.5
+PyMySQL==0.9.3
+ftfy==5.5.1
+python-dateutil==2.8.0
 cached-property==1.5.1
-Jinja2==2.10
+Jinja2==2.10.1
