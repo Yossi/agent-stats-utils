@@ -78,6 +78,7 @@ class Stat(object):
         self.ocf = row.ocf
         self.intel_ops = row.intel_ops
         self.ifs = row.ifs
+        self.dark_xm_threat = row.dark_xm_threat
 
         if str(self.name).startswith('@'):
             self.agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name[:16]))[0][0]
@@ -133,6 +134,7 @@ class Stat(object):
         self.ocf = row['ocf']
         self.intel_ops = row['intel_ops']
         self.ifs = row['ifs']
+        self.dark_xm_threat = row['dark_xm_threat']
 
         agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name))
         if agent_id:
@@ -330,6 +332,7 @@ class Stat(object):
                      ocf='{ocf}',
                      intel_ops='{intel_ops}',
                      ifs='{ifs}',
+                     dark_xm_threat='{dark_xm_threat}',
                      flag={flag},
                      `min-ap`='{min_ap}'
                  ON DUPLICATE KEY UPDATE `level`='{level}',
@@ -376,6 +379,7 @@ class Stat(object):
                                          ocf='{ocf}',
                                          intel_ops='{intel_ops}',
                                          ifs='{ifs}',
+                                         dark_xm_threat='{dark_xm_threat}',
                                          flag={flag},
                                          `min-ap`='{min_ap}';'''.format(**self.__dict__)
         self.changed = exec_mysql(sql)

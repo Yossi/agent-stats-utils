@@ -101,7 +101,8 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                    'opr_live': '(OPR Live Events)',
                    'ocf': '(Clear Field Events)',
                    'intel_ops': '(Intel Ops Missions)',
-                   'ifs': '(First Saturday Events)'}
+                   'ifs': '(First Saturday Events)',
+                   'dark_xm_threat': '(Dark XM Total Link Length)'}
     definitions.update(extra_definitions)
 
     categories = list(definitions.keys())
@@ -386,7 +387,8 @@ def get_badges(data):
                   'opr_live': [1, 3, 6, 10, 20],
                   'ocf': [1, 3, 6, 10, 20],
                   'intel_ops': [1, 3, 6, 10, 20],
-                  'ifs': [1, 6, 12, 24, 36]}
+                  'ifs': [1, 6, 12, 24, 36],
+                  'dark_xm_threat': [5000, 50000, 250000, 99999999998, 99999999999]}
 
     result = {} # TODO: change these 2 dicts to OrderedDicts
     for category, ranks in categories.items():
@@ -451,13 +453,14 @@ def summary(group='all', days=7):
                'opr_live',
                'ocf',
                'intel_ops',
-               'ifs')
+               'ifs',
+               'dark_xm_threat')
 
     sql_before = f'''SELECT x.name, s.`date`, `level`, ap, explorer, discoverer, seer, recon, trekker, builder, connector, 
                             `mind-controller` mind_controller, illuminator, recharger, liberator, pioneer, engineer, purifier,
                             specops, missionday, `nl-1331-meetups` nl_1331_meetups, `cassandra-neutralizer` cassandra_neutralizer,
                             hacker, translator, sojourner, recruiter, magnusbuilder, recursions, prime_challenge, stealth_ops,
-                            opr_live, ocf, intel_ops, ifs
+                            opr_live, ocf, intel_ops, ifs, dark_xm_threat
                      FROM (
                          SELECT a.name name, s.idagents id, MAX(s.date) AS date
                          FROM agents a, stats s, membership m, groups g
@@ -481,7 +484,7 @@ def summary(group='all', days=7):
                          `mind-controller` mind_controller, illuminator, recharger, liberator, pioneer, engineer, purifier,
                          specops, missionday, `nl-1331-meetups` nl_1331_meetups, `cassandra-neutralizer` cassandra_neutralizer,
                          hacker, translator, sojourner, recruiter, magnusbuilder, recursions, prime_challenge, stealth_ops,
-                         opr_live, ocf, intel_ops, ifs
+                         opr_live, ocf, intel_ops, ifs, dark_xm_threat
                      FROM (
                          SELECT a.name name, s.idagents id, MAX(s.date) AS date
                          FROM agents a, stats s, membership m, groups g

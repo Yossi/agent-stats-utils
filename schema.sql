@@ -80,6 +80,7 @@ CREATE TABLE `stats` (
   `ocf` bigint(20) unsigned DEFAULT NULL,
   `intel_ops` bigint(20) unsigned DEFAULT NULL,
   `ifs` bigint(20) unsigned DEFAULT NULL,
+  `dark_xm_threat` bigint(20) unsigned DEFAULT NULL,
   `flag` int(1) unsigned DEFAULT NULL,
   `min-ap` bigint(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`idagents`,`date`),
@@ -137,7 +138,8 @@ SELECT
   `stats`.`opr_live`,
   `stats`.`ocf`,
   `stats`.`intel_ops`,
-  `stats`.`ifs`
+  `stats`.`ifs`,
+  `stats`.`dark_xm_threat`
 FROM `stats`, `agents`
 WHERE `stats`.`idagents` = `agents`.`idagents` AND `agents`.`name` = `agentname`;
 END$$

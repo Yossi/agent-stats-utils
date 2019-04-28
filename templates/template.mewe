@@ -51,6 +51,7 @@
 {{ high_scores(chart.ocf) -}}
 {{ high_scores(chart.intel_ops) -}}
 {{ high_scores(chart.ifs) -}}
+{{ high_scores(chart.dark_xm_threat) -}}
 
 {%- if dings.data -%}
 Recent badge dings:
