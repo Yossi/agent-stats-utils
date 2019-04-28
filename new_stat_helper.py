@@ -14,7 +14,7 @@ def create_code(new_stats):
     for template in templates:
         for stat, description, tiers in new_stats:
             stat_dict = {'description': description,
-                         'tiers': ', '.join([tier.strip() for tier in tiers.split('\t')[1:]]),
+                         'tiers': ', '.join([tier.strip().replace(',', '') for tier in tiers.split('\t')[1:]]),
                          'statname': stat,
                          'statnodash': stat.replace('-', '_'),
                          'statbacktick': f'`{stat}`' if '-' in stat else stat,
