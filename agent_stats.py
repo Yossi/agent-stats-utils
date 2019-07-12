@@ -171,66 +171,6 @@ def get_groups(group=None):
 
     return group_id, group_name
 
-def test_new_badges(group):
-    # leftover test function that will need to be moved elsewhere later, but for now it stays so i can test the inevitable bugs introduced last time
-    from colorama import init, Fore, Back, Style # pip install colorama
-    init() # colorama
-    from pprint import pprint
-
-    def red(s):
-        return Style.BRIGHT + Back.RED + str(s) + Style.RESET_ALL
-    def yellow(s):
-        return Back.YELLOW + Fore.BLACK + str(s) + Style.RESET_ALL
-    def green(s):
-        return Style.BRIGHT + Back.GREEN + str(s) + Style.RESET_ALL
-
-
-    inputs = OrderedDict([
-              ('same', ['Bronze', 'Bronze']),
-              ('one standard rank', ['Bronze', 'Silver']),
-              ('multi standard ranks', ['Bronze', 'Gold']),
-              ('same extended ranks', ['4x Onyx', '4x Onyx']),
-              ('one extended rank', ['4x Onyx', '5x Onyx']),
-              ('multi extended ranks', ['4x Onyx', '7x Onyx']),
-              ('one standard to one extended', ['Onyx', '2x Onyx']),
-              ('multi standard to one extended', ['Gold', '2x Onyx']),
-              ('one standard to multi extended', ['Onyx', '3x Onyx']),
-              ('multi standard to multi extended', ['Gold', '4x Onyx']),
-              ('locked same', ['Locked', 'Locked']),
-              ('locked one standard rank', ['Locked', 'Bronze']),
-              ('locked multi standard ranks', ['Locked', 'Gold']),
-              ('locked multi standard to one extended', ['Locked', '2x Onyx']),
-              ('backwards standard', ['Onyx', 'Locked']),
-              ('backwards extended', ['5x Onyx', '2x Onyx']),
-              ('backwards extended to standard', ['10x Onyx', 'Bronze']),
-              ])
-
-    old, new = [OrderedDict(zip(inputs,t)) for t in zip(*inputs.values())]
-
-    expected = {
-                'same': None,
-                'one standard rank': ['Silver'],
-                'multi standard ranks': ['Silver', 'Gold'],
-                'same extended ranks': None,
-                'one extended rank': ['5x Onyx'],
-                'multi extended ranks': ['5x Onyx', '6x Onyx', '7x Onyx'],
-                'one standard to one extended': ['2x Onyx'],
-                'multi standard to one extended': ['Platinum', 'Onyx', '2x Onyx'],
-                'one standard to multi extended': ['2x Onyx', '3x Onyx'],
-                'multi standard to multi extended': ['Platinum', 'Onyx', '2x Onyx', '3x Onyx', '4x Onyx'],
-                'locked same': None,
-                'locked one standard rank': ['Bronze'],
-                'locked multi standard ranks': ['Bronze', 'Silver', 'Gold'],
-                'locked multi standard to one extended': ['Bronze', 'Silver', 'Gold', 'Platinum', 'Onyx', '2x Onyx'],
-                'backwards standard': None,
-                'backwards extended': None,
-                'backwards extended to standard': None
-               }
-
-    result = new_badges(old, new)
-    pprint(result)
-    print('passed:', result == expected)
-
 def new_badges(old_data, new_data):
     ranks = ['Locked', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Onyx']
 
