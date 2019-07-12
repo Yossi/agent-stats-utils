@@ -1,10 +1,10 @@
 import pymysql # pip install pymysql
-pymysql.install_as_MySQLdb()
-import MySQLdb
+# pymysql.install_as_pymysql()
+# import pymysql
 import logging
 
 import warnings
-warnings.filterwarnings('error', category=MySQLdb.Warning)
+warnings.filterwarnings('error', category=pymysql.Warning)
 
 class CM(object):
     ''' connection manager '''
@@ -18,7 +18,7 @@ class CM(object):
     def get_conn(self):
         if not self.connection:
             logging.info('no db connection. creating...')
-            self.connection = MySQLdb.connect(**self.credentials)
+            self.connection = pymysql.connect(**self.credentials)
         return self.connection
 
     def close(self):
@@ -41,7 +41,7 @@ def exec_mysql(sql, retries=2):
         db.commit()
         return rows
 
-    except MySQLdb.OperationalError as exc:
+    except pymysql.OperationalError:
         if cur:
             cur.close()
         cm.close()
