@@ -1,8 +1,8 @@
 use new_stat_helper.py
 
 in .sql
-	add a column in stats table
-	fix the stored procedure name FindAgentByName
+       add a column in stats table
+       fix the stored procedure name FindAgentByName
 in Stat.py:
 update string: fields (change - to _)
        db_load()
@@ -16,4 +16,11 @@ in agent_stats.py:
        sql_now
 add new stat to template(s)
 
-update database columns manually and save the changes in changes.sql
+update local database column(s) and stored procedure manually and save the changes in changes.sql
+
+deploy on remotes $ git fetch --all && git reset --hard origin/master
+
+be sure that running version there is the most recent schema before this and run $ mysql -u user -p agent_stats < changes.sql
+       edit user to match your db username, both in this command and in changes.sql where it says DEFINER=`user`
+
+transfer custom templates manually
