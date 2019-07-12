@@ -27,9 +27,9 @@ def create_code(new_stats):
 #https://www.agent-stats.com/faq.php
 #copy the new stat(s) from the table and paste them here as is
 
-a = '''dark_xm_threat
-Dark XM Total Link Length
-	5,000 	50,000 	250,000	N/A	N/A'''
+a = '''myriad_hack
+Myriad: Unique Portals Hacked
+	100 	350 	750	N/A	N/A'''
 
 it = iter(a.split('\n'))
 

@@ -17,7 +17,7 @@ recharger, liberator, pioneer, engineer, purifier, guardian, specops, missionday
 nl_1331_meetups, cassandra_neutralizer, hacker, translator, sojourner, recruiter,
 collector, binder, country_master, neutralizer, disruptor, salvator, smuggler,
 link_master, controller, field_master, magnusbuilder, prime_challenge, stealth_ops,
-opr_live, ocf, intel_ops, ifs'''
+opr_live, ocf, intel_ops, ifs, dark_xm_threat, myriad_hack'''
 
 Row = namedtuple('Row', fields)
 
@@ -79,6 +79,7 @@ class Stat(object):
         self.intel_ops = row.intel_ops
         self.ifs = row.ifs
         self.dark_xm_threat = row.dark_xm_threat
+        self.myriad_hack = row.myriad_hack
 
         if str(self.name).startswith('@'):
             self.agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name[:16]))[0][0]
@@ -135,6 +136,7 @@ class Stat(object):
         self.intel_ops = row['intel_ops']
         self.ifs = row['ifs']
         self.dark_xm_threat = row['dark_xm_threat']
+        self.myriad_hack = row['myriad_hack']
 
         agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name))
         if agent_id:
@@ -333,6 +335,7 @@ class Stat(object):
                      intel_ops='{intel_ops}',
                      ifs='{ifs}',
                      dark_xm_threat='{dark_xm_threat}',
+                     myriad_hack='{myriad_hack}',
                      flag={flag},
                      `min-ap`='{min_ap}'
                  ON DUPLICATE KEY UPDATE `level`='{level}',
@@ -380,6 +383,7 @@ class Stat(object):
                                          intel_ops='{intel_ops}',
                                          ifs='{ifs}',
                                          dark_xm_threat='{dark_xm_threat}',
+                                         myriad_hack='{myriad_hack}',
                                          flag={flag},
                                          `min-ap`='{min_ap}';'''.format(**self.__dict__)
         self.changed = exec_mysql(sql)
