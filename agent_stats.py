@@ -328,9 +328,7 @@ def get_badges(data):
                   'opr_live': [1, 3, 6, 10, 20],
                   'ocf': [1, 3, 6, 10, 20],
                   'intel_ops': [1, 3, 6, 10, 20],
-                  'ifs': [1, 6, 12, 24, 36],
-                  'dark_xm_threat': [5000, 50000, 250000, 99999999998, 99999999999],
-                  'myriad_hack': [100, 350, 750, 99999999998, 99999999999]}
+                  'ifs': [1, 6, 12, 24, 36]}
 
     result = {} # TODO: change these 2 dicts to OrderedDicts
     for category, ranks in categories.items():
@@ -345,7 +343,9 @@ def get_badges(data):
                     current = f'{multiplier}x {current}'
         result[category] = current
 
-    for category, ranks in {'cassandra_neutralizer': [100, 300, 1000]}.items(): # doesn't strictly have to be a loop, but i want it to match above
+    for category, ranks in {'cassandra_neutralizer': [100, 300, 1000], # special categories that only go up to gold
+                            'dark_xm_threat': [5000, 50000, 250000],
+                            'myriad_hack': [100, 350, 750]}.items():
         current = 'Locked'
         multiplier = 1
         for rank, badge in zip(ranks, ['Bronze', 'Silver', 'Gold']):
