@@ -94,7 +94,7 @@ def main():
         temp[0] = now.strftime('%Y-%m-%d')
         temp[1] = now.strftime('%H:%M:%S')
         temp[2] = str(int(temp[2])+1)
-        temp[-1] = 'statfixer'
+        temp[-1] = '"statfixer"'
         data = ' '.join(temp)
         logging.info(data)
         driver.get('https://www.agent-stats.com/import.php')
