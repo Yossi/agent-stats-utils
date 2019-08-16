@@ -1,7 +1,7 @@
 USE `agent_stats`;
 
-#ALTER TABLE `stats`
-#ADD COLUMN `aurora_glyph` BIGINT(20) UNSIGNED NULL AFTER `myriad_hack`;
+ALTER TABLE `stats`
+ADD COLUMN `aurora_glyph` BIGINT(20) UNSIGNED NULL AFTER `myriad_hack`;
 
 DROP procedure IF EXISTS `FindAgentByName`;
 
