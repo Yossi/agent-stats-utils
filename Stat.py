@@ -17,7 +17,7 @@ recharger, liberator, pioneer, engineer, purifier, guardian, specops, missionday
 nl_1331_meetups, cassandra_neutralizer, hacker, translator, sojourner, recruiter,
 collector, binder, country_master, neutralizer, disruptor, salvator, smuggler,
 link_master, controller, field_master, magnusbuilder, prime_challenge, stealth_ops,
-opr_live, ocf, intel_ops, ifs, dark_xm_threat, myriad_hack'''
+opr_live, ocf, intel_ops, ifs, dark_xm_threat, myriad_hack, aurora_glyph'''
 
 Row = namedtuple('Row', fields)
 
@@ -80,6 +80,7 @@ class Stat(object):
         self.ifs = row.ifs
         self.dark_xm_threat = row.dark_xm_threat
         self.myriad_hack = row.myriad_hack
+        self.aurora_glyph = row.aurora_glyph
 
         if str(self.name).startswith('@'):
             self.agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name[:16]))[0][0]
@@ -137,6 +138,7 @@ class Stat(object):
         self.ifs = row['ifs']
         self.dark_xm_threat = row['dark_xm_threat']
         self.myriad_hack = row['myriad_hack']
+        self.aurora_glyph = row['aurora_glyph']
 
         agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name))
         if agent_id:
@@ -266,6 +268,8 @@ class Stat(object):
             reasons.append( 'builder:magnusbuilder %s < %s' % (self.builder, self.magnusbuilder) )
         if self.seer > self.discoverer:
             reasons.append( 'seer:discoverer %s > %s' % (self.seer, self.discoverer) )
+        if self.aurora_glyph > self.translator:
+            reasons.append( 'aurora_glyph:translator %s > %s' % (self.aurora_glyph, self.translator) )
 
         # there was a missionday where they didnt require missions at all. 100 UPV would get you the badge
         # http://www.pref.iwate.jp/dbps_data/_material_/_files/000/000/031/399/morioka0621.pdf (in japanese, on page 2)
@@ -336,6 +340,7 @@ class Stat(object):
                      ifs='{ifs}',
                      dark_xm_threat='{dark_xm_threat}',
                      myriad_hack='{myriad_hack}',
+                     aurora_glyph='{aurora_glyph}',
                      flag={flag},
                      `min-ap`='{min_ap}'
                  ON DUPLICATE KEY UPDATE `level`='{level}',
@@ -373,7 +378,7 @@ class Stat(object):
                                          disruptor='{disruptor}',
                                          salvator='{salvator}',
                                          smuggler='{smuggler}',
-                                        `link-master`='{link_master}',
+                                         `link-master`='{link_master}',
                                          controller='{controller}',
                                          `field-master`='{field_master}',
                                          prime_challenge='{prime_challenge}',
@@ -384,6 +389,7 @@ class Stat(object):
                                          ifs='{ifs}',
                                          dark_xm_threat='{dark_xm_threat}',
                                          myriad_hack='{myriad_hack}',
+                                         aurora_glyph='{aurora_glyph}',
                                          flag={flag},
                                          `min-ap`='{min_ap}';'''.format(**self.__dict__)
         self.changed = exec_mysql(sql)

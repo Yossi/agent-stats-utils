@@ -1,7 +1,7 @@
 USE `agent_stats`;
 
-ALTER TABLE `stats`
-ADD COLUMN `myriad_hack` BIGINT(20) UNSIGNED NULL AFTER `dark_xm_threat`;
+#ALTER TABLE `stats`
+#ADD COLUMN `aurora_glyph` BIGINT(20) UNSIGNED NULL AFTER `myriad_hack`;
 
 DROP procedure IF EXISTS `FindAgentByName`;
 
@@ -59,7 +59,8 @@ SELECT
   `stats`.`intel_ops`,
   `stats`.`ifs`,
   `stats`.`dark_xm_threat`,
-  `stats`.`myriad_hack`
+  `stats`.`myriad_hack`,
+  `stats`.`aurora_glyph`
 FROM `stats`, `agents`
 WHERE `stats`.`idagents` = `agents`.`idagents` AND `agents`.`name` = `agentname`;
 END$$

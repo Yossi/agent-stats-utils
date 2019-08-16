@@ -82,6 +82,7 @@ CREATE TABLE `stats` (
   `ifs` bigint(20) unsigned DEFAULT NULL,
   `dark_xm_threat` bigint(20) unsigned DEFAULT NULL,
   `myriad_hack` bigint(20) unsigned DEFAULT NULL,
+  `aurora_glyph` bigint(20) unsigned DEFAULT NULL,
   `flag` int(1) unsigned DEFAULT NULL,
   `min-ap` bigint(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`idagents`,`date`),
@@ -141,7 +142,8 @@ SELECT
   `stats`.`intel_ops`,
   `stats`.`ifs`,
   `stats`.`dark_xm_threat`,
-  `stats`.`myriad_hack`
+  `stats`.`myriad_hack`,
+  `stats`.`aurora_glyph`
 FROM `stats`, `agents`
 WHERE `stats`.`idagents` = `agents`.`idagents` AND `agents`.`name` = `agentname`;
 END$$
