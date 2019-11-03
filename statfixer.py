@@ -19,7 +19,7 @@ logging.basicConfig(level=logging.INFO,
                     datefmt='%H:%M:%S')
 
 try:
-    # once you have your profile and this is able to smoothly post a data point without 
+    # once you have your profile and this is able to smoothly post a data point without
     # intervention, you can change this to True in secrets.py and go setup cron to run the script
     from secrets import HEADLESS
 except:
@@ -56,7 +56,7 @@ def main():
         textarea = driver.find_element_by_tag_name('textarea')
         textarea.click()
         textarea.send_keys(data)
-        driver.find_element_by_xpath('/html/body/div[2]/div[3]/div/form/input').click()
+        driver.find_element_by_xpath('/html/body/div[2]/div[1]/div/form/input').click()
 
         #driver.save_screenshot('selenium.png')
         #logging.info('screenshot saved')
