@@ -464,7 +464,16 @@ def summary(group='all', days=7):
             if badges_old != badges_new:
                 changes.update(new_badges(badges_old, badges_new))
             if ap_40m_old < ap_40m_new:
-                changes['ap'] = [f'{(l+1)*40} MILLION' for l in range(ap_40m_old, ap_40m_new)]
+                changes['ap'] = []
+                for l in range(ap_40m_old, ap_40m_new+3):
+                    if l < 24:
+                        changes['ap'].append(f'{(l+1)*40} MILLION')
+                    else:
+                        billions = (l+1)/25
+                        if billions.is_integer():
+                            changes['ap'].append(f'{int(billions)} BILLION')
+                        else: 
+                            changes['ap'].append(f'{billions} BILLION')
             if level_old < level_new:
                 changes['level'] = [str(l+1) for l in range(level_old, level_new)]
             if changes:
