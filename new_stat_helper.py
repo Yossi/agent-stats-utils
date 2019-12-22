@@ -29,9 +29,9 @@ def create_code(new_stats):
 #https://www.agent-stats.com/faq.php
 #copy the new stat(s) from the table and paste them here as is
 
-a = '''aurora_glyph
-Aurora: Unique Glyph Hack Points
-	100 	500 	1,000	N/A	N/A'''
+a = '''umbra_deploy
+Umbra: Unique Resonator Slots Deployed
+	120 	600 	1,440	N/A	N/A'''
 
 it = iter(a.split('\n'))
 
