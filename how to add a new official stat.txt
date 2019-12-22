@@ -1,3 +1,5 @@
+READ ALL OF THIS! There's important stuff at the end.
+
 use new_stat_helper.py
 
 in schema.sql
