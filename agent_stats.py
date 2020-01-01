@@ -468,7 +468,7 @@ def summary(group='all', days=7):
                 changes.update(new_badges(badges_old, badges_new))
             if ap_40m_old < ap_40m_new:
                 changes['ap'] = []
-                for l in range(ap_40m_old, ap_40m_new+3):
+                for l in range(ap_40m_old, ap_40m_new):
                     if l < 24:
                         changes['ap'].append(f'{(l+1)*40} MILLION')
                     else:
