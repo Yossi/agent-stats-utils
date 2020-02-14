@@ -11,9 +11,9 @@ today = datetime.date.today()
 sojourner_start = datetime.date(2015, 3, 5)
 game_start = datetime.date(2012, 11, 15)
 
-fields = '''name, date, flag, min_ap, lifetime_ap, recursions, ap, level, explorer, 
-discoverer, seer, recon, trekker, builder, connector, mind_controller, illuminator, 
-recharger, liberator, pioneer, engineer, purifier, guardian, specops, missionday, 
+fields = '''name, date, flag, min_ap, lifetime_ap, recursions, ap, level, explorer,
+discoverer, seer, recon, trekker, builder, connector, mind_controller, illuminator,
+recharger, liberator, pioneer, engineer, purifier, guardian, specops, missionday,
 nl_1331_meetups, cassandra_neutralizer, hacker, translator, sojourner, recruiter,
 collector, binder, country_master, neutralizer, disruptor, salvator, smuggler,
 link_master, controller, field_master, magnusbuilder, prime_challenge, stealth_ops,
@@ -234,7 +234,7 @@ class Stat(object):
 
         reasons = []
         # this seems to be a more common bug, and until there is some action agents can take to fix it, it wont be flagged
-        #if self.min_level > self.level + 1: # +1 is for special case where agents just dinged and scanner hasn't caught up yet. better to let some slip through than to flag an exited agent's ding 
+        #if self.min_level > self.level + 1: # +1 is for special case where agents just dinged and scanner hasn't caught up yet. better to let some slip through than to flag an exited agent's ding
         #    reasons.append( 'reported level %s < %s' % (self.level, self.min_level) )
         if self.ap > self.lifetime_ap:
             reasons.append( 'ap:lifetime_ap %s > %s' % (self.ap, self.lifetime_ap) )

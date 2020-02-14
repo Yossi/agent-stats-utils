@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 import argparse
 import datetime
@@ -406,7 +405,7 @@ def summary(group='all', days=7):
                'aurora_glyph',
                'umbra_deploy',)
 
-    sql_before = f'''SELECT x.name, s.`date`, `level`, ap, explorer, discoverer, seer, recon, trekker, builder, connector, 
+    sql_before = f'''SELECT x.name, s.`date`, `level`, ap, explorer, discoverer, seer, recon, trekker, builder, connector,
                             `mind-controller` mind_controller, illuminator, recharger, liberator, pioneer, engineer, purifier,
                             specops, missionday, `nl-1331-meetups` nl_1331_meetups, `cassandra-neutralizer` cassandra_neutralizer,
                             hacker, translator, sojourner, recruiter, magnusbuilder, recursions, prime_challenge, stealth_ops,
@@ -475,7 +474,7 @@ def summary(group='all', days=7):
                         billions = (l+1)/25
                         if billions.is_integer():
                             changes['ap'].append(f'{int(billions)} BILLION')
-                        else: 
+                        else:
                             changes['ap'].append(f'{billions} BILLION')
             if level_old < level_new:
                 changes['level'] = [str(l+1) for l in range(level_old, level_new)]
@@ -541,24 +540,24 @@ def monthly_roundup(group):
 
     month = (start - datetime.timedelta(days=start.day)).date()
     output_dict['month'] = month.strftime("%B")
-    
+
     logging.info('getting monthly top lists')
     output_dict['chart'] = get_stats(group_id, 'monthly', args.number, submitters)
 
     logging.info('getting badge dings')
     output_dict['dings'] = summary(group_id, month.day)
-    
+
     output_dict['start'] = start
     output_dict['group_id'] = group_id
     output_dict['name'] = group_name
-    
+
     output_dict['n'] = num2words(args.number).lower()
     output_dict['number'] = num2words(min(args.number, submitters[0]))
     output_dict['submitters'] = num2words(submitters[0])
-    
+
     end = datetime.datetime.now()
     output_dict['duration'] = end-start
-    
+
     return render(output_dict)
 
 def custom_roundup(group):
@@ -593,15 +592,15 @@ def custom_roundup(group):
 
     logging.info('getting badge dings')
     output_dict['dings'] = summary(group_id, (endDate - startDate).days)
-    
+
     output_dict['start'] = start
     output_dict['group_id'] = group_id
     output_dict['name'] = group_name
-    
+
     output_dict['n'] = num2words(args.number).lower()
     output_dict['number'] = num2words(min(args.number, submitters[0]))
     output_dict['submitters'] = num2words(submitters[0])
-    
+
     end = datetime.datetime.now()
     output_dict['duration'] = end-start
 
@@ -667,7 +666,7 @@ def check_categories(*args):
 
     with open('known_stats.json', 'w') as fpw:
         json.dump(new, fpw, sort_keys=True, indent=4)
- 
+
     return '\n'.join(message)
 
 def update_group_names(group):
