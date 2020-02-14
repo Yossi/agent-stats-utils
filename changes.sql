@@ -1,7 +1,7 @@
 USE `agent_stats`;
 
 ALTER TABLE `stats`
-ADD COLUMN `umbra_deploy` BIGINT(20) UNSIGNED NULL AFTER `aurora_glyph`;
+ADD COLUMN `didact_field` BIGINT(20) UNSIGNED NULL AFTER `umbra_deploy`;
 
 DROP procedure IF EXISTS `FindAgentByName`;
 
@@ -61,7 +61,8 @@ SELECT
   `stats`.`dark_xm_threat`,
   `stats`.`myriad_hack`,
   `stats`.`aurora_glyph`,
-  `stats`.`umbra_deploy`
+  `stats`.`umbra_deploy`,
+  `stats`.`didact_field`
 FROM `stats`, `agents`
 WHERE `stats`.`idagents` = `agents`.`idagents` AND `agents`.`name` = `agentname`;
 END$$

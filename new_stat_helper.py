@@ -29,9 +29,9 @@ def create_code(new_stats):
 #https://www.agent-stats.com/faq.php
 #copy the new stat(s) from the table and paste them here as is
 
-a = '''umbra_deploy
-Umbra: Unique Resonator Slots Deployed
-	120 	600 	1,440	N/A	N/A'''
+a = '''didact_field
+Didact: Control Fields Created
+	100 	300 	800	N/A	N/A'''
 
 it = iter(a.split('\n'))
 
