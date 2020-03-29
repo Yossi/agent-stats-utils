@@ -1,7 +1,7 @@
 USE `agent_stats`;
 
 ALTER TABLE `stats`
-ADD COLUMN `didact_field` BIGINT(20) UNSIGNED NULL AFTER `umbra_deploy`;
+ADD COLUMN `scout` BIGINT(20) UNSIGNED NULL AFTER `recon`;
 
 DROP procedure IF EXISTS `FindAgentByName`;
 
@@ -22,6 +22,7 @@ SELECT
   `stats`.`discoverer`,
   `stats`.`seer`,
   `stats`.`recon`,
+  `stats`.`scout`,
   `stats`.`trekker`,
   `stats`.`builder`,
   `stats`.`connector`,

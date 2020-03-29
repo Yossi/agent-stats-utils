@@ -43,6 +43,7 @@ class Stat(object):
         self.discoverer = row.discoverer
         self.seer = row.seer
         self.recon = row.recon
+        self.scout = row.scout
         self.collector = row.collector
         self.trekker = row.trekker
         self.builder = row.builder
@@ -103,6 +104,7 @@ class Stat(object):
         self.discoverer = row['discoverer']
         self.seer = row['seer']
         self.recon = row['recon']
+        self.scout = row['scout']
         self.collector = row['collector']
         self.trekker = row['trekker']
         self.builder = row['builder']
@@ -307,6 +309,7 @@ class Stat(object):
                      discoverer='{discoverer}',
                      seer='{seer}',
                      recon='{recon}',
+                     scout='{scout}'
                      trekker='{trekker}',
                      builder='{builder}',
                      connector='{connector}',
@@ -358,6 +361,7 @@ class Stat(object):
                                          discoverer='{discoverer}',
                                          seer='{seer}',
                                          recon='{recon}',
+                                         scout='{scout}'
                                          trekker='{trekker}',
                                          builder='{builder}',
                                          connector='{connector}',

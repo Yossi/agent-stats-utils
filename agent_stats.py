@@ -66,6 +66,7 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                    'discoverer': '(Portals Discovered)',
                    'seer': '(Seer Points)',
                    'recon': '(OPR Agreements)',
+                   'scout': '(AR Videos Uploaded)',
                    'trekker': '(Distance Walked)',
                    'builder': '(Resonators Deployed)',
                    'connector': '(Links Created)',
@@ -307,6 +308,7 @@ def get_badges(data):
                   'discoverer': [10, 50, 200, 500, 5000],
                   'seer': [10, 50, 200, 500, 5000],
                   'recon': [100, 750, 2500, 5000, 10000],
+                  'scout': [50, 250, 1000, 3000, 6000],
                   'trekker': [10, 100, 300, 1000, 2500],
                   'builder': [2000, 10000, 30000, 100000, 200000],
                   'connector': [50, 1000, 5000, 25000, 100000],
@@ -376,6 +378,7 @@ def summary(group='all', days=7):
                'discoverer',
                'seer',
                'recon',
+               'scout',
                'trekker',
                'builder',
                'connector',
@@ -408,7 +411,7 @@ def summary(group='all', days=7):
                'umbra_deploy',
                'didact_field',)
 
-    sql_before = f'''SELECT x.name, s.`date`, `level`, ap, explorer, discoverer, seer, recon, trekker, builder, connector,
+    sql_before = f'''SELECT x.name, s.`date`, `level`, ap, explorer, discoverer, seer, recon, scout, trekker, builder, connector,
                             `mind-controller` mind_controller, illuminator, recharger, liberator, pioneer, engineer, purifier,
                             specops, missionday, `nl-1331-meetups` nl_1331_meetups, `cassandra-neutralizer` cassandra_neutralizer,
                             hacker, translator, sojourner, recruiter, magnusbuilder, recursions, prime_challenge, stealth_ops,
@@ -432,7 +435,7 @@ def summary(group='all', days=7):
             baseline[agent] = {'date': row[1], 'level': row[2], 'ap': row[3],
                                'badges': get_badges(dict(zip(headers, row[4:])))}
 
-    sql_now = f'''SELECT x.name, s.`date`, `level`, ap, explorer, discoverer, seer, recon, trekker, builder, connector,
+    sql_now = f'''SELECT x.name, s.`date`, `level`, ap, explorer, discoverer, seer, recon, scout, trekker, builder, connector,
                          `mind-controller` mind_controller, illuminator, recharger, liberator, pioneer, engineer, purifier,
                          specops, missionday, `nl-1331-meetups` nl_1331_meetups, `cassandra-neutralizer` cassandra_neutralizer,
                          hacker, translator, sojourner, recruiter, magnusbuilder, recursions, prime_challenge, stealth_ops,

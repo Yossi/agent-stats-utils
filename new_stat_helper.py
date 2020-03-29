@@ -29,9 +29,9 @@ def create_code(new_stats):
 #https://www.agent-stats.com/faq.php
 #copy the new stat(s) from the table and paste them here as is
 
-a = '''didact_field
-Didact: Control Fields Created
-	100 	300 	800	N/A	N/A'''
+a = '''scout
+AR Videos Uploaded
+	50 	250 	1,000 	3,000 	6,000'''
 
 it = iter(a.split('\n'))
 
