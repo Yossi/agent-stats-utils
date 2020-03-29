@@ -309,7 +309,7 @@ class Stat(object):
                      discoverer='{discoverer}',
                      seer='{seer}',
                      recon='{recon}',
-                     scout='{scout}'
+                     scout='{scout}',
                      trekker='{trekker}',
                      builder='{builder}',
                      connector='{connector}',
@@ -361,7 +361,7 @@ class Stat(object):
                                          discoverer='{discoverer}',
                                          seer='{seer}',
                                          recon='{recon}',
-                                         scout='{scout}'
+                                         scout='{scout}',
                                          trekker='{trekker}',
                                          builder='{builder}',
                                          connector='{connector}',
