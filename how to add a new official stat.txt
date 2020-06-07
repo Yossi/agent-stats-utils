@@ -12,9 +12,10 @@ update string: fields (change - to _)
        save() x2
 in agent_stats.py:
        update definitions
-       categories dict (in get_badges())
-       headers tuple (in summary()) use _ here
-       sql_before & sql_now
+       categories dict (in get_badges()) # only if real badged stat is being added
+       headers tuple (in summary()) use _ here # only if real badged stat is being added
+       sql_before & sql_now # only if real badged stat is being added
+
 add new stat to template(s)
 
 update local database column(s) and stored procedure manually and save the changes in changes.sql

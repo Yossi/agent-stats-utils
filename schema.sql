@@ -86,6 +86,10 @@ CREATE TABLE `stats` (
   `aurora_glyph` bigint(20) unsigned DEFAULT NULL,
   `umbra_deploy` bigint(20) unsigned DEFAULT NULL,
   `didact_field` bigint(20) unsigned DEFAULT NULL,
+  `drone_explorer` bigint(20) unsigned DEFAULT NULL,
+  `drone_distance` bigint(20) unsigned DEFAULT NULL,
+  `drone_recalls` bigint(20) unsigned DEFAULT NULL,
+  `drone_hacker` bigint(20) unsigned DEFAULT NULL,
   `flag` int(1) unsigned DEFAULT NULL,
   `min-ap` bigint(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`idagents`,`date`),
@@ -149,7 +153,11 @@ SELECT
   `stats`.`myriad_hack`,
   `stats`.`aurora_glyph`,
   `stats`.`umbra_deploy`,
-  `stats`.`didact_field`
+  `stats`.`didact_field`,
+  `stats`.`drone_explorer`,
+  `stats`.`drone_distance`,
+  `stats`.`drone_recalls`,
+  `stats`.`drone_hacker`
 FROM `stats`, `agents`
 WHERE `stats`.`idagents` = `agents`.`idagents` AND `agents`.`name` = `agentname`;
 END$$

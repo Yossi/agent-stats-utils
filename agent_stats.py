@@ -106,7 +106,12 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                    'myriad_hack': '(Myriad: Unique Portals Hacked)',
                    'aurora_glyph': '(Aurora: Unique Glyph Hack Points)',
                    'umbra_deploy': '(Umbra: Unique Resonator Slots Deployed)',
-                   'didact_field': '(Didact: Control Fields Created)',}
+                   'didact_field': '(Didact: Control Fields Created)',
+                   'drone_explorer': '(Unique Portals Drone Visited)',
+                   'drone_distance': '(Furthest Drone Flight Distance)',
+                   'drone_recalls': '(Forced Drone Recalls)',
+                   'drone_hacker': '(Drone Hacks)',
+    }
     definitions.update(extra_definitions)
 
     categories = list(definitions.keys())
@@ -409,7 +414,8 @@ def summary(group='all', days=7):
                'myriad_hack',
                'aurora_glyph',
                'umbra_deploy',
-               'didact_field',)
+               'didact_field',
+    )
 
     sql_before = f'''SELECT x.name, s.`date`, `level`, ap, explorer, discoverer, seer, recon, scout, trekker, builder, connector,
                             `mind-controller` mind_controller, illuminator, recharger, liberator, pioneer, engineer, purifier,

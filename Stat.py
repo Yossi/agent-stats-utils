@@ -18,7 +18,7 @@ nl_1331_meetups, cassandra_neutralizer, hacker, translator, sojourner, recruiter
 collector, binder, country_master, neutralizer, disruptor, salvator, smuggler,
 link_master, controller, field_master, magnusbuilder, prime_challenge, stealth_ops,
 opr_live, ocf, intel_ops, ifs, dark_xm_threat, myriad_hack, aurora_glyph, umbra_deploy,
-didact_field'''
+didact_field, drone_explorer, drone_distance, drone_recalls, drone_hacker'''
 
 Row = namedtuple('Row', fields)
 
@@ -85,6 +85,10 @@ class Stat(object):
         self.aurora_glyph = row.aurora_glyph
         self.umbra_deploy = row.umbra_deploy
         self.didact_field = row.didact_field
+        self.drone_explorer = row.drone_explorer
+        self.drone_distance = row.drone_distance
+        self.drone_recalls = row.drone_recalls
+        self.drone_hacker = row.drone_hacker
 
         if str(self.name).startswith('@'):
             self.agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name[:16]))[0][0]
@@ -146,6 +150,10 @@ class Stat(object):
         self.aurora_glyph = row['aurora_glyph']
         self.umbra_deploy = row['umbra_deploy']
         self.didact_field = row['didact_field']
+        self.drone_explorer = row['drone_explorer']
+        self.drone_distance = row['drone_distance']
+        self.drone_recalls = row['drone_recalls']
+        self.drone_hacker = row['drone_hacker']
 
         agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name))
         if agent_id:
@@ -351,6 +359,11 @@ class Stat(object):
                      aurora_glyph='{aurora_glyph}',
                      umbra_deploy='{umbra_deploy}',
                      didact_field='{didact_field}',
+                     drone_explorer='{drone_explorer}',
+                     drone_distance='{drone_distance}',
+                     drone_recalls='{drone_recalls}',
+                     drone_hacker='{drone_hacker}',
+
                      flag={flag},
                      `min-ap`='{min_ap}'
                  ON DUPLICATE KEY UPDATE `level`='{level}',
@@ -403,6 +416,11 @@ class Stat(object):
                                          aurora_glyph='{aurora_glyph}',
                                          umbra_deploy='{umbra_deploy}',
                                          didact_field='{didact_field}',
+                                         drone_explorer='{drone_explorer}',
+                                         drone_distance='{drone_distance}',
+                                         drone_recalls='{drone_recalls}',
+                                         drone_hacker='{drone_hacker}',
+
                                          flag={flag},
                                          `min-ap`='{min_ap}';'''.format(**self.__dict__)
         self.changed = exec_mysql(sql)

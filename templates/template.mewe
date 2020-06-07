@@ -55,6 +55,10 @@
 {{ high_scores(chart.dark_xm_threat) -}}
 {{ high_scores(chart.aurora_glyph) -}}
 {{ high_scores(chart.didact_field) -}}
+{{ high_scores(chart.drone_explorer) -}}
+{{ high_scores(chart.drone_distance) -}}
+{{ high_scores(chart.drone_recalls) -}}
+{{ high_scores(chart.drone_hacker) -}}
 
 {%- if dings.data -%}
 Recent badge dings:

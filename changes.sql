@@ -1,7 +1,10 @@
 USE `agent_stats`;
 
-ALTER TABLE `stats`
-ADD COLUMN `scout` BIGINT(20) UNSIGNED NULL AFTER `recon`;
+ALTER TABLE `agent_stats`.`stats`
+ADD COLUMN `drone_explorer` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `didact_field`,
+ADD COLUMN `drone_distance` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `drone_explorer`,
+ADD COLUMN `drone_recalls` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `drone_distance`,
+ADD COLUMN `drone_hacker` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `drone_recalls`;
 
 DROP procedure IF EXISTS `FindAgentByName`;
 
@@ -63,7 +66,11 @@ SELECT
   `stats`.`myriad_hack`,
   `stats`.`aurora_glyph`,
   `stats`.`umbra_deploy`,
-  `stats`.`didact_field`
+  `stats`.`didact_field`,
+  `stats`.`drone_explorer`,
+  `stats`.`drone_distance`,
+  `stats`.`drone_recalls`,
+  `stats`.`drone_hacker`
 FROM `stats`, `agents`
 WHERE `stats`.`idagents` = `agents`.`idagents` AND `agents`.`name` = `agentname`;
 END$$
