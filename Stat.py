@@ -133,23 +133,23 @@ class Stat(object):
         self.specops = row['specops']
         self.missionday = row['missionday']
         self.nl_1331_meetups = row['nl-1331-meetups']
-        self.cassandra_neutralizer = row['cassandra-neutralizer']
+        #self.cassandra_neutralizer = row['cassandra-neutralizer']
         self.hacker = row['hacker']
         self.translator = row['translator']
         self.sojourner = row['sojourner']
         self.recruiter = row['recruiter']
-        self.magnusbuilder = row['magnusbuilder']
+        #self.magnusbuilder = row['magnusbuilder']
         self.prime_challenge = row['prime_challenge']
         self.stealth_ops = row['stealth_ops']
         self.opr_live = row['opr_live']
         self.ocf = row['ocf']
         self.intel_ops = row['intel_ops']
         self.ifs = row['ifs']
-        self.dark_xm_threat = row['dark_xm_threat']
-        self.myriad_hack = row['myriad_hack']
-        self.aurora_glyph = row['aurora_glyph']
-        self.umbra_deploy = row['umbra_deploy']
-        self.didact_field = row['didact_field']
+        #self.dark_xm_threat = row['dark_xm_threat']
+        #self.myriad_hack = row['myriad_hack']
+        #self.aurora_glyph = row['aurora_glyph']
+        #self.umbra_deploy = row['umbra_deploy']
+        #self.didact_field = row['didact_field']
         self.drone_explorer = row['drone_explorer']
         self.drone_distance = row['drone_distance']
         self.drone_recalls = row['drone_recalls']
@@ -277,14 +277,8 @@ class Stat(object):
             reasons.append( 'neutralizer:purifier %s > %s' % (self.neutralizer, self.purifier) )
         if (self.translator/15) > self.hacker:
             reasons.append( 'hacker:translator %s < %s/15' % (self.hacker, self.translator) )
-        if (self.magnusbuilder/8) > self.explorer:
-            reasons.append( 'explorer:magnusbuilder %s < %s/8' % (self.explorer, self.magnusbuilder) )
-        if self.magnusbuilder > self.builder:
-            reasons.append( 'builder:magnusbuilder %s < %s' % (self.builder, self.magnusbuilder) )
         if self.seer > self.discoverer:
             reasons.append( 'seer:discoverer %s > %s' % (self.seer, self.discoverer) )
-        if self.aurora_glyph > self.translator:
-            reasons.append( 'aurora_glyph:translator %s > %s' % (self.aurora_glyph, self.translator) )
 
         # there was a missionday where they didnt require missions at all. 100 UPV would get you the badge
         # http://www.pref.iwate.jp/dbps_data/_material_/_files/000/000/031/399/morioka0621.pdf (in japanese, on page 2)
@@ -332,12 +326,10 @@ class Stat(object):
                      specops='{specops}',
                      missionday='{missionday}',
                      `nl-1331-meetups`='{nl_1331_meetups}',
-                     `cassandra-neutralizer`='{cassandra_neutralizer}',
                      hacker='{hacker}',
                      translator='{translator}',
                      sojourner='{sojourner}',
                      recruiter='{recruiter}',
-                     magnusbuilder='{magnusbuilder}',
                      collector='{collector}',
                      binder='{binder}',
                      `country-master`='{country_master}',
@@ -354,11 +346,6 @@ class Stat(object):
                      ocf='{ocf}',
                      intel_ops='{intel_ops}',
                      ifs='{ifs}',
-                     dark_xm_threat='{dark_xm_threat}',
-                     myriad_hack='{myriad_hack}',
-                     aurora_glyph='{aurora_glyph}',
-                     umbra_deploy='{umbra_deploy}',
-                     didact_field='{didact_field}',
                      drone_explorer='{drone_explorer}',
                      drone_distance='{drone_distance}',
                      drone_recalls='{drone_recalls}',
@@ -389,12 +376,10 @@ class Stat(object):
                                          specops='{specops}',
                                          missionday='{missionday}',
                                          `nl-1331-meetups`='{nl_1331_meetups}',
-                                         `cassandra-neutralizer`='{cassandra_neutralizer}',
                                          hacker='{hacker}',
                                          translator='{translator}',
                                          sojourner='{sojourner}',
                                          recruiter='{recruiter}',
-                                         magnusbuilder='{magnusbuilder}',
                                          collector='{collector}',
                                          binder='{binder}',
                                          `country-master`='{country_master}',
@@ -411,11 +396,6 @@ class Stat(object):
                                          ocf='{ocf}',
                                          intel_ops='{intel_ops}',
                                          ifs='{ifs}',
-                                         dark_xm_threat='{dark_xm_threat}',
-                                         myriad_hack='{myriad_hack}',
-                                         aurora_glyph='{aurora_glyph}',
-                                         umbra_deploy='{umbra_deploy}',
-                                         didact_field='{didact_field}',
                                          drone_explorer='{drone_explorer}',
                                          drone_distance='{drone_distance}',
                                          drone_recalls='{drone_recalls}',
