@@ -20,6 +20,8 @@ add new stat to template(s)
 
 update local database column(s) and stored procedure manually and save the changes in changes.sql
 
+commit and push to to github
+
 deploy on remotes $ git fetch --all && git reset --hard origin/master
 
 be sure that running version there is the most recent schema before this one and run $ mysql -u user -p agent_stats < changes.sql

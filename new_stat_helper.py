@@ -8,9 +8,9 @@ def create_code(new_stats):
         'Stat.py > save(1)': "                     {statbacktick}='{{{statnodash}}}',\n",
         'Stat.py > save(2)': "                                         {statbacktick}='{{{statnodash}}}',\n",
         'agent_stats.py > get_stats() > definitions': "                   '{statname}': '({description})',\n",
-        'agent_stats.py > get_badges() > categories (or 3 tier categories)': "                  '{statname}': [{tiers}],\n",
-        'agent_stats.py > summary() > headers': "               '{statnodash}',\n",
-        'agent_stats.py > summary() > sql_before & sql_after': ", {statname}",
+        'agent_stats.py > get_badges() > categories (or 3 tier categories) (skip if not officialy badged stat)': "                  '{statname}': [{tiers}],\n",
+        'agent_stats.py > summary() > headers (skip if not officialy badged stat)': "               '{statnodash}',\n",
+        'agent_stats.py > summary() > sql_before & sql_after (skip if not officialy badged stat)': ", {statname}",
         'templates': "{{{{ high_scores(chart{stattemplate}) -}}}}\n"}
     for place, template in templates.items():
         print(place + ':')
@@ -29,18 +29,9 @@ def create_code(new_stats):
 #https://www.agent-stats.com/faq.php
 #copy the new stat(s) from the table and paste them here as is
 
-a = '''drone_explorer
-Unique Portals Drone Visited
-	100 	1,000 	2,000 	10,000 	30,000
-drone_distance
-Furthest Drone Flight Distance
-	10 	50 	100 	250 	500
-drone_recalls
-Forced Drone Recalls
-	50 	100 	250 	500 	1,000
-drone_hacker
-Drone Hacks
-	2,000 	10,000 	30,000 	100,000 	200,000'''
+a = '''scout_controller
+Scout Controller on Unique Portals
+	50 	150 	300 	600 	1,250'''
 
 it = iter(a.split('\n'))
 

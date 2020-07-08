@@ -18,7 +18,7 @@ nl_1331_meetups, cassandra_neutralizer, hacker, translator, sojourner, recruiter
 collector, binder, country_master, neutralizer, disruptor, salvator, smuggler,
 link_master, controller, field_master, magnusbuilder, prime_challenge, stealth_ops,
 opr_live, ocf, intel_ops, ifs, dark_xm_threat, myriad_hack, aurora_glyph, umbra_deploy,
-didact_field, drone_explorer, drone_distance, drone_recalls, drone_hacker'''
+didact_field, drone_explorer, drone_distance, drone_recalls, drone_hacker, scout_controller'''
 
 Row = namedtuple('Row', fields)
 
@@ -68,27 +68,30 @@ class Stat(object):
         self.specops = row.specops
         self.missionday = row.missionday
         self.nl_1331_meetups = row.nl_1331_meetups
-        self.cassandra_neutralizer = row.cassandra_neutralizer
         self.hacker = row.hacker
         self.translator = row.translator
         self.sojourner = row.sojourner
         self.recruiter = row.recruiter
-        self.magnusbuilder = row.magnusbuilder
         self.prime_challenge = row.prime_challenge
         self.stealth_ops = row.stealth_ops
         self.opr_live = row.opr_live
         self.ocf = row.ocf
         self.intel_ops = row.intel_ops
         self.ifs = row.ifs
+        self.drone_explorer = row.drone_explorer
+        self.drone_distance = row.drone_distance
+        self.drone_recalls = row.drone_recalls
+        self.drone_hacker = row.drone_hacker
+        self.scout_controller = row.scout_controller
+
+        # obsolete stats
+        self.cassandra_neutralizer = row.cassandra_neutralizer
+        self.magnusbuilder = row.magnusbuilder
         self.dark_xm_threat = row.dark_xm_threat
         self.myriad_hack = row.myriad_hack
         self.aurora_glyph = row.aurora_glyph
         self.umbra_deploy = row.umbra_deploy
         self.didact_field = row.didact_field
-        self.drone_explorer = row.drone_explorer
-        self.drone_distance = row.drone_distance
-        self.drone_recalls = row.drone_recalls
-        self.drone_hacker = row.drone_hacker
 
         if str(self.name).startswith('@'):
             self.agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name[:16]))[0][0]
@@ -133,27 +136,21 @@ class Stat(object):
         self.specops = row['specops']
         self.missionday = row['missionday']
         self.nl_1331_meetups = row['nl-1331-meetups']
-        #self.cassandra_neutralizer = row['cassandra-neutralizer']
         self.hacker = row['hacker']
         self.translator = row['translator']
         self.sojourner = row['sojourner']
         self.recruiter = row['recruiter']
-        #self.magnusbuilder = row['magnusbuilder']
         self.prime_challenge = row['prime_challenge']
         self.stealth_ops = row['stealth_ops']
         self.opr_live = row['opr_live']
         self.ocf = row['ocf']
         self.intel_ops = row['intel_ops']
         self.ifs = row['ifs']
-        #self.dark_xm_threat = row['dark_xm_threat']
-        #self.myriad_hack = row['myriad_hack']
-        #self.aurora_glyph = row['aurora_glyph']
-        #self.umbra_deploy = row['umbra_deploy']
-        #self.didact_field = row['didact_field']
         self.drone_explorer = row['drone_explorer']
         self.drone_distance = row['drone_distance']
         self.drone_recalls = row['drone_recalls']
         self.drone_hacker = row['drone_hacker']
+        self.scout_controller = row['scout_controller']
 
         agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name))
         if agent_id:
@@ -350,6 +347,7 @@ class Stat(object):
                      drone_distance='{drone_distance}',
                      drone_recalls='{drone_recalls}',
                      drone_hacker='{drone_hacker}',
+                     scout_controller='{scout_controller}',
 
                      flag={flag},
                      `min-ap`='{min_ap}'
@@ -400,6 +398,7 @@ class Stat(object):
                                          drone_distance='{drone_distance}',
                                          drone_recalls='{drone_recalls}',
                                          drone_hacker='{drone_hacker}',
+                                         scout_controller='{scout_controller}',
 
                                          flag={flag},
                                          `min-ap`='{min_ap}';'''.format(**self.__dict__)
@@ -421,8 +420,9 @@ class Stat(object):
 # purifier >= disruptor
 # purifier >= neutralizer
 # hacker >= translator/15
-# builder >= magnusbuilder
-# explorer >= magnusbuilder/8
+## builder >= magnusbuilder
+## explorer >= magnusbuilder/8
+## translator >= aurora_glyph
 ## missionday > specops
 # min_ap = liberator*125 + min(-(-max(0,(builder-liberator*8))/7)*65, -(-max(0,(builder-liberator*8))/8)*125) + connector*313 + mind_controller*1250 + liberator*500 + engineer*125 + purifier*75 + recharger/15000*10 + disruptor*187 + salvator*750
 ## requirement[level] <= ap

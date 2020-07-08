@@ -80,12 +80,10 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                    'specops': '(New Missions Completed)',
                    'missionday': '(Mission Days Attended)',
                    'nl-1331-meetups': '(NL-1331 Meetup(s) Attended)',
-                   #'cassandra-neutralizer': '(Unique Portals Neutralized)',
                    'hacker': '(Hacks)',
                    'translator': '(Glyph Hack Points)',
                    'sojourner': '(Longest Hacking Streak)',
                    'recruiter': '(Agents successfully recruited)',
-                   #'magnusbuilder': '(Unique Resonator Slots Deployed)',
                    'collector': '(XM Collected)',
                    'binder': '(Longest Link Ever Created)',
                    'country-master': '(Largest Control Field)',
@@ -102,15 +100,20 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                    'ocf': '(Clear Field Events)',
                    'intel_ops': '(Intel Ops Missions)',
                    'ifs': '(First Saturday Events)',
-                   #'dark_xm_threat': '(Dark XM Total Link Length)',
-                   #'myriad_hack': '(Myriad: Unique Portals Hacked)',
-                   #'aurora_glyph': '(Aurora: Unique Glyph Hack Points)',
-                   #'umbra_deploy': '(Umbra: Unique Resonator Slots Deployed)',
-                   #'didact_field': '(Didact: Control Fields Created)',
                    'drone_explorer': '(Unique Portals Drone Visited)',
                    'drone_distance': '(Furthest Drone Flight Distance)',
                    'drone_recalls': '(Forced Drone Recalls)',
                    'drone_hacker': '(Drone Hacks)',
+                   'scout_controller': '(Scout Controller on Unique Portals)',
+
+                   # obsolete
+                   'cassandra-neutralizer': '(Unique Portals Neutralized)',
+                   'magnusbuilder': '(Unique Resonator Slots Deployed)',
+                   'dark_xm_threat': '(Dark XM Total Link Length)',
+                   'myriad_hack': '(Myriad: Unique Portals Hacked)',
+                   'aurora_glyph': '(Aurora: Unique Glyph Hack Points)',
+                   'umbra_deploy': '(Umbra: Unique Resonator Slots Deployed)',
+                   'didact_field': '(Didact: Control Fields Created)',
     }
     definitions.update(extra_definitions)
 
@@ -119,7 +122,7 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
     for category in categories:
         output[category] = {'scores': [], 'title': {'category': 'Top ' + titlecase(category.replace('_', ' '), callback=abbreviations), 'description': definitions.get(category.lower(), '')}}
         top_list = sorted((line for line in data if 0 < float(line[category])), key=lambda k: float(k[category]), reverse=True)
-        if category not in ('lifetime_ap', 'cassandra-neutralizer', 'umbra_deploy'):
+        if category not in ('lifetime_ap', 'cassandra-neutralizer', 'magnusbuilder', 'dark_xm_threat', 'myriad_hack', 'aurora_glyph', 'umbra_deploy', 'didact_field'):
             submitters[0] = max(submitters[0], len(top_list))
         i = -1
         for i, line in enumerate(top_list):
@@ -397,12 +400,12 @@ def summary(group='all', days=7):
                'specops',
                'missionday',
                'nl_1331_meetups',
-               'cassandra_neutralizer',
+               'cassandra_neutralizer', # obsolete
                'hacker',
                'translator',
                'sojourner',
                'recruiter',
-               'magnusbuilder',
+               'magnusbuilder', # obsolete
                'recursions',
                'prime_challenge',
                'stealth_ops',
@@ -410,11 +413,11 @@ def summary(group='all', days=7):
                'ocf',
                'intel_ops',
                'ifs',
-               'dark_xm_threat',
-               'myriad_hack',
-               'aurora_glyph',
-               'umbra_deploy',
-               'didact_field',
+               'dark_xm_threat', # obsolete
+               'myriad_hack', # obsolete
+               'aurora_glyph', # obsolete
+               'umbra_deploy', # obsolete
+               'didact_field', # obsolete
     )
 
     sql_before = f'''SELECT x.name, s.`date`, `level`, ap, explorer, discoverer, seer, recon, scout, trekker, builder, connector,
