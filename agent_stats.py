@@ -107,13 +107,13 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                    'scout_controller': '(Scout Controller on Unique Portals)',
 
                    # obsolete
-                   'cassandra-neutralizer': '(Unique Portals Neutralized)',
-                   'magnusbuilder': '(Unique Resonator Slots Deployed)',
-                   'dark_xm_threat': '(Dark XM Total Link Length)',
-                   'myriad_hack': '(Myriad: Unique Portals Hacked)',
-                   'aurora_glyph': '(Aurora: Unique Glyph Hack Points)',
-                   'umbra_deploy': '(Umbra: Unique Resonator Slots Deployed)',
-                   'didact_field': '(Didact: Control Fields Created)',
+                   # 'cassandra-neutralizer': '(Unique Portals Neutralized)',
+                   # 'magnusbuilder': '(Unique Resonator Slots Deployed)',
+                   # 'dark_xm_threat': '(Dark XM Total Link Length)',
+                   # 'myriad_hack': '(Myriad: Unique Portals Hacked)',
+                   # 'aurora_glyph': '(Aurora: Unique Glyph Hack Points)',
+                   # 'umbra_deploy': '(Umbra: Unique Resonator Slots Deployed)',
+                   # 'didact_field': '(Didact: Control Fields Created)',
     }
     definitions.update(extra_definitions)
 
