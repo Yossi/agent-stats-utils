@@ -31,7 +31,7 @@ def create_code(new_stats):
 
 a = '''scout_controller
 Scout Controller on Unique Portals
-	50 	150 	300 	600 	1,250'''
+	100 	500 	1000 	5000 	15,000'''
 
 it = iter(a.split('\n'))
 

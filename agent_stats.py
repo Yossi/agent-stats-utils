@@ -340,7 +340,8 @@ def get_badges(data):
                   'opr_live': [1, 3, 6, 10, 20],
                   'ocf': [1, 3, 6, 10, 20],
                   'intel_ops': [1, 3, 6, 10, 20],
-                  'ifs': [1, 6, 12, 24, 36]}
+                  'ifs': [1, 6, 12, 24, 36],
+                  'scout_controller': [100, 500, 1000, 5000, 15000],}
 
     result = {} # TODO: change these 2 dicts to OrderedDicts
     for category, ranks in categories.items():
@@ -418,13 +419,15 @@ def summary(group='all', days=7):
                'aurora_glyph', # obsolete
                'umbra_deploy', # obsolete
                'didact_field', # obsolete
+               'scout_controller',
     )
 
     sql_before = f'''SELECT x.name, s.`date`, `level`, ap, explorer, discoverer, seer, recon, scout, trekker, builder, connector,
                             `mind-controller` mind_controller, illuminator, recharger, liberator, pioneer, engineer, purifier,
                             specops, missionday, `nl-1331-meetups` nl_1331_meetups, `cassandra-neutralizer` cassandra_neutralizer,
                             hacker, translator, sojourner, recruiter, magnusbuilder, recursions, prime_challenge, stealth_ops,
-                            opr_live, ocf, intel_ops, ifs, dark_xm_threat, myriad_hack, aurora_glyph, umbra_deploy, didact_field
+                            opr_live, ocf, intel_ops, ifs, dark_xm_threat, myriad_hack, aurora_glyph, umbra_deploy, didact_field,
+                            scout_controller
                      FROM (
                          SELECT a.name name, s.idagents id, MAX(s.date) AS date
                          FROM agents a, stats s, membership m, groups g
@@ -448,7 +451,8 @@ def summary(group='all', days=7):
                          `mind-controller` mind_controller, illuminator, recharger, liberator, pioneer, engineer, purifier,
                          specops, missionday, `nl-1331-meetups` nl_1331_meetups, `cassandra-neutralizer` cassandra_neutralizer,
                          hacker, translator, sojourner, recruiter, magnusbuilder, recursions, prime_challenge, stealth_ops,
-                         opr_live, ocf, intel_ops, ifs, dark_xm_threat, myriad_hack, aurora_glyph, umbra_deploy, didact_field
+                         opr_live, ocf, intel_ops, ifs, dark_xm_threat, myriad_hack, aurora_glyph, umbra_deploy, didact_field,
+                         scout_controller
                      FROM (
                          SELECT a.name name, s.idagents id, MAX(s.date) AS date
                          FROM agents a, stats s, membership m, groups g
