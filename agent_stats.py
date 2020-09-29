@@ -66,7 +66,7 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                    'discoverer': '(Portals Discovered)',
                    'seer': '(Seer Points)',
                    'recon': '(OPR Agreements)',
-                   'scout': '(AR Videos Uploaded)',
+                   'scout': '(Portal Scans Uploaded)',
                    'trekker': '(Distance Walked)',
                    'builder': '(Resonators Deployed)',
                    'connector': '(Links Created)',
