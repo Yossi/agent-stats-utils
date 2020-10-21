@@ -105,6 +105,7 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                    'drone_recalls': '(Forced Drone Recalls)',
                    'drone_hacker': '(Drone Hacks)',
                    'scout_controller': '(Scout Controller on Unique Portals)',
+                   'crafter': '(Kinetic Capsules Completed)',
 
                    # obsolete
                    # 'cassandra-neutralizer': '(Unique Portals Neutralized)',

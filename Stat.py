@@ -83,6 +83,7 @@ class Stat(object):
         self.drone_recalls = row.drone_recalls
         self.drone_hacker = row.drone_hacker
         self.scout_controller = row.scout_controller
+        self.crafter = row.crafter
 
         # obsolete stats
         self.cassandra_neutralizer = row.cassandra_neutralizer
@@ -151,6 +152,7 @@ class Stat(object):
         self.drone_recalls = row['drone_recalls']
         self.drone_hacker = row['drone_hacker']
         self.scout_controller = row['scout_controller']
+        self.crafter = row['crafter']
 
         agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name))
         if agent_id:
@@ -276,6 +278,8 @@ class Stat(object):
             reasons.append( 'hacker:translator %s < %s/15' % (self.hacker, self.translator) )
         if self.seer > self.discoverer:
             reasons.append( 'seer:discoverer %s > %s' % (self.seer, self.discoverer) )
+        if (self.crafter*8) > self.trekker:
+            reasons.append( 'trekker:crafter %s < %s*8' % (self.trekker, self.crafter) )
 
         # there was a missionday where they didnt require missions at all. 100 UPV would get you the badge
         # http://www.pref.iwate.jp/dbps_data/_material_/_files/000/000/031/399/morioka0621.pdf (in japanese, on page 2)
@@ -348,6 +352,7 @@ class Stat(object):
                      drone_recalls='{drone_recalls}',
                      drone_hacker='{drone_hacker}',
                      scout_controller='{scout_controller}',
+                     crafter='{crafter}',
 
                      flag={flag},
                      `min-ap`='{min_ap}'
@@ -399,6 +404,7 @@ class Stat(object):
                                          drone_recalls='{drone_recalls}',
                                          drone_hacker='{drone_hacker}',
                                          scout_controller='{scout_controller}',
+                                         crafter='{crafter}',
 
                                          flag={flag},
                                          `min-ap`='{min_ap}';'''.format(**self.__dict__)
@@ -420,6 +426,7 @@ class Stat(object):
 # purifier >= disruptor
 # purifier >= neutralizer
 # hacker >= translator/15
+# trekker >= crafter*8
 ## builder >= magnusbuilder
 ## explorer >= magnusbuilder/8
 ## translator >= aurora_glyph

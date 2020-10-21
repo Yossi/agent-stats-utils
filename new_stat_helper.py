@@ -29,9 +29,9 @@ def create_code(new_stats):
 #https://www.agent-stats.com/faq.php
 #copy the new stat(s) from the table and paste them here as is
 
-a = '''scout_controller
-Scout Controller on Unique Portals
-	100 	500 	1000 	5000 	15,000'''
+a = '''crafter
+Kinetic Capsules Completed
+	50 	100 	200 	350 	700'''
 
 it = iter(a.split('\n'))
 
