@@ -24,7 +24,7 @@ commit and push to to github
 
 deploy on remotes $ git fetch --all && git reset --hard origin/master
 
-be sure that running version there is the most recent schema before this one and run $ mysql -u user -p agent_stats < changes.sql # /!\ SEE NEXT LINE /!\
-       edit user to match your db username, both in this command AND IN changes.sql # READ THIS LINE AND UNDERSTAND IT!!!!!
+edit user to match your db username, both in the following command AND IN changes.sql > stored proceedure # READ THIS LINE AND UNDERSTAND IT!!!!!
+be sure that running version there is the most recent schema before this one and run $ mysql -u user -p agent_stats < changes.sql
 
 transfer custom templates manually
