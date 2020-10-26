@@ -278,8 +278,8 @@ class Stat(object):
             reasons.append( 'hacker:translator %s < %s/15' % (self.hacker, self.translator) )
         if self.seer > self.discoverer:
             reasons.append( 'seer:discoverer %s > %s' % (self.seer, self.discoverer) )
-        if (self.crafter*8) > self.trekker:
-            reasons.append( 'trekker:crafter %s < %s*8' % (self.trekker, self.crafter) )
+        if (self.crafter*4) > self.trekker:
+            reasons.append( 'trekker:crafter %s < %s*4' % (self.trekker, self.crafter) )
 
         # there was a missionday where they didnt require missions at all. 100 UPV would get you the badge
         # http://www.pref.iwate.jp/dbps_data/_material_/_files/000/000/031/399/morioka0621.pdf (in japanese, on page 2)
@@ -426,7 +426,7 @@ class Stat(object):
 # purifier >= disruptor
 # purifier >= neutralizer
 # hacker >= translator/15
-# trekker >= crafter*8
+# trekker >= crafter*4
 ## builder >= magnusbuilder
 ## explorer >= magnusbuilder/8
 ## translator >= aurora_glyph
