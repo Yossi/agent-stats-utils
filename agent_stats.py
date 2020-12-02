@@ -173,7 +173,7 @@ def get_groups(group=None):
     if group not in ('smurfs', 'frogs', 'all', None):
         group_id = group
         if not re.fullmatch(r'([0-9a-f]{14}\.[\d]{8})', group_id):
-            group_id = exec_mysql(f'SELECT url FROM groups WHERE `name` = "{group}"')[0][0]
+            group_id = exec_mysql(f'SELECT url FROM `groups` WHERE `name` = "{group}"')[0][0]
 
         try:
             group_name = groups()[group_id]
@@ -226,7 +226,7 @@ def debug(group):
 
 def collate_agents():
     logging.info('collate agents')
-    general_groups = dict(exec_mysql("SELECT name, idgroups FROM groups WHERE name IN ('smurfs', 'frogs', 'all');"))
+    general_groups = dict(exec_mysql("SELECT name, idgroups FROM `groups` WHERE name IN ('smurfs', 'frogs', 'all');"))
     for agent_id, faction in exec_mysql('SELECT idagents, faction FROM agents;'):
         faction = 'frogs' if faction == 'enl' else 'smurfs'
         sql = f'''INSERT INTO `membership`
@@ -245,7 +245,7 @@ def snarf(group=None):
     if not group_id:
         results = []
         for group_id, group_name in groups().items():
-            idgroups = exec_mysql(f"SELECT idgroups FROM groups WHERE url = '{group_id}';")
+            idgroups = exec_mysql(f"SELECT idgroups FROM `groups` WHERE url = '{group_id}';")
             if not idgroups:
                 sql = f'''INSERT INTO `groups`
                           SET `name`='{group_name}', url='{group_id}';'''
@@ -256,7 +256,7 @@ def snarf(group=None):
     else:
         logging.info(f'snarfing {group_name}')
         added, removed, flagged, flipped = [], [], [], []
-        idgroups = exec_mysql(f"SELECT idgroups FROM groups WHERE url = '{group_id}';")[0][0]
+        idgroups = exec_mysql(f"SELECT idgroups FROM `groups` WHERE url = '{group_id}';")[0][0]
         remaining_roster = [item for sublist in exec_mysql(f"SELECT idagents FROM membership WHERE idgroups = {idgroups};") for item in sublist] # get the class attendance sheet
 
         logging.info(f'read table: group {group_name}, span now')
@@ -431,7 +431,7 @@ def summary(group='all', days=7):
                             scout_controller
                      FROM (
                          SELECT a.name name, s.idagents id, MAX(s.date) AS date
-                         FROM agents a, stats s, membership m, groups g
+                         FROM agents a, stats s, membership m, `groups` g
                          WHERE a.idagents = s.idagents AND
                                s.idagents = m.idagents AND
                                m.idgroups = g.idgroups AND
@@ -456,7 +456,7 @@ def summary(group='all', days=7):
                          scout_controller
                      FROM (
                          SELECT a.name name, s.idagents id, MAX(s.date) AS date
-                         FROM agents a, stats s, membership m, groups g
+                         FROM agents a, stats s, membership m, `groups` g
                          WHERE a.idagents = s.idagents AND
                                s.idagents = m.idagents AND
                                m.idgroups = g.idgroups AND
@@ -636,7 +636,7 @@ def render(output_dict):
     return template.render(**output_dict)
 
 def validate_group(group):
-    groups = [name for row in exec_mysql('SELECT name, url FROM groups;') for name in row]
+    groups = [name for row in exec_mysql('SELECT name, url FROM `groups`;') for name in row]
     groups.append(None)
     if group in groups:
         return group
@@ -690,7 +690,7 @@ def check_categories(*args):
     return '\n'.join(message)
 
 def update_group_names(group):
-    db = dict(exec_mysql('SELECT url, `name` FROM groups WHERE url IS NOT NULL;'))
+    db = dict(exec_mysql('SELECT url, `name` FROM `groups` WHERE url IS NOT NULL;'))
     web = dict(groups())
     allgood = True
     for gid in web:
@@ -698,7 +698,7 @@ def update_group_names(group):
             allgood = False
             print(f'{gid} was named "{db[gid]}" is now "{web[gid]}"')
             if input('Update the database? (y/N) ').lower().startswith('y'):
-                exec_mysql(f'UPDATE groups SET `name`="{web[gid]}" WHERE url="{gid}" AND `name`="{db[gid]}";')
+                exec_mysql(f'UPDATE `groups` SET `name`="{web[gid]}" WHERE url="{gid}" AND `name`="{db[gid]}";')
     if allgood:
         print('\nAll group names match\n')
 
