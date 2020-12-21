@@ -176,8 +176,7 @@ class Stat(object):
         sorted_badges = sorted([a.split(' ')[-1] for a in get_badges(self.__dict__).values()], key=lambda x: ranks.index(x))
         expanded_badges = list(chain.from_iterable([ranks[ranks.index(a):] for a in sorted_badges]))
 
-        if 0 <= self.ap:
-            level = 1
+        level = 1
         if 2500 <= self.ap:
             level = 2
         if 20000 <= self.ap:
