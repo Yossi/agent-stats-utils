@@ -155,7 +155,7 @@ class Stat(object):
         self.drone_hacker = row['drone_hacker']
         self.scout_controller = row['scout_controller']
         self.crafter = row['crafter']
-        self.bb_combatant = row['bb_combatant']
+        #self.bb_combatant = row['bb_combatant']
 
         agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name))
         if agent_id:
@@ -355,7 +355,6 @@ class Stat(object):
                      drone_hacker='{drone_hacker}',
                      scout_controller='{scout_controller}',
                      crafter='{crafter}',
-                     bb_combatant='{bb_combatant}',
 
                      flag={flag},
                      `min-ap`='{min_ap}'
@@ -408,7 +407,6 @@ class Stat(object):
                                          drone_hacker='{drone_hacker}',
                                          scout_controller='{scout_controller}',
                                          crafter='{crafter}',
-                                         bb_combatant='{bb_combatant}',
 
                                          flag={flag},
                                          `min-ap`='{min_ap}';'''.format(**self.__dict__)
