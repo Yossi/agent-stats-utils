@@ -29,9 +29,9 @@ def create_code(new_stats):
 #https://www.agent-stats.com/faq.php
 #copy the new stat(s) from the table and paste them here as is
 
-a = '''crafter
-Kinetic Capsules Completed
-	50 	100 	200 	350 	700'''
+a = '''bb_combatant
+Battle Beacon Combatant
+	10 	50 	200 	1,000 	4,000'''
 
 it = iter(a.split('\n'))
 

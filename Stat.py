@@ -18,7 +18,8 @@ nl_1331_meetups, cassandra_neutralizer, hacker, translator, sojourner, recruiter
 collector, binder, country_master, neutralizer, disruptor, salvator, smuggler,
 link_master, controller, field_master, magnusbuilder, prime_challenge, stealth_ops,
 opr_live, ocf, intel_ops, ifs, dark_xm_threat, myriad_hack, aurora_glyph, umbra_deploy,
-didact_field, drone_explorer, drone_distance, drone_recalls, drone_hacker, scout_controller'''
+didact_field, drone_explorer, drone_distance, drone_recalls, drone_hacker, scout_controller,
+crafter, bb_combatant'''
 
 Row = namedtuple('Row', fields)
 
@@ -84,6 +85,7 @@ class Stat(object):
         self.drone_hacker = row.drone_hacker
         self.scout_controller = row.scout_controller
         self.crafter = row.crafter
+        self.bb_combatant = row.bb_combatant
 
         # obsolete stats
         self.cassandra_neutralizer = row.cassandra_neutralizer
@@ -153,6 +155,7 @@ class Stat(object):
         self.drone_hacker = row['drone_hacker']
         self.scout_controller = row['scout_controller']
         self.crafter = row['crafter']
+        self.bb_combatant = row['bb_combatant']
 
         agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name))
         if agent_id:
@@ -352,6 +355,7 @@ class Stat(object):
                      drone_hacker='{drone_hacker}',
                      scout_controller='{scout_controller}',
                      crafter='{crafter}',
+                     bb_combatant='{bb_combatant}',
 
                      flag={flag},
                      `min-ap`='{min_ap}'
@@ -404,6 +408,7 @@ class Stat(object):
                                          drone_hacker='{drone_hacker}',
                                          scout_controller='{scout_controller}',
                                          crafter='{crafter}',
+                                         bb_combatant='{bb_combatant}',
 
                                          flag={flag},
                                          `min-ap`='{min_ap}';'''.format(**self.__dict__)

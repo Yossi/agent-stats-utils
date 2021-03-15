@@ -1,7 +1,8 @@
 USE `agent_stats`;
 
 ALTER TABLE `agent_stats`.`stats`
-ADD COLUMN `crafter` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `scout_controller`;
+ADD COLUMN `bb_combatant` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `crafter`;
+
 
 DROP procedure IF EXISTS `FindAgentByName`;
 
@@ -69,7 +70,8 @@ SELECT
   `stats`.`drone_recalls`,
   `stats`.`drone_hacker`,
   `stats`.`scout_controller`,
-  `stats`.`crafter`
+  `stats`.`crafter`,
+  `stats`.`bb_combatant`
 FROM `stats`, `agents`
 WHERE `stats`.`idagents` = `agents`.`idagents` AND `agents`.`name` = `agentname`;
 END$$

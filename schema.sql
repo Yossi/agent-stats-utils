@@ -92,6 +92,7 @@ CREATE TABLE `stats` (
   `drone_hacker` bigint(20) unsigned DEFAULT NULL,
   `scout_controller` bigint(20) unsigned DEFAULT NULL,
   `crafter` bigint(20) unsigned DEFAULT NULL,
+  `bb_combatant` bigint(20) unsigned DEFAULT NULL,
   `flag` int(1) unsigned DEFAULT NULL,
   `min-ap` bigint(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`idagents`,`date`),
@@ -161,7 +162,8 @@ SELECT
   `stats`.`drone_recalls`,
   `stats`.`drone_hacker`,
   `stats`.`scout_controller`,
-  `stats`.`crafter`
+  `stats`.`crafter`,
+  `stats`.`bb_combatant`
 FROM `stats`, `agents`
 WHERE `stats`.`idagents` = `agents`.`idagents` AND `agents`.`name` = `agentname`;
 END$$
