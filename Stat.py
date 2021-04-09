@@ -19,7 +19,7 @@ collector, binder, country_master, neutralizer, disruptor, salvator, smuggler,
 link_master, controller, field_master, magnusbuilder, prime_challenge, stealth_ops,
 opr_live, ocf, intel_ops, ifs, dark_xm_threat, myriad_hack, aurora_glyph, umbra_deploy,
 didact_field, drone_explorer, drone_distance, drone_recalls, drone_hacker, scout_controller,
-crafter, bb_combatant'''
+crafter, bb_combatant, hack_the_world202104'''
 
 Row = namedtuple('Row', fields)
 
@@ -86,6 +86,7 @@ class Stat(object):
         self.scout_controller = row.scout_controller
         self.crafter = row.crafter
         self.bb_combatant = row.bb_combatant
+        self.hack_the_world202104 = row.hack_the_world202104
 
         # obsolete stats
         self.cassandra_neutralizer = row.cassandra_neutralizer
@@ -156,6 +157,7 @@ class Stat(object):
         self.scout_controller = row['scout_controller']
         self.crafter = row['crafter']
         self.bb_combatant = row['bb_combatant']
+        self.hack_the_world202104 = row['hack_the_world202104']
 
         agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name))
         if agent_id:
@@ -356,6 +358,7 @@ class Stat(object):
                      scout_controller='{scout_controller}',
                      crafter='{crafter}',
                      bb_combatant='{bb_combatant}',
+                     hack_the_world202104='{hack_the_world202104}',
 
                      flag={flag},
                      `min-ap`='{min_ap}'
@@ -409,6 +412,7 @@ class Stat(object):
                                          scout_controller='{scout_controller}',
                                          crafter='{crafter}',
                                          bb_combatant='{bb_combatant}',
+                                         hack_the_world202104='{hack_the_world202104}',
 
                                          flag={flag},
                                          `min-ap`='{min_ap}';'''.format(**self.__dict__)

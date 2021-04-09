@@ -29,9 +29,9 @@ def create_code(new_stats):
 #https://www.agent-stats.com/faq.php
 #copy the new stat(s) from the table and paste them here as is
 
-a = '''bb_combatant
-Battle Beacon Combatant
-	10 	50 	200 	1,000 	4,000'''
+a = '''hack_the_world202104
+Unique Event Portals Hacked
+	N/A	N/A	N/A	N/A	N/A'''
 
 it = iter(a.split('\n'))
 

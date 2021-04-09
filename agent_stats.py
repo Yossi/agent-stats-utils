@@ -107,6 +107,7 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                    'scout_controller': '(Scout Controller on Unique Portals)',
                    'crafter': '(Kinetic Capsules Completed)',
                    'bb_combatant': '(Battle Beacon Combatant)',
+                   'hack_the_world202104': '(Unique Event Portals Hacked)',
 
                    # obsolete
                    # 'cassandra-neutralizer': '(Unique Portals Neutralized)',
