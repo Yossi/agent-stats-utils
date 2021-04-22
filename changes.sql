@@ -1,8 +1,8 @@
 USE `agent_stats`;
 
 ALTER TABLE `agent_stats`.`stats`
-ADD COLUMN `hack_the_world202104` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `bb_combatant`;
-
+ADD COLUMN `epoch` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `hack_the_world202104`,
+ADD COLUMN `matryoshka_links` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `epoch`;
 
 DROP procedure IF EXISTS `FindAgentByName`;
 
@@ -72,7 +72,9 @@ SELECT
   `stats`.`scout_controller`,
   `stats`.`crafter`,
   `stats`.`bb_combatant`,
-  `stats`.`hack_the_world202104`
+  `stats`.`hack_the_world202104`,
+  `stats`.`epoch`,
+  `stats`.`matryoshka_links`
 FROM `stats`, `agents`
 WHERE `stats`.`idagents` = `agents`.`idagents` AND `agents`.`name` = `agentname`;
 END$$

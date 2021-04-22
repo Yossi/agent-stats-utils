@@ -63,6 +63,8 @@
 {{ high_scores(chart.crafter) -}}
 {{ high_scores(chart.bb_combatant) -}}
 {{ high_scores(chart.hack_the_world202104) -}}
+{{ high_scores(chart.epoch) -}}
+{{ high_scores(chart.matryoshka_links) -}}
 
 {%- if dings.data -%}
 Recent badge dings:

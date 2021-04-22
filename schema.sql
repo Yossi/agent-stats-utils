@@ -94,6 +94,8 @@ CREATE TABLE `stats` (
   `crafter` bigint(20) unsigned DEFAULT NULL,
   `bb_combatant` bigint(20) unsigned DEFAULT NULL,
   `hack_the_world202104` bigint(20) unsigned DEFAULT NULL,
+  `epoch` bigint(20) unsigned DEFAULT NULL,
+  `matryoshka_links` bigint(20) unsigned DEFAULT NULL,
   `flag` int(1) unsigned DEFAULT NULL,
   `min-ap` bigint(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`idagents`,`date`),
@@ -165,7 +167,9 @@ SELECT
   `stats`.`scout_controller`,
   `stats`.`crafter`,
   `stats`.`bb_combatant`,
-  `stats`.`hack_the_world202104`
+  `stats`.`hack_the_world202104`,
+  `stats`.`epoch`,
+  `stats`.`matryoshka_links`
 FROM `stats`, `agents`
 WHERE `stats`.`idagents` = `agents`.`idagents` AND `agents`.`name` = `agentname`;
 END$$

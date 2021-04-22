@@ -29,8 +29,11 @@ def create_code(new_stats):
 #https://www.agent-stats.com/faq.php
 #copy the new stat(s) from the table and paste them here as is
 
-a = '''hack_the_world202104
-Unique Event Portals Hacked
+a = '''epoch
+Completed Hackstreaks
+	2 	4 	8 	30 	60
+matryoshka_links
+Matryoshka Links Created
 	N/A	N/A	N/A	N/A	N/A'''
 
 it = iter(a.split('\n'))
