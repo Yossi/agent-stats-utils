@@ -160,7 +160,6 @@ class Stat(object):
         self.crafter = row['crafter']
         self.bb_combatant = row['bb_combatant']
         self.epoch = row.get('epoch', 0) # temporary fix until the api is updated
-        self.matryoshka_links = row.get('matryoshka_links', 0)
 
         agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name))
         if agent_id:

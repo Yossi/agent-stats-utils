@@ -108,9 +108,9 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                    'crafter': '(Kinetic Capsules Completed)',
                    'bb_combatant': '(Battle Beacon Combatant)',
                    'epoch': '(Completed Hackstreaks)',
-                   'matryoshka_links': '(Matryoshka Links Created)',
 
                    # obsolete
+                   # 'matryoshka_links': '(Matryoshka Links Created)',
                    # 'hack_the_world202104': '(Unique Event Portals Hacked)',
                    # 'cassandra-neutralizer': '(Unique Portals Neutralized)',
                    # 'magnusbuilder': '(Unique Resonator Slots Deployed)',

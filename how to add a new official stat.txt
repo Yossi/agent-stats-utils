@@ -28,3 +28,11 @@ edit user to match your db username, both in the following command AND IN change
 be sure that running version there is the most recent schema before this one and run $ mysql -u user -p agent_stats < changes.sql
 
 transfer custom templates manually
+
+
+to remove a dead stat:
+in Stat.py:
+       remove from table_load()
+in agent_stats.py:
+       remove from get_stats() > definitions
+       mark # obsolete in summary() > headers if was official tiered stat
