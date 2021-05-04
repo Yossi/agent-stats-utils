@@ -18,8 +18,8 @@ nl_1331_meetups, cassandra_neutralizer, hacker, translator, sojourner, recruiter
 collector, binder, country_master, neutralizer, disruptor, salvator, smuggler,
 link_master, controller, field_master, magnusbuilder, prime_challenge, stealth_ops,
 opr_live, ocf, intel_ops, ifs, dark_xm_threat, myriad_hack, aurora_glyph, umbra_deploy,
-didact_field, drone_explorer, drone_distance, drone_recalls, drone_hacker, scout_controller,
-crafter, bb_combatant, hack_the_world202104, epoch, matryoshka_links'''
+didact_field, drone_explorer, drone_distance, drone_recalls, drone_sender, maverick,
+scout_controller, crafter, bb_combatant, hack_the_world202104, epoch, matryoshka_links'''
 
 Row = namedtuple('Row', fields)
 
@@ -82,7 +82,8 @@ class Stat(object):
         self.drone_explorer = row.drone_explorer
         self.drone_distance = row.drone_distance
         self.drone_recalls = row.drone_recalls
-        self.drone_hacker = row.drone_hacker
+        self.drone_sender = row.drone_sender
+        self.maverick = row.maverick
         self.scout_controller = row.scout_controller
         self.crafter = row.crafter
         self.bb_combatant = row.bb_combatant
@@ -155,7 +156,8 @@ class Stat(object):
         self.drone_explorer = row['drone_explorer']
         self.drone_distance = row['drone_distance']
         self.drone_recalls = row['drone_recalls']
-        self.drone_hacker = row['drone_hacker']
+        self.drone_sender = row.get('drone_sender', 0)
+        self.maverick = row.get('maverick', 0)
         self.scout_controller = row['scout_controller']
         self.crafter = row['crafter']
         self.bb_combatant = row['bb_combatant']
@@ -356,7 +358,8 @@ class Stat(object):
                      drone_explorer='{drone_explorer}',
                      drone_distance='{drone_distance}',
                      drone_recalls='{drone_recalls}',
-                     drone_hacker='{drone_hacker}',
+                     drone_sender='{drone_sender}',
+                     maverick='{maverick}',
                      scout_controller='{scout_controller}',
                      crafter='{crafter}',
                      bb_combatant='{bb_combatant}',
@@ -411,7 +414,8 @@ class Stat(object):
                                          drone_explorer='{drone_explorer}',
                                          drone_distance='{drone_distance}',
                                          drone_recalls='{drone_recalls}',
-                                         drone_hacker='{drone_hacker}',
+                                         drone_sender='{drone_sender}',
+                                         maverick='{maverick}',
                                          scout_controller='{scout_controller}',
                                          crafter='{crafter}',
                                          bb_combatant='{bb_combatant}',

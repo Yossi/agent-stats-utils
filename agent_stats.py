@@ -103,7 +103,8 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                    'drone_explorer': '(Unique Portals Drone Visited)',
                    'drone_distance': '(Furthest Drone Flight Distance)',
                    'drone_recalls': '(Forced Drone Recalls)',
-                   'drone_hacker': '(Drone Hacks)',
+                   'drone_sender': '(Drones Returned)',
+                   'maverick': '(Drone Hacks)',
                    'scout_controller': '(Scout Controller on Unique Portals)',
                    'crafter': '(Kinetic Capsules Completed)',
                    'bb_combatant': '(Battle Beacon Combatant)',
@@ -346,6 +347,7 @@ def get_badges(data):
                   'ocf': [1, 3, 6, 10, 20],
                   'intel_ops': [1, 3, 6, 10, 20],
                   'ifs': [1, 6, 12, 24, 36],
+                  'maverick': [250, 1000, 2000, 5000, 10000],
                   'scout_controller': [100, 500, 1000, 5000, 15000],
                   'epoch': [2, 4, 8, 30, 60],
                   }
@@ -421,6 +423,7 @@ def summary(group='all', days=7):
                'ocf',
                'intel_ops',
                'ifs',
+               'maverick',
                'dark_xm_threat', # obsolete
                'myriad_hack', # obsolete
                'aurora_glyph', # obsolete
@@ -434,8 +437,8 @@ def summary(group='all', days=7):
                             `mind-controller` mind_controller, illuminator, recharger, liberator, pioneer, engineer, purifier,
                             specops, missionday, `nl-1331-meetups` nl_1331_meetups, `cassandra-neutralizer` cassandra_neutralizer,
                             hacker, translator, sojourner, recruiter, magnusbuilder, recursions, prime_challenge, stealth_ops,
-                            opr_live, ocf, intel_ops, ifs, dark_xm_threat, myriad_hack, aurora_glyph, umbra_deploy, didact_field,
-                            scout_controller, epoch
+                            opr_live, ocf, intel_ops, ifs, maverick, dark_xm_threat, myriad_hack, aurora_glyph, umbra_deploy,
+                            didact_field, scout_controller, epoch
                      FROM (
                          SELECT a.name name, s.idagents id, MAX(s.date) AS date
                          FROM agents a, stats s, membership m, `groups` g
@@ -459,8 +462,8 @@ def summary(group='all', days=7):
                          `mind-controller` mind_controller, illuminator, recharger, liberator, pioneer, engineer, purifier,
                          specops, missionday, `nl-1331-meetups` nl_1331_meetups, `cassandra-neutralizer` cassandra_neutralizer,
                          hacker, translator, sojourner, recruiter, magnusbuilder, recursions, prime_challenge, stealth_ops,
-                         opr_live, ocf, intel_ops, ifs, dark_xm_threat, myriad_hack, aurora_glyph, umbra_deploy, didact_field,
-                         scout_controller, epoch
+                         opr_live, ocf, intel_ops, ifs, maverick, dark_xm_threat, myriad_hack, aurora_glyph, umbra_deploy,
+                         didact_field, scout_controller, epoch
                      FROM (
                          SELECT a.name name, s.idagents id, MAX(s.date) AS date
                          FROM agents a, stats s, membership m, `groups` g

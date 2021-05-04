@@ -58,7 +58,8 @@
 {{ high_scores(chart.drone_explorer) -}}
 {{ high_scores(chart.drone_distance) -}}
 {{ high_scores(chart.drone_recalls) -}}
-{{ high_scores(chart.drone_hacker) -}}
+{{ high_scores(chart.drone_sender) -}}
+{{ high_scores(chart.maverick) -}}
 {{ high_scores(chart.scout_controller) -}}
 {{ high_scores(chart.crafter) -}}
 {{ high_scores(chart.bb_combatant) -}}

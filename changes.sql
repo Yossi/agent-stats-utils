@@ -1,8 +1,9 @@
 USE `agent_stats`;
 
 ALTER TABLE `agent_stats`.`stats`
-ADD COLUMN `epoch` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `hack_the_world202104`,
-ADD COLUMN `matryoshka_links` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `epoch`;
+CHANGE COLUMN `drone_hacker` `maverick` BIGINT(20) UNSIGNED NULL DEFAULT NULL ;
+
+ADD COLUMN `drone_sender` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `matryoshka_links`;
 
 DROP procedure IF EXISTS `FindAgentByName`;
 
@@ -68,7 +69,8 @@ SELECT
   `stats`.`drone_explorer`,
   `stats`.`drone_distance`,
   `stats`.`drone_recalls`,
-  `stats`.`drone_hacker`,
+  `stats`.`drone_sender`,
+  `stats`.`maverick`,
   `stats`.`scout_controller`,
   `stats`.`crafter`,
   `stats`.`bb_combatant`,
