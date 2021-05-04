@@ -33,6 +33,7 @@ transfer custom templates manually
 to remove a dead stat:
 in Stat.py:
        remove from table_load()
+       remove from save() in both places
 in agent_stats.py:
        remove from get_stats() > definitions
        mark # obsolete in summary() > headers if was official tiered stat

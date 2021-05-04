@@ -109,7 +109,7 @@ class Stat(object):
     def table_load(self, **row):
         self.date = parse(row['last_submit'] if row['last_submit'] and not row['last_submit'].startswith('0') else '1000/1/1').date()
         self.name = row['name'][:16]
-        self.faction = row.get('faction'], 'UNK')
+        self.faction = row.get('faction', 'UNK')
         self.level = row.get('level', 0)
         self.lifetime_ap = row.get('lifetime_ap', 0)
         self.recursions = row.get('recursions', 0)
@@ -364,7 +364,6 @@ class Stat(object):
                      crafter='{crafter}',
                      bb_combatant='{bb_combatant}',
                      epoch='{epoch}',
-                     matryoshka_links='{matryoshka_links}',
 
                      flag={flag},
                      `min-ap`='{min_ap}'
@@ -420,7 +419,6 @@ class Stat(object):
                                          crafter='{crafter}',
                                          bb_combatant='{bb_combatant}',
                                          epoch='{epoch}',
-                                         matryoshka_links='{matryoshka_links}',
 
                                          flag={flag},
                                          `min-ap`='{min_ap}';'''.format(**self.__dict__)
