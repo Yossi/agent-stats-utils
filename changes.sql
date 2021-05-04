@@ -3,6 +3,7 @@ USE `agent_stats`;
 ALTER TABLE `agent_stats`.`stats`
 CHANGE COLUMN `drone_hacker` `maverick` BIGINT(20) UNSIGNED NULL DEFAULT NULL ;
 
+ALTER TABLE `agent_stats`.`stats`
 ADD COLUMN `drone_sender` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `matryoshka_links`;
 
 DROP procedure IF EXISTS `FindAgentByName`;
