@@ -4,7 +4,7 @@ def create_code(new_stats):
         'schema.sql > stored procedure': "  `stats`.`{statname}`,\n",
         'Stat.py > fields': ", {statnodash}",
         'Stat.py > db_load()': "        self.{statnodash} = row.{statnodash}\n",
-        'Stat.py > table_load()': "        self.{statnodash} = row['{statname}']\n",
+        'Stat.py > table_load()': "        self.{statnodash} = row.get('{statname}', 0)\n",
         'Stat.py > save(1)': "                     {statbacktick}='{{{statnodash}}}',\n",
         'Stat.py > save(2)': "                                         {statbacktick}='{{{statnodash}}}',\n",
         'agent_stats.py > get_stats() > definitions': "                   '{statname}': '({description})',\n",
@@ -29,12 +29,9 @@ def create_code(new_stats):
 #https://www.agent-stats.com/faq.php
 #copy the new stat(s) from the table and paste them here as is
 
-a = '''epoch
-Completed Hackstreaks
-	2 	4 	8 	30 	60
-matryoshka_links
-Matryoshka Links Created
-	N/A	N/A	N/A	N/A	N/A'''
+a = '''drone_sender
+Drones Returned
+	100 	200 	500 	800 	1,200'''
 
 it = iter(a.split('\n'))
 
