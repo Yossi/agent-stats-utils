@@ -19,7 +19,8 @@ collector, binder, country_master, neutralizer, disruptor, salvator, smuggler,
 link_master, controller, field_master, magnusbuilder, prime_challenge, stealth_ops,
 opr_live, ocf, intel_ops, ifs, dark_xm_threat, myriad_hack, aurora_glyph, umbra_deploy,
 didact_field, drone_explorer, drone_distance, drone_recalls, drone_sender, maverick,
-scout_controller, crafter, bb_combatant, hack_the_world202104, epoch, matryoshka_links'''
+scout_controller, crafter, bb_combatant, hack_the_world202104, epoch, matryoshka_links,
+operation_sentinel'''
 
 Row = namedtuple('Row', fields)
 
@@ -89,6 +90,7 @@ class Stat(object):
         self.bb_combatant = row.bb_combatant
         self.epoch = row.epoch
         self.matryoshka_links = row.matryoshka_links
+        self.operation_sentinel = row.operation_sentinel
 
         # obsolete stats
         self.hack_the_world202104 = row.hack_the_world202104
@@ -162,6 +164,7 @@ class Stat(object):
         self.crafter = row.get('crafter', 0)
         self.bb_combatant = row.get('bb_combatant', 0)
         self.epoch = row.get('epoch', 0)
+        self.operation_sentinel = row.get('operation_sentinel', 0)
 
         agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name))
         if agent_id:
@@ -364,6 +367,7 @@ class Stat(object):
                      crafter='{crafter}',
                      bb_combatant='{bb_combatant}',
                      epoch='{epoch}',
+                     operation_sentinel='{operation_sentinel}',
 
                      flag={flag},
                      `min-ap`='{min_ap}'
@@ -419,6 +423,7 @@ class Stat(object):
                                          crafter='{crafter}',
                                          bb_combatant='{bb_combatant}',
                                          epoch='{epoch}',
+                                         operation_sentinel='{operation_sentinel}',
 
                                          flag={flag},
                                          `min-ap`='{min_ap}';'''.format(**self.__dict__)

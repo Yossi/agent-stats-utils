@@ -29,9 +29,9 @@ def create_code(new_stats):
 #https://www.agent-stats.com/faq.php
 #copy the new stat(s) from the table and paste them here as is
 
-a = '''drone_sender
-Drones Returned
-	100 	200 	500 	800 	1,200'''
+a = '''operation_sentinel
+Sentinel Portals Captured
+	N/A	N/A	N/A	N/A	N/A'''
 
 it = iter(a.split('\n'))
 

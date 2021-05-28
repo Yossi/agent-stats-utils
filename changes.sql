@@ -1,10 +1,7 @@
 USE `agent_stats`;
 
 ALTER TABLE `agent_stats`.`stats`
-CHANGE COLUMN `drone_hacker` `maverick` BIGINT(20) UNSIGNED NULL DEFAULT NULL ;
-
-ALTER TABLE `agent_stats`.`stats`
-ADD COLUMN `drone_sender` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `matryoshka_links`;
+ADD COLUMN `operation_sentinel` BIGINT(20) UNSIGNED NULL AFTER `drone_sender`;
 
 DROP procedure IF EXISTS `FindAgentByName`;
 
@@ -77,7 +74,8 @@ SELECT
   `stats`.`bb_combatant`,
   `stats`.`hack_the_world202104`,
   `stats`.`epoch`,
-  `stats`.`matryoshka_links`
+  `stats`.`matryoshka_links`,
+  `stats`.`operation_sentinel`
 FROM `stats`, `agents`
 WHERE `stats`.`idagents` = `agents`.`idagents` AND `agents`.`name` = `agentname`;
 END$$

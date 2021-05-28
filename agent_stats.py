@@ -109,6 +109,7 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                    'crafter': '(Kinetic Capsules Completed)',
                    'bb_combatant': '(Battle Beacon Combatant)',
                    'epoch': '(Completed Hackstreaks)',
+                   'operation_sentinel': '(Sentinel Portals Captured)',
 
                    # obsolete
                    # 'matryoshka_links': '(Matryoshka Links Created)',
