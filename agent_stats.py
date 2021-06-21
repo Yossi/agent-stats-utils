@@ -109,7 +109,6 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                    'crafter': '(Kinetic Capsules Completed)',
                    'bb_combatant': '(Battle Beacon Combatant)',
                    'epoch': '(Completed Hackstreaks)',
-                   'operation_sentinel': '(Sentinel Portals Captured)',
 
                    # obsolete
                    # 'matryoshka_links': '(Matryoshka Links Created)',
@@ -121,6 +120,7 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                    # 'aurora_glyph': '(Aurora: Unique Glyph Hack Points)',
                    # 'umbra_deploy': '(Umbra: Unique Resonator Slots Deployed)',
                    # 'didact_field': '(Didact: Control Fields Created)',
+                   # 'operation_sentinel': '(Sentinel Portals Captured)',
     }
     definitions.update(extra_definitions)
 
