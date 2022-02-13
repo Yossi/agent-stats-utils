@@ -29,9 +29,9 @@ def create_code(new_stats):
 #https://www.agent-stats.com/faq.php
 #copy the new stat(s) from the table and paste them here as is
 
-a = '''operation_sentinel
-Sentinel Portals Captured
-	N/A	N/A	N/A	N/A	N/A'''
+a = '''second_sunday
+Second Sunday Events
+	1 	6 	12 	24 	36'''
 
 it = iter(a.split('\n'))
 

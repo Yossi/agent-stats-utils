@@ -67,6 +67,7 @@
 {{ high_scores(chart.epoch) -}}
 {{ high_scores(chart.matryoshka_links) -}}
 {{ high_scores(chart.operation_sentinel) -}}
+{{ high_scores(chart.second_sunday) -}}
 
 {%- if dings.data -%}
 Recent badge dings:

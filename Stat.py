@@ -20,7 +20,7 @@ link_master, controller, field_master, magnusbuilder, prime_challenge, stealth_o
 opr_live, ocf, intel_ops, ifs, dark_xm_threat, myriad_hack, aurora_glyph, umbra_deploy,
 didact_field, drone_explorer, drone_distance, drone_recalls, drone_sender, maverick,
 scout_controller, crafter, bb_combatant, hack_the_world202104, epoch, matryoshka_links,
-operation_sentinel'''
+operation_sentinel, second_sunday'''
 
 Row = namedtuple('Row', fields)
 
@@ -91,6 +91,7 @@ class Stat(object):
         self.epoch = row.epoch
         self.matryoshka_links = row.matryoshka_links
         self.operation_sentinel = row.operation_sentinel
+        self.second_sunday = row.second_sunday
 
         # obsolete stats
         self.hack_the_world202104 = row.hack_the_world202104
@@ -165,6 +166,7 @@ class Stat(object):
         self.bb_combatant = row.get('bb_combatant', 0)
         self.epoch = row.get('epoch', 0)
         self.operation_sentinel = row.get('operation_sentinel', 0)
+        self.second_sunday = row.get('second_sunday', 0)
 
         agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name))
         if agent_id:
@@ -368,6 +370,7 @@ class Stat(object):
                      bb_combatant='{bb_combatant}',
                      epoch='{epoch}',
                      operation_sentinel='{operation_sentinel}',
+                     second_sunday='{second_sunday}',
 
                      flag={flag},
                      `min-ap`='{min_ap}'
@@ -424,6 +427,7 @@ class Stat(object):
                                          bb_combatant='{bb_combatant}',
                                          epoch='{epoch}',
                                          operation_sentinel='{operation_sentinel}',
+                                         second_sunday='{second_sunday}',
 
                                          flag={flag},
                                          `min-ap`='{min_ap}';'''.format(**self.__dict__)

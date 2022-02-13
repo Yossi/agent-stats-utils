@@ -109,6 +109,7 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                    'crafter': '(Kinetic Capsules Completed)',
                    'bb_combatant': '(Battle Beacon Combatant)',
                    'epoch': '(Completed Hackstreaks)',
+                   'second_sunday': '(Second Sunday Events)',
 
                    # obsolete
                    # 'matryoshka_links': '(Matryoshka Links Created)',
@@ -351,6 +352,7 @@ def get_badges(data):
                   'maverick': [250, 1000, 2000, 5000, 10000],
                   'scout_controller': [100, 500, 1000, 5000, 15000],
                   'epoch': [2, 4, 8, 30, 60],
+                  'second_sunday': [1, 6, 12, 24, 36],
                   }
 
     result = {} # TODO: change these 2 dicts to OrderedDicts
@@ -432,6 +434,7 @@ def summary(group='all', days=7):
                'didact_field', # obsolete
                'scout_controller',
                'epoch',
+               'second_sunday',
     )
 
     sql_before = f'''SELECT x.name, s.`date`, `level`, ap, explorer, discoverer, seer, recon, scout, trekker, builder, connector,
@@ -439,7 +442,7 @@ def summary(group='all', days=7):
                             specops, missionday, `nl-1331-meetups` nl_1331_meetups, `cassandra-neutralizer` cassandra_neutralizer,
                             hacker, translator, sojourner, recruiter, magnusbuilder, recursions, prime_challenge, stealth_ops,
                             opr_live, ocf, intel_ops, ifs, maverick, dark_xm_threat, myriad_hack, aurora_glyph, umbra_deploy,
-                            didact_field, scout_controller, epoch
+                            didact_field, scout_controller, epoch, second_sunday
                      FROM (
                          SELECT a.name name, s.idagents id, MAX(s.date) AS date
                          FROM agents a, stats s, membership m, `groups` g
@@ -464,7 +467,7 @@ def summary(group='all', days=7):
                          specops, missionday, `nl-1331-meetups` nl_1331_meetups, `cassandra-neutralizer` cassandra_neutralizer,
                          hacker, translator, sojourner, recruiter, magnusbuilder, recursions, prime_challenge, stealth_ops,
                          opr_live, ocf, intel_ops, ifs, maverick, dark_xm_threat, myriad_hack, aurora_glyph, umbra_deploy,
-                         didact_field, scout_controller, epoch
+                         didact_field, scout_controller, epoch, second_sunday
                      FROM (
                          SELECT a.name name, s.idagents id, MAX(s.date) AS date
                          FROM agents a, stats s, membership m, `groups` g

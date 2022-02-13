@@ -20,7 +20,7 @@ add new stat to template(s)
 
 update local database column(s) and stored procedure manually and save the changes in changes.sql
 
-commit and push to to github
+commit and push to github
 
 deploy on remotes $ git fetch --all && git reset --hard origin/master
 
