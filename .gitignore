@@ -1,6 +1,8 @@
 secrets.py
 extra_stats.py
 known_stats.json
+client_secret.json
+gmail-python-email-send.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
