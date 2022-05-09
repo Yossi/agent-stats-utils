@@ -76,7 +76,9 @@ def get_credentials():
     if not credentials or credentials.invalid:
         flow = oauth2client.client.flow_from_clientsecrets('client_secret.json', 'https://www.googleapis.com/auth/gmail.send')
         flow.user_agent = 'agent-stats-util'
-        credentials = oauth2client.tools.run_flow(flow, store)
+        args = oauth2client.tools.argparser.parse_args()
+        args.noauth_local_webserver = True
+        credentials = oauth2client.tools.run_flow(flow, store, args)
         logging.info('Storing credentials to ' + credential_path)
     return credentials
 
@@ -116,3 +118,6 @@ def mail(to, subject, text, attach=False, host=False):
 
 
     return SendMessageInternal(service, "me", message)
+
+if __name__ == '__main__':
+    get_credentials()
