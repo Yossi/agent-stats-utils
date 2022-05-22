@@ -1,3 +1,5 @@
+from mail import mail
+
 import pymysql # pip install pymysql
 import logging
 
@@ -54,70 +56,3 @@ def exec_mysql(sql, retries=2):
         raise
 
 
-#######
-
-
-import oauth2client
-from oauth2client import client, tools, file
-from apiclient import errors, discovery
-import httplib2
-import platform
-from ftfy import fix_text # pip install ftfy
-from email.mime.application import MIMEApplication
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from secrets import gmail_sender
-import base64
-
-def get_credentials():
-    credential_path = 'gmail-python-email-send.json'
-    store = oauth2client.file.Storage(credential_path)
-    credentials = store.get()
-    if not credentials or credentials.invalid:
-        flow = oauth2client.client.flow_from_clientsecrets('client_secret.json', 'https://www.googleapis.com/auth/gmail.send')
-        flow.user_agent = 'agent-stats-util'
-        args = oauth2client.tools.argparser.parse_args()
-        args.noauth_local_webserver = True
-        credentials = oauth2client.tools.run_flow(flow, store, args)
-        logging.info('Storing credentials to ' + credential_path)
-    return credentials
-
-def SendMessageInternal(service, user_id, message):
-    try:
-        message = (service.users().messages().send(userId=user_id, body=message).execute())
-        logging.info('Message Id: %s' % message['id'])
-        return message
-    except errors.HttpError as error:
-        logging.error('An error occurred: %s' % error)
-        return "Error"
-
-def mail(to, subject, text, attach=False, host=False):
-       # to has to be a list
-
-    credentials = get_credentials()
-    http = credentials.authorize(httplib2.Http())
-    service = discovery.build('gmail', 'v1', http=http, cache_discovery=False)
-
-
-    msg = MIMEMultipart()
-
-    msg['From'] = gmail_sender
-    msg['To'] = ", ".join(to) if len(to[0])-1 else to
-    if host:
-        subject = platform.node() + ' ' + subject
-    msg['Subject'] = subject
-
-    msg.attach(MIMEText(text))
-
-    if attach:
-        part = MIMEApplication(fix_text(text), Name=subject)
-        part['Content-Disposition'] = 'attachment; filename="%s.txt"' % subject
-        msg.attach(part)
-
-    message = {'raw': base64.urlsafe_b64encode(msg.as_bytes()).decode()}
-
-
-    return SendMessageInternal(service, "me", message)
-
-if __name__ == '__main__':
-    get_credentials()
