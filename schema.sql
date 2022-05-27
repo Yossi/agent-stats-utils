@@ -99,6 +99,7 @@ CREATE TABLE `stats` (
   `matryoshka_links` bigint(20) unsigned DEFAULT NULL,
   `operation_sentinel` bigint(20) unsigned DEFAULT NULL,
   `second_sunday` bigint(20) unsigned DEFAULT NULL,
+  `eos_imprint` bigint(20) unsigned DEFAULT NULL,
   `flag` int(1) unsigned DEFAULT NULL,
   `min-ap` bigint(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`idagents`,`date`),
@@ -175,7 +176,8 @@ SELECT
   `stats`.`epoch`,
   `stats`.`matryoshka_links`,
   `stats`.`operation_sentinel`,
-  `stats`.`second_sunday`
+  `stats`.`second_sunday`,
+  `stats`.`eos_imprint`
 FROM `stats`, `agents`
 WHERE `stats`.`idagents` = `agents`.`idagents` AND `agents`.`name` = `agentname`;
 END$$

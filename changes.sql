@@ -1,7 +1,7 @@
 USE `agent_stats`;
 
 ALTER TABLE `agent_stats`.`stats`
-ADD COLUMN `second_sunday` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `operation_sentinel`;
+ADD COLUMN `eos_imprint` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `second_sunday`;
 
 DROP procedure IF EXISTS `FindAgentByName`;
 
@@ -76,7 +76,8 @@ SELECT
   `stats`.`epoch`,
   `stats`.`matryoshka_links`,
   `stats`.`operation_sentinel`,
-  `stats`.`second_sunday`
+  `stats`.`second_sunday`,
+  `stats`.`eos_imprint`
 FROM `stats`, `agents`
 WHERE `stats`.`idagents` = `agents`.`idagents` AND `agents`.`name` = `agentname`;
 END$$

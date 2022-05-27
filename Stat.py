@@ -20,7 +20,7 @@ link_master, controller, field_master, magnusbuilder, prime_challenge, stealth_o
 opr_live, ocf, intel_ops, ifs, dark_xm_threat, myriad_hack, aurora_glyph, umbra_deploy,
 didact_field, drone_explorer, drone_distance, drone_recalls, drone_sender, maverick,
 scout_controller, crafter, bb_combatant, hack_the_world202104, epoch, matryoshka_links,
-operation_sentinel, second_sunday'''
+operation_sentinel, second_sunday, eos_imprint'''
 
 Row = namedtuple('Row', fields)
 
@@ -92,6 +92,7 @@ class Stat(object):
         self.matryoshka_links = row.matryoshka_links
         self.operation_sentinel = row.operation_sentinel
         self.second_sunday = row.second_sunday
+        self.eos_imprint = row.eos_imprint
 
         # obsolete stats
         self.hack_the_world202104 = row.hack_the_world202104
@@ -167,6 +168,7 @@ class Stat(object):
         self.epoch = row.get('epoch', 0)
         self.operation_sentinel = row.get('operation_sentinel', 0)
         self.second_sunday = row.get('second_sunday', 0)
+        self.eos_imprint = row.get('eos_imprint', 0)
 
         agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name))
         if agent_id:
@@ -371,6 +373,7 @@ class Stat(object):
                      epoch='{epoch}',
                      operation_sentinel='{operation_sentinel}',
                      second_sunday='{second_sunday}',
+                     eos_imprint='{eos_imprint}',
 
                      flag={flag},
                      `min-ap`='{min_ap}'
@@ -428,6 +431,7 @@ class Stat(object):
                                          epoch='{epoch}',
                                          operation_sentinel='{operation_sentinel}',
                                          second_sunday='{second_sunday}',
+                                         eos_imprint='{eos_imprint}',
 
                                          flag={flag},
                                          `min-ap`='{min_ap}';'''.format(**self.__dict__)

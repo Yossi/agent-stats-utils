@@ -29,9 +29,9 @@ def create_code(new_stats):
 #https://www.agent-stats.com/faq.php
 #copy the new stat(s) from the table and paste them here as is
 
-a = '''second_sunday
-Second Sunday Events
-	1 	6 	12 	24 	36'''
+a = '''eos_imprint
+EOS Points Earned
+	2,000 	4,000 	8,000	N/A	N/A'''
 
 it = iter(a.split('\n'))
 
