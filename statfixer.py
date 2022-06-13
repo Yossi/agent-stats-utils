@@ -6,8 +6,8 @@
 
 from time import sleep
 from webdriver import get_driver # pip install git+https://github.com/Yossi/webdriver#webdriver
+from selenium.webdriver.common.by import By
 import logging
-import datetime
 
 try:
     input = raw_input
@@ -35,7 +35,7 @@ def main():
         sleep(3)
         logging.info('url loaded')
 
-        if 'Sign in' in driver.find_element_by_tag_name('BODY').text:
+        if 'Sign in' in driver.find_element(by=By.TAG_NAME, value='BODY').text:
             if HEADLESS:
                 driver.save_screenshot('selenium.png')
                 # not really how to raise exceptions, but this line crashes and that's the point here
@@ -44,12 +44,12 @@ def main():
 
         driver.get('https://www.agent-stats.com/quick_add.php') # loads up with everything already filled in. basically does exactly what we need
 
-        comment = driver.find_element_by_xpath("//input[@name='comment']")
+        comment = driver.find_element(by=By.XPATH, value="//input[@name='comment']")
         comment.clear()
         comment.click()
         comment.send_keys('statfixer')
 
-        save = driver.find_element_by_xpath("//input[@value='save']")
+        save = driver.find_element(by=By.XPATH, value="//input[@value='save']")
         save.click()
 
         #driver.save_screenshot('selenium.png')
