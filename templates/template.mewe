@@ -51,6 +51,7 @@
 {{ high_scores(chart.opr_live) -}}
 {{ high_scores(chart.ocf) -}}
 {{ high_scores(chart.intel_ops) -}}
+{{ high_scores(chart.urban_ops) -}}
 {{ high_scores(chart.ifs) -}}
 {{ high_scores(chart.dark_xm_threat) -}}
 {{ high_scores(chart.aurora_glyph) -}}

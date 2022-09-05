@@ -1,7 +1,7 @@
 USE `agent_stats`;
 
 ALTER TABLE `agent_stats`.`stats`
-ADD COLUMN `eos_imprint` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `second_sunday`;
+ADD COLUMN `urban_ops` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `intel_ops`;
 
 DROP procedure IF EXISTS `FindAgentByName`;
 
@@ -58,6 +58,7 @@ SELECT
   `stats`.`opr_live`,
   `stats`.`ocf`,
   `stats`.`intel_ops`,
+  `stats`.`urban_ops`,
   `stats`.`ifs`,
   `stats`.`dark_xm_threat`,
   `stats`.`myriad_hack`,

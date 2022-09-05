@@ -29,9 +29,9 @@ def create_code(new_stats):
 #https://www.agent-stats.com/faq.php
 #copy the new stat(s) from the table and paste them here as is
 
-a = '''eos_imprint
-EOS Points Earned
-	2,000 	4,000 	8,000	N/A	N/A'''
+a = '''urban_ops
+Urban Ops Missions
+	1 	3 	6 	10 	20'''
 
 it = iter(a.split('\n'))
 
