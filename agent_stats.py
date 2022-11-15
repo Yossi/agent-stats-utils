@@ -156,6 +156,8 @@ def cleanup_data(data):
     for k, v in data.items():
         if v == '-':
             data[k] = 0
+        if type(v) == int and v < 0:
+            data[k] = 0
     data['last_submit'] = last_submit
     return data
 
