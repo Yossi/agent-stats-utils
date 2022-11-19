@@ -64,6 +64,9 @@
 {{ high_scores(chart.scout_controller) -}}
 {{ high_scores(chart.crafter) -}}
 {{ high_scores(chart.bb_combatant) -}}
+{{ high_scores(chart['red-disruptor']) -}}
+{{ high_scores(chart['red-purifier']) -}}
+{{ high_scores(chart['red-neutralizer']) -}}
 {{ high_scores(chart.hack_the_world202104) -}}
 {{ high_scores(chart.epoch) -}}
 {{ high_scores(chart.matryoshka_links) -}}
