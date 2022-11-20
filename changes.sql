@@ -1,8 +1,8 @@
 USE `agent_stats`;
 
 ALTER TABLE `agent_stats`.`stats`
-ADD COLUMN `red-disruptor` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `bb_combatant`;
-ADD COLUMN `red-purifier` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `red-disruptor`;
+ADD COLUMN `red-disruptor` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `bb_combatant`,
+ADD COLUMN `red-purifier` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `red-disruptor`,
 ADD COLUMN `red-neutralizer` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `red-purifier`;
 
 DROP procedure IF EXISTS `FindAgentByName`;
