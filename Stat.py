@@ -325,7 +325,7 @@ class Stat(object):
         return reasons
 
     def save(self):
-        self.flag, self.min_ap # hack to make sure these are in the cache
+        self.flag, self.min_ap, self.min_level # hack to make sure these are in the cache
 
         sql = '''INSERT INTO `stats`
                  SET idagents={agent_id},
