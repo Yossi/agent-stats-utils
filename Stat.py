@@ -12,14 +12,14 @@ sojourner_start = datetime.date(2015, 3, 5)
 game_start = datetime.date(2012, 11, 15)
 
 fields = '''name, date, flag, min_ap, lifetime_ap, recursions, ap, level, explorer,
-discoverer, seer, recon, trekker, builder, connector, mind_controller, illuminator,
+discoverer, seer, recon, scout, trekker, builder, connector, mind_controller, illuminator,
 recharger, liberator, pioneer, engineer, purifier, guardian, specops, missionday,
 nl_1331_meetups, cassandra_neutralizer, hacker, translator, sojourner, recruiter,
 collector, binder, country_master, neutralizer, disruptor, salvator, smuggler,
 link_master, controller, field_master, magnusbuilder, prime_challenge, stealth_ops,
 opr_live, ocf, intel_ops, urban_ops, ifs, dark_xm_threat, myriad_hack, aurora_glyph,
 umbra_deploy, didact_field, drone_explorer, drone_distance, drone_recalls, drone_sender,
-maverick, scout_controller, crafter, bb_combatant, red_disruptor, red_purifier, 
+maverick, scout_controller, crafter, bb_combatant, red_disruptor, red_purifier,
 red_neutralizer, hack_the_world202104, epoch, matryoshka_links, operation_sentinel,
 second_sunday, eos_imprint'''
 
@@ -302,7 +302,7 @@ class Stat(object):
             reasons.append( 'hacker:translator %s < %s/15' % (self.hacker, self.translator) )
         if self.seer > self.discoverer:
             reasons.append( 'seer:discoverer %s > %s' % (self.seer, self.discoverer) )
-        
+
         # there can be multiple crafting capsules now. this signal is very weak even if recalibrated
         # if (self.crafter*2) > self.trekker:
         #     reasons.append( 'trekker:crafter %s < %s*2' % (self.trekker, self.crafter) )
@@ -381,7 +381,7 @@ class Stat(object):
                      maverick='{maverick}',
                      scout_controller='{scout_controller}',
                      crafter='{crafter}',
-                     bb_combatant='{bb_combatant}',        
+                     bb_combatant='{bb_combatant}',
                      `red-disruptor`='{red_disruptor}',
                      `red-purifier`='{red_purifier}',
                      `red-neutralizer`='{red_neutralizer}',
