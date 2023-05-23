@@ -1,9 +1,7 @@
 USE `agent_stats`;
 
 ALTER TABLE `agent_stats`.`stats`
-ADD COLUMN `red-disruptor` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `bb_combatant`,
-ADD COLUMN `red-purifier` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `red-disruptor`,
-ADD COLUMN `red-neutralizer` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `red-purifier`;
+ADD COLUMN `reclaimer` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `red-neutralizer`;
 
 DROP procedure IF EXISTS `FindAgentByName`;
 
@@ -78,6 +76,7 @@ SELECT
   `stats`.`red-disruptor`,
   `stats`.`red-purifier`,
   `stats`.`red-neutralizer`,
+  `stats`.`reclaimer`,
   `stats`.`hack_the_world202104`,
   `stats`.`epoch`,
   `stats`.`matryoshka_links`,
