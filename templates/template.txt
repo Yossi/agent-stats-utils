@@ -74,6 +74,7 @@
 {{ high_scores(chart.operation_sentinel) -}}
 {{ high_scores(chart.second_sunday) -}}
 {{ high_scores(chart.eos_imprint) -}}
+{{ high_scores(chart.overclocker) -}}
 
 {%- if dings.data -%}
 Recent badge dings:

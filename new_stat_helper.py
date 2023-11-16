@@ -29,9 +29,9 @@ def create_code(new_stats):
 #https://www.agent-stats.com/faq.php
 #copy the new stat(s) from the table and paste them here as is
 
-a = '''reclaimer
-Machina Portals Reclaimed
-	100 	1,000 	5,000 	15,000 	40,000'''
+a = '''overclocker
+Overclock Hack Points
+	750 	1,250 	2,250 	5,500 	7,500'''
 
 it = iter(a.split('\n'))
 

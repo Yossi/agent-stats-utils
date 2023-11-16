@@ -116,6 +116,7 @@ def get_stats(group_id, time_span='now', number=10, submitters=[0]):
                    'epoch': '(Completed Hackstreaks)',
                    'second_sunday': '(Second Sunday Events)',
                    'eos_imprint': '(EOS Points Earned)',
+                   'overclocker': '(Overclock Hack Points)',
 
                    # obsolete
                    # 'matryoshka_links': '(Matryoshka Links Created)',

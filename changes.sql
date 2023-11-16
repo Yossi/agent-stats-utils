@@ -1,7 +1,7 @@
 USE `agent_stats`;
 
 ALTER TABLE `agent_stats`.`stats`
-ADD COLUMN `reclaimer` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `red-neutralizer`;
+ADD COLUMN `overclocker` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `eos_imprint`;
 
 DROP procedure IF EXISTS `FindAgentByName`;
 
@@ -82,7 +82,8 @@ SELECT
   `stats`.`matryoshka_links`,
   `stats`.`operation_sentinel`,
   `stats`.`second_sunday`,
-  `stats`.`eos_imprint`
+  `stats`.`eos_imprint`,
+  `stats`.`overclocker`
 FROM `stats`, `agents`
 WHERE `stats`.`idagents` = `agents`.`idagents` AND `agents`.`name` = `agentname`;
 END$$
