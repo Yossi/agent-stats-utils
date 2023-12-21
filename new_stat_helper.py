@@ -29,9 +29,9 @@ def create_code(new_stats):
 #https://www.agent-stats.com/faq.php
 #copy the new stat(s) from the table and paste them here as is
 
-a = '''overclocker
-Overclock Hack Points
-	750 	1,250 	2,250 	5,500 	7,500'''
+a = '''operation_chronos
+Operation Chronos Points
+	500 	5,000	N/A	N/A	N/A'''
 
 it = iter(a.split('\n'))
 

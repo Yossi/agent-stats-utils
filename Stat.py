@@ -21,7 +21,7 @@ opr_live, ocf, intel_ops, urban_ops, ifs, dark_xm_threat, myriad_hack, aurora_gl
 umbra_deploy, didact_field, drone_explorer, drone_distance, drone_recalls, drone_sender,
 maverick, scout_controller, crafter, bb_combatant, red_disruptor, red_purifier,
 red_neutralizer, reclaimer, hack_the_world202104, epoch, matryoshka_links, operation_sentinel,
-second_sunday, eos_imprint, overclocker'''
+second_sunday, eos_imprint, overclocker, operation_chronos'''
 
 Row = namedtuple('Row', fields)
 
@@ -100,6 +100,7 @@ class Stat(object):
         self.second_sunday = row.second_sunday
         self.eos_imprint = row.eos_imprint
         self.overclocker = row.overclocker
+        self.operation_chronos = row.operation_chronos
 
         # obsolete stats
         self.hack_the_world202104 = row.hack_the_world202104
@@ -182,6 +183,7 @@ class Stat(object):
         self.second_sunday = row.get('second_sunday', 0)
         self.eos_imprint = row.get('eos_imprint', 0)
         self.overclocker = row.get('overclocker', 0)
+        self.operation_chronos = row.get('operation_chronos', 0)
 
         agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name))
         if agent_id:
@@ -395,6 +397,7 @@ class Stat(object):
                      second_sunday='{second_sunday}',
                      eos_imprint='{eos_imprint}',
                      overclocker='{overclocker}',
+                     operation_chronos='{operation_chronos}',
 
                      flag={flag},
                      `min-ap`='{min_ap}'
@@ -459,6 +462,7 @@ class Stat(object):
                                          second_sunday='{second_sunday}',
                                          eos_imprint='{eos_imprint}',
                                          overclocker='{overclocker}',
+                                         operation_chronos='{operation_chronos}',
 
                                          flag={flag},
                                          `min-ap`='{min_ap}';'''.format(**self.__dict__)

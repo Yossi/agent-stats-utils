@@ -106,6 +106,7 @@ CREATE TABLE `stats` (
   `second_sunday` bigint(20) unsigned DEFAULT NULL,
   `eos_imprint` bigint(20) unsigned DEFAULT NULL,
   `overclocker` bigint(20) unsigned DEFAULT NULL,
+  `operation_chronos` bigint(20) unsigned DEFAULT NULL,
   `flag` int(1) unsigned DEFAULT NULL,
   `min-ap` bigint(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`idagents`,`date`),
@@ -189,7 +190,8 @@ SELECT
   `stats`.`operation_sentinel`,
   `stats`.`second_sunday`,
   `stats`.`eos_imprint`,
-  `stats`.`overclocker`
+  `stats`.`overclocker`,
+  `stats`.`operation_chronos`
 FROM `stats`, `agents`
 WHERE `stats`.`idagents` = `agents`.`idagents` AND `agents`.`name` = `agentname`;
 END$$
