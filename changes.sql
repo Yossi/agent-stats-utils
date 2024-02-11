@@ -2,8 +2,8 @@ USE `agent_stats`;
 
 ALTER TABLE `agent_stats`.`stats`
 
-ADD COLUMN `cryptic_memories_op` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `operation_chronos`;
-ADD COLUMN `research_bounties` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `cryptic_memories_op`;
+ADD COLUMN `cryptic_memories_op` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `operation_chronos`,
+ADD COLUMN `research_bounties` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `cryptic_memories_op`,
 ADD COLUMN `research_days` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `research_bounties`;
 
 DROP procedure IF EXISTS `FindAgentByName`;
