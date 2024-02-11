@@ -107,6 +107,9 @@ CREATE TABLE `stats` (
   `eos_imprint` bigint(20) unsigned DEFAULT NULL,
   `overclocker` bigint(20) unsigned DEFAULT NULL,
   `operation_chronos` bigint(20) unsigned DEFAULT NULL,
+  `cryptic_memories_op` bigint(20) unsigned DEFAULT NULL,
+  `research_bounties` bigint(20) unsigned DEFAULT NULL,
+  `research_days` bigint(20) unsigned DEFAULT NULL,
   `flag` int(1) unsigned DEFAULT NULL,
   `min-ap` bigint(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`idagents`,`date`),
@@ -191,7 +194,10 @@ SELECT
   `stats`.`second_sunday`,
   `stats`.`eos_imprint`,
   `stats`.`overclocker`,
-  `stats`.`operation_chronos`
+  `stats`.`operation_chronos`,
+  `stats`.`cryptic_memories_op`,
+  `stats`.`research_bounties`,
+  `stats`.`research_days`
 FROM `stats`, `agents`
 WHERE `stats`.`idagents` = `agents`.`idagents` AND `agents`.`name` = `agentname`;
 END$$

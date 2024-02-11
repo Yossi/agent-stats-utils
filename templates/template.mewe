@@ -76,6 +76,9 @@
 {{ high_scores(chart.eos_imprint) -}}
 {{ high_scores(chart.overclocker) -}}
 {{ high_scores(chart.operation_chronos) -}}
+{{ high_scores(chart.cryptic_memories_op) -}}
+{{ high_scores(chart.research_bounties) -}}
+{{ high_scores(chart.research_days) -}}
 
 {%- if dings.data -%}
 Recent badge dings:

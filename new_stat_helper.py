@@ -29,9 +29,15 @@ def create_code(new_stats):
 #https://www.agent-stats.com/faq.php
 #copy the new stat(s) from the table and paste them here as is
 
-a = '''operation_chronos
-Operation Chronos Points
-	500 	5,000	N/A	N/A	N/A'''
+a = '''cryptic_memories_op
+Cryptic Memories Global Op Points
+	1,500 	15,000	N/A	N/A	N/A
+research_bounties
+Research Bounties Completed
+	50 	150 	500 	1,500 	5,000
+research_days
+Research Days Completed
+	15 	30 	60 	180 	360'''
 
 it = iter(a.split('\n'))
 

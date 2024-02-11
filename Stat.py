@@ -21,7 +21,8 @@ opr_live, ocf, intel_ops, urban_ops, ifs, dark_xm_threat, myriad_hack, aurora_gl
 umbra_deploy, didact_field, drone_explorer, drone_distance, drone_recalls, drone_sender,
 maverick, scout_controller, crafter, bb_combatant, red_disruptor, red_purifier,
 red_neutralizer, reclaimer, hack_the_world202104, epoch, matryoshka_links, operation_sentinel,
-second_sunday, eos_imprint, overclocker, operation_chronos'''
+second_sunday, eos_imprint, overclocker, operation_chronos, cryptic_memories_op, research_bounties, 
+research_days'''
 
 Row = namedtuple('Row', fields)
 
@@ -101,6 +102,9 @@ class Stat(object):
         self.eos_imprint = row.eos_imprint
         self.overclocker = row.overclocker
         self.operation_chronos = row.operation_chronos
+        self.cryptic_memories_op = row.cryptic_memories_op
+        self.research_bounties = row.research_bounties
+        self.research_days = row.research_days
 
         # obsolete stats
         self.hack_the_world202104 = row.hack_the_world202104
@@ -184,6 +188,9 @@ class Stat(object):
         self.eos_imprint = row.get('eos_imprint', 0)
         self.overclocker = row.get('overclocker', 0)
         self.operation_chronos = row.get('operation_chronos', 0)
+        self.cryptic_memories_op = row.get('cryptic_memories_op', 0)
+        self.research_bounties = row.get('research_bounties', 0)
+        self.research_days = row.get('research_days', 0)
 
         agent_id = exec_mysql("SELECT idagents FROM agents WHERE name = '{0}';".format(self.name))
         if agent_id:
@@ -398,6 +405,9 @@ class Stat(object):
                      eos_imprint='{eos_imprint}',
                      overclocker='{overclocker}',
                      operation_chronos='{operation_chronos}',
+                     cryptic_memories_op='{cryptic_memories_op}',
+                     research_bounties='{research_bounties}',
+                     research_days='{research_days}',
 
                      flag={flag},
                      `min-ap`='{min_ap}'
@@ -463,7 +473,10 @@ class Stat(object):
                                          eos_imprint='{eos_imprint}',
                                          overclocker='{overclocker}',
                                          operation_chronos='{operation_chronos}',
-
+                                         cryptic_memories_op='{cryptic_memories_op}',
+                                         research_bounties='{research_bounties}',
+                                         research_days='{research_days}',
+                                         
                                          flag={flag},
                                          `min-ap`='{min_ap}';'''.format(**self.__dict__)
         self.changed = exec_mysql(sql)
