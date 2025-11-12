@@ -21,7 +21,7 @@ opr_live, ocf, intel_ops, urban_ops, ifs, dark_xm_threat, myriad_hack, aurora_gl
 umbra_deploy, didact_field, drone_explorer, drone_distance, drone_recalls, drone_sender,
 maverick, scout_controller, crafter, bb_combatant, red_disruptor, red_purifier,
 red_neutralizer, reclaimer, hack_the_world202104, epoch, matryoshka_links, operation_sentinel,
-second_sunday, eos_imprint, overclocker, operation_chronos, cryptic_memories_op, research_bounties, 
+second_sunday, eos_imprint, overclocker, operation_chronos, cryptic_memories_op, research_bounties,
 research_days'''
 
 Row = namedtuple('Row', fields)
@@ -476,7 +476,7 @@ class Stat(object):
                                          cryptic_memories_op='{cryptic_memories_op}',
                                          research_bounties='{research_bounties}',
                                          research_days='{research_days}',
-                                         
+
                                          flag={flag},
                                          `min-ap`='{min_ap}';'''.format(**self.__dict__)
         self.changed = exec_mysql(sql)
