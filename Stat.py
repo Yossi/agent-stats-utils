@@ -313,8 +313,8 @@ class Stat(object):
             reasons.append( 'neutralizer:purifier %s > %s' % (self.neutralizer, self.purifier) )
         if (self.translator/15) > self.hacker:
             reasons.append( 'hacker:translator %s < %s/15' % (self.hacker, self.translator) )
-        if self.seer > self.discoverer:
-            reasons.append( 'seer:discoverer %s > %s' % (self.seer, self.discoverer) )
+        # if self.seer > self.discoverer:
+        #     reasons.append( 'seer:discoverer %s > %s' % (self.seer, self.discoverer) )
 
         # there can be multiple crafting capsules now. this signal is very weak even if recalibrated
         # if (self.crafter*2) > self.trekker:
@@ -487,7 +487,7 @@ class Stat(object):
 # lifetime_ap >= ap
 # date >= game_start
 # today >= date
-# discoverer >= seer
+# discoverer >= seer  ## these have been swapped (or discoverer completely retired)
 # connector >= mind_controller/2
 # hacker+builder+engineer+connector >= explorer
 # explorer >= pioneer
